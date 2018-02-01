@@ -1,0 +1,151 @@
+﻿<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cube"></i> Show Room Add Form</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <!--Server side error messageing------>
+    <div class="col-sm-12" ng-hide="serverMessage" style="margin-top:1em;">
+        <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+            <ul>
+                <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+            </ul>
+        </div>
+    </div>
+    <!--End Server side error messageing-->
+    <!--Client side error messageing------>
+    <div class="col-sm-12" ng-hide="clientMessage" style="margin-top:1em;">
+        <div class="alert alert-{{messageType}} alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-check"></i> {{messageType}}!</h4>
+            {{message}}
+        </div>
+    </div>
+    <!--End Client side error messageing-->
+    <form name="showRoomForm" novalidate role="form" class="form-horizontal" id="showRoomForm" ng-submit="submitShowRoomForm()">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Show Room Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : showRoomForm.ShowRoomName.$invalid && (showRoomForm.ShowRoomName.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-building"></i></span>
+                        <input id="ShowRoomName" type="text" class="form-control" name="ShowRoomName" autocomplete="off" tabindex="1" autofocus
+                               move-focus-by-enter-key
+                               ng-model="showRoom.ShowRoomName"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="showRoomForm.ShowRoomName.$error.required && (showRoomForm.ShowRoomName.$dirty || submitted)" class="help-block">Show Room name is required.</p>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Show Room Name Bangla</label>
+                    <div class="input-group" ng-class="{ 'has-error' : showRoomForm.ShowRoomNameBangla.$invalid && (showRoomForm.ShowRoomNameBangla.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-building"></i></span>
+                        <input id="ShowRoomNameBangla" type="text" class="form-control" name="ShowRoomNameBangla" autocomplete="off" tabindex="2" autofocus
+                               move-focus-by-enter-key
+                               ng-model="showRoom.ShowRoomNameBangla"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="showRoomForm.ShowRoomNameBangla.$error.required && (showRoomForm.ShowRoomNameBangla.$dirty || submitted)" class="help-block">Show Room Name Bangla is required.</p>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Unit</label>
+                    <div class="input-group" ng-class="{ 'has-error' : showRoomForm.ShowRoomId.$invalid && (showRoomForm.ShowRoomId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-bookmark"></i></span>
+                        <select name="UnitId" class="form-control" tabindex="2"
+                                ng-focus="true"
+                                move-focus-by-enter-key
+                                ng-model="showRoom.UnitId"
+                                ng-options="l.UnitName for l in unitList track by l.UnitId"
+                                ng-required="true">
+                            <option value="">--Select Unit Name--</option>
+                        </select>
+                    </div>
+                    <p ng-show="showRoomForm.UnitId.$error.required && (showRoomForm.UnitId.$dirty || submitted)" class="help-block">Select Unit</p>
+
+                </div>
+
+
+            </div>
+        </div><!-- /.box-body -->
+        <div class="box-footer no-border">
+            <button type="submit" class="btn btn-success" tabindex="4"
+                    move-focus-by-enter-key
+                    ng-hide="addButton"
+                    ng-disabled="showRoomForm.$invalid">
+                <i class="fa fa-pencil"></i> Save Show Room
+            </button>
+            <button type="button" class="btn btn-default"
+                    ng-hide="cancelButton"
+                    ng-click="cancel()">
+                <span class="glyphicon glyphicon-remove"></span> Clear
+            </button>
+        </div><!-- /.box-footer -->
+    </form>
+</div>
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cubes"></i> Total Show Room : {{users.length}}</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <table class="table table-bordered table-hover table-condensed">
+            <tr style="font-weight: bold" class="danger">
+                <td style="width:30%">Show Room Name</td>
+                <td style="width:30%">প্রদর্শনী রুম বাংলা</td>
+                <td style="width:25%">Unit</td>
+                <td style="width:15%">Action</td>
+            </tr>
+            <tr ng-repeat="user in users">
+                <td>
+                    <!-- editable username (text with validation) -->
+                    <span editable-text="user.name" e-name="name" e-form="rowform" onbeforesave="checkName($data, user.id)" e-required>
+                        {{ user.name || 'empty' }}
+                    </span>
+                </td>
+                <td>
+                    <span editable-text="user.ShowRoomNameBangla" e-name="ShowRoomNameBangla" e-form="rowform" e-required>
+                        {{ user.ShowRoomNameBangla || 'empty' }}
+                    </span>
+                </td>
+                <td>
+                    <span editable-select="user.group" e-name="group" onshow="loadGroups()" e-form="rowform" e-ng-options="g.id as g.text for g in groups">
+                        {{ showGroup(user) }}
+                    </span>
+                </td>
+                <td style="white-space: nowrap">
+                    <!-- form -->
+                    <form editable-form name="rowform" 
+                          onbeforesave="saveUser($data, user.id)" 
+                          ng-show="rowform.$visible" 
+                          class="form-buttons form-inline" 
+                          shown="inserted == user">
+                        <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+                            save
+                        </button>
+                        <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                            cancel
+                        </button>
+                    </form>
+                    <div class="buttons" ng-show="!rowform.$visible">
+                        <button class="btn btn-primary" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>
+                        <button class="btn btn-danger" ng-click="remove($index,user.id)"><i class="glyphicon glyphicon-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>

@@ -1,0 +1,494 @@
+﻿
+<div ng-cloak>
+    <md-content>
+        <md-tabs md-dynamic-height md-border-bottom>
+
+            <md-tab label="Create Invoice">
+                <md-content class="md-padding">
+                    
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="box" style="border-top: 0px solid #fff;">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"></h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                    </div>
+                                </div><!-- /.box-header -->
+                                <div class="box-body">
+
+                                    <table class="table">
+                                        <tr>
+                                            <td width="30%" style="border-top: 1px solid #fff;">
+                                                <div class="info-box" style="box-shadow: 0 0px 0px rgba(0,0,0,0.1);" ng-show="invoice.customer_info.CreditLimit>=0">
+                                                    <span class="info-box-icon bg-red"><img ng-src="{{invoice.customer_info.Image ? 'Upload/Customers/'+invoice.customer_info.Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
+                                                    <div class="info-box-content">
+                                                        <span class="info-box-text">Address</span>
+                                                        <span class="info-box-text text-red" style="font-size:.9em;">{{invoice.customer_info.Address}}</span>
+                                                        <span class="info-box-text">Credit Limit</span>
+                                                        <span class="info-box-number">{{invoice.customer_info.CreditLimit| currency:"৳":0}}</span>
+                                                    </div><!-- /.info-box-content -->
+                                                </div>
+                                            </td>
+                                            <td width="40%" style="border-top: 1px solid #fff;">
+                                                <center><img src="Content/images/pakiza-collection.png" /></center>
+                                                <center><h5>House 97, Road 11/A, Dhanmondi, Dhaka 1209</h5></center>
+                                                <center><strong>Showroom Name : {{invoice.showRoom.ShowRoomName}}</strong></center>
+                                            </td>
+                                            <td width="30%" style="border-top: 1px solid #fff;">
+
+                                                <div class="info-box" style="box-shadow: 0 0px 0px rgba(0,0,0,0.1);" ng-show="invoice.customer_info.CreditLimit>=0">
+                                                    <span class="info-box-icon bg-red">৳</span>
+                                                    <div class="info-box-content">
+                                                        <span class="info-box-text">Credit</span>
+                                                        <span class="info-box-number">{{invoice.customer_info.TotalCredit| currency:"৳":0}}</span>
+
+                                                        <span class="info-box-text">Limit Balance</span>
+                                                        <span class="info-box-number">{{ invoice.customer_info.CreditLimit == 0 ? 0 : (invoice.customer_info.CreditLimit-invoice.customer_info.TotalCredit) | currency:"৳":0}}</span>
+                                                    </div><!-- /.info-box-content -->
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <div ng-show="invoice.items.length>0" style="padding:1em;">
+                                        <div class="progress-group" ng-repeat="(key, value) in invoice.items | groupBy: 'MainCategoryName'">
+                                            <span class="progress-text">{{ key }}</span>
+                                            <span class="progress-number"><b>{{ GetGroupSumOfILineQu(value) |number:"0" }}</b>/{{ GetGroupSumOfILineTotal(value) |currency }}</span>
+                                            <div class="progress sm">
+                                                <div class="progress-bar progress-bar-red" style="width: 100%;"></div>
+                                            </div>
+                                        </div>
+
+                                        <!--<div layout="row" layout-align="space-around">
+                                            <div style="width:50px;"></div>
+                                            <md-button ng-click="showSimpleToast()">
+                                                Show Simple
+                                            </md-button>
+                                            <md-button class="md-raised" ng-click="showActionToast()">
+                                                Show With Action
+                                            </md-button>
+                                            <div style="width:50px"></div>
+                                        </div>-->
+                                    </div>
+                                </div><!-- /.box-body -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+
+                        <div class="col-xs-12 col-md-6 col-lg-2">
+                            <div class="invoice-number-container">
+                                <label for="invoice-date">Date </label>
+                                <input class="form-control" type="text" id="invoice-date" tabindex="1"
+                                       ng-focus="InvoiceDatePickerOpen()"
+                                       datepicker-localdate
+                                       datepicker-popup="dd/MM/yyyy"
+                                       is-open="invoiceDatePickerIsOpen"
+                                       ng-click="InvoiceDatePickerOpen()"
+                                       ng-required="true"
+                                       ng-model="invoice.invoiceDate" />
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label>Party Name </label>
+                                <input id="CustomerName" type="text" name="CustomerName" class="form-control" autocomplete="off" placeholder="Party Name " tabindex="2" 
+                                       move-focus-by-enter-key
+                                       ng-model="invoice.customer_info.name"
+                                       ng-minlength="1"
+                                       ng-maxlength="145"
+                                       ng-required="true"
+                                       ng-change="GetNewMemoId()"
+                                       ng-keydown='$event.keyCode == 13 && GetCustomerDetailById()'
+                                       ng-keyup="updatePartyTypeaheadList(invoice.customer_info.name)"
+                                       typeahead-on-select="changeSelectCustomerName($item)"
+                                       typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:20" />
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6 col-lg-2">
+                            <div class="invoice-number-container">
+                                <label for="invoice-number">Invoice </label>
+                                <input class="form-control" type="text" id="invoice-number"
+                                       ng-disabled="true"
+                                       move-focus-by-enter-key
+                                       ng-model="invoice.number" />
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label>Show Room No</label>
+                                <select name="showRoom" class="form-control" id="showRoom"
+                                        ng-focus="true"
+                                        ng-disabled="true"
+                                        ng-model="invoice.showRoom"
+                                        ng-options="s.ShowRoomName for s in showRoomList track by s.ShowRoomId"
+                                        ng-required="true"></select>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered table-responsive" style="" id="invoiceTable">
+                        <tr class="danger">
+                            <th style="text-align:center"></th>
+                            <th width="35%">Product Name</th>
+                            <th width="15%">Quantity</th>
+                            <th width="15%">Rate</th>
+                            <th width="15%">Discount</th>
+                            <th width="20%">Total</th>
+                            <th></th>
+                        </tr>
+                        <tr class="success">
+                            <td>
+                                <button class="btn btn-default btn-sm btn-block">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <input class="form-control cartTextBox" name="productName" id="productName" type="text" tabindex="3" placeholder="Product Name"
+                                       ng-model="productName"
+                                       move-focus-by-enter-key
+                                       ng-keyup="$event.keyCode == 13 && GetProductDetailById()"
+                                       typeahead-on-select="changeSelectProductName($item)"
+                                       typeahead="p.ProductName for p in productList | filter:$viewValue | limitTo:8" />
+                            </td>
+                            <td>
+                                <input name="itemQuentity" id="itemQuentity" class="form-control cartTextBox" type="number" tabindex="4" placeholder="0"
+                                       ng-model="itemQuentity"
+                                       move-focus-by-enter-key />
+                            </td>
+                            <td>
+                                <input id="itemCost" class="form-control cartTextBox" type="number" tabindex="5" placeholder="0"
+                                       ng-disabled="creditParty"
+                                       ng-model="itemCost"
+                                       move-focus-by-enter-key />
+                            </td>
+                            <td>
+                                <input id="itemDiscount" class="form-control cartTextBox" type="number" tabindex="6" placeholder="0"
+                                       ng-disabled="creditParty"
+                                       ng-model="itemDiscount"
+                                       move-focus-by-enter-key />
+                            </td>
+                            <td>
+                                <div style="width:100%">
+                                    <div style="width:50%;float:left;">
+                                        <md-button aria-label="Add" class="md-raised md-primary" ng-click="addItem()" tabindex="7"><i class="fa fa-plus"></i></md-button>
+                                    </div>
+                                    <div style="width:50%;float:left;">
+                                        <md-button aria-label="Save" class="md-raised md-warn" ng-click="saveInvoice()" tabindex="12"><i class="fa fa-save"></i></md-button>
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td></td>
+                        </tr>
+
+                        <!--<tr class="danger">
+                            <th style="text-align:center">SL</th>
+                            <th width="35%">Product Name</th>
+                            <th width="15%">Quantity</th>
+                            <th width="15%">Rate</th>
+                            <th width="15%">Discount</th>
+                            <th width="20%">Total</th>
+                            <th></th>
+                        </tr>-->
+                        <tr ng-repeat="item in invoice.items">
+                            <td>{{$index+1}}</td>
+                            <td>{{item.description.ProductName}}</td>
+                            <td><input class="form-control" type="number" ng-model="item.qty" ng-required></td>
+                            <td><input class="form-control" type="number" ng-model="item.cost" ng-required ng-disabled="true"></td>
+                            <td><input class="form-control" type="number" ng-model="item.discount" ng-required ng-disabled="true"></td>
+                            <td>{{item.qty * (item.cost-item.discount) | currency}}</td>
+                            <td>
+                                <a style="padding: 0px 4px;" href ng-click="removeItem($index)" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                            </td>
+                        </tr>
+
+                        <tr class="text-blue text-bold">
+                            <td colspan="5">Total:</td>
+                            <td style="text-align:right">{{total() | currency}}</td>
+                            <td></td>
+                        </tr>
+                        <tr class="font-bold">
+                            <td colspan="5">Final Discount:</td>
+                            <td>
+                                <input name="finalDiscount" id="finalDiscount" class="form-control" type="number" tabindex="8" placeholder="Final Discount"
+                                       onfocus="javascript: if(this.value == '0'){ this.value = ''; }" 
+                                       onblur="javascript: if(this.value==''){this.value='0';}"
+                                       move-focus-by-enter-key
+                                       ng-model="invoice.finalDiscount">
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr class="font-bold">
+                            <td colspan="5">Other Expencess:</td>
+                            <td>
+                                <input name="otherExpencess" id="otherExpencess" class="form-control" type="number" tabindex="9" placeholder="Other Expencess"
+                                       onfocus="javascript: if(this.value == '0'){ this.value = ''; }" 
+                                       onblur="javascript: if(this.value==''){this.value='0';}"
+                                       move-focus-by-enter-key
+                                       ng-model="invoice.otherExpencess">
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr class="text-blue text-bold">
+                            <td colspan="5">Grand Total:</td>
+                            <td style="text-align:right">
+                                <p>{{grandTotal() | currency}}</p>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr class="font-bold">
+                            <td colspan="5">Payment:</td>
+                            <td>
+                                <input name="payment" id="payment" class="form-control" type="number" tabindex="10" placeholder="Payment Amount"
+                                       onfocus="javascript: if(this.value == '0'){ this.value = ''; }" 
+                                       onblur="javascript: if(this.value==''){this.value='0';}"
+                                       move-focus-by-enter-key
+                                       ng-model="invoice.payment">
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr class="text-bold text-green">
+                            <td colspan="5">Due Total:</td>
+
+                            <td style="text-align:right">
+                                <p>{{dueTotal()| currency}}</p>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr class="">
+                            <td colspan="6">
+                                <input name="otherExpencessRemarks" id="otherExpencessRemarks" class="form-control" type="text" tabindex="11" placeholder="Other Expencess Remarks"
+                                       move-focus-by-enter-key
+                                       ng-model="invoice.otherExpencessRemarks">
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr class="">
+                            <td colspan="5"></td>
+                            <td>
+                                <md-button class="md-raised md-warn btn-block" ng-click="saveInvoice()" tabindex=""><i class="fa fa-save"></i> Save</md-button>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </md-content>
+            </md-tab>
+            <md-tab label="Print Preview English">
+                <md-content class="md-padding">
+                    <div id="printable-memo-english">
+                        <div class="col-sm-12">
+                            <center><img src="Content/images/pakiza-collection-big.png" /></center>
+                            <center><h4>House 97, Road 11/A, Dhanmondi, Dhaka 1209</h4></center>
+                            <center><strong>Showroom Name : {{invoice.showRoom.ShowRoomName}}</strong></center>
+                        </div>
+                        <table class="table table-bordered">
+                            <tr class="text-bold">
+                                <td colspan="3">
+                                    Date: {{invoice.invoiceDate |date:"dd-MM-yyyy"}}
+                                </td>
+                                <td colspan="3" style="text-align:right"> Invoice No: {{invoice.number}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" class="text-bold">Name: {{invoice.customer_info.name.CustomerName}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">Address: {{invoice.customer_info.Address}}</td>
+                            </tr>
+
+                                <tr class="danger">
+                                    <th style="text-align:center">SL#</th>
+                                    <th width="35%" style="text-align:center">Product Name</th>
+                                    <th width="15%" style="text-align:center">Quantity</th>
+                                    <th width="15%" style="text-align:center">Rate</th>
+                                    <th width="15%" style="text-align:center">Discount</th>
+                                    <th width="20%" style="text-align:center">Total</th>
+                                </tr>
+
+                                <tr ng-repeat="item in invoice.items">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{item.description.ProductName}}</td>
+                                    <td style="text-align:right">{{item.qty}}</td>
+                                    <td style="text-align:right">{{item.cost}}</td>
+                                    <td style="text-align:right">{{item.discount}}</td>
+                                    <td style="text-align:right">{{item.qty * (item.cost-item.discount) | currency}}</td>
+                                </tr>
+                                <tr class="text-red text-bold">
+                                    <td colspan="5">Total:</td>
+                                    <td style="text-align:right">{{total() | currency}}</td>
+                                </tr>
+                                <tr class="text-bold">
+                                    <td colspan="5">Final Discount:</td>
+                                    <td style="text-align:right;">
+                                        {{invoice.finalDiscount| currency}}
+                                    </td>
+                                </tr>                               
+                                <tr class="text-bold">
+                                    <td colspan="5">Other Expencess:</td>
+                                    <td style="text-align:right">
+                                        {{invoice.otherExpencess| currency}}
+                                    </td>
+                                </tr>
+                                <tr class="text-green text-bold">
+                                    <td colspan="5">Grand Total:</td>
+                                    <td style="text-align:right">
+                                        <p>{{grandTotal() | currency}}</p>
+                                    </td>
+                                </tr>
+                                <tr class="text-bold">
+                                    <td colspan="5">Payment:</td>
+                                    <td style="text-align:right;">
+                                        {{invoice.payment| currency}}
+                                    </td>
+                                </tr>
+                                <tr class="text-bold">
+                                    <td colspan="5">Invoice Credit:</td>
+                                    <td style="text-align:right">
+                                        <p>{{dueTotal()| currency}}</p>
+                                    </td>
+                                </tr>
+                                <tr class="text-bold">
+                                    <td colspan="5">Previous Credit:</td>
+                                    <td>
+                                        <span class="label label-danger pull-right" style="font-size:1.5em;"> {{ invoice.customer_info.TotalCredit| currency:"৳":0}} </span>
+                                    </td>
+                                </tr>
+                                <tr class="text-bold">
+                                    <td colspan="5" class="text-bold">Present Credit: </td>
+                                    <td>
+                                        <span class="label label-danger pull-right" style="font-size:1.5em;"> {{dueTotal()+invoice.customer_info.TotalCredit| currency:"৳":0}} </span>
+                                    </td>
+                                </tr>
+
+                        </table>
+                        <div class="col-sm-12">
+                            <button id="" class=" print-hide-button btn btn-primary pull-right" ng-click="printMemo('printable-memo-english')"><i class="fa fa-print"></i> Print</button>
+                        </div>
+                    </div>
+
+                </md-content>
+            </md-tab>
+            <md-tab label="মুদ্রণ পূর্বরূপ বাংলা">
+                <md-content class="md-padding">
+                    <div id="printable-memo-bangla">
+                        <div class="col-sm-12">
+                            <center><img id="" src="Content/images/pfc-bangla.png" /></center>
+                            <center><p><strong>হাউজ নং ৯৭, রোড নং ১১/এ, ধানমন্ডি, ঢাকা</strong></p></center>
+                            <center><p><strong>দোকানের নাম: {{invoice.showRoom.ShowRoomNameBangla}}</strong></p></center>
+                        </div>
+                        <table class="table table-bordered">
+                            <tr class="text-bold">
+                                <td colspan="3" style="border-top: 0px solid #f4f4f4">তারিখ: <span class="bangla-font">{{invoice.invoiceDate |date:"dd-MM-yyyy"}}</span></td>
+                                <td colspan="3" style="text-align:right;border-top: 0px solid #f4f4f4"> বিল নং: <span class="bangla-font">{{invoice.number}}</span></td>
+                            </tr>
+                            <tr class="text-bold bangla-font">
+                                <td colspan="6">নাম: {{invoice.customer_info.name.CustomerNameBangla}}</td>
+                            </tr>
+                            <tr class="bangla-font">
+                                <td colspan="3" style="border-top: 0px solid #f4f4f4">ঠিকানা:  <span class="bangla-font">{{invoice.customer_info.AddressBangla}}</span></td>
+                                <td colspan="3" style="text-align:right;border-top: 0px solid #f4f4f4"> জেলা : <span class="bangla-font">{{'না'}}</span></td>
+                            </tr>
+
+                            <tr class="danger">
+                                <th width="10%" style="text-align:center">ক্রমিকনং</th>
+                                <th width="45%" style="text-align:center">পণ্যের নাম</th>
+                                <th width="10%" style="text-align:center">পরিমাণ</th>
+                                <th width="10%" style="text-align:center">মূল্য</th>
+                                <th width="10%" style="text-align:center">বাটা</th>
+                                <th width="15%" style="text-align:center">দাম</th>
+                            </tr>
+                            <tr ng-repeat="item in invoice.items">
+                                <td style="text-align:center;" class="bangla-font">{{$index+1}}</td>
+                                <td>{{item.description.ProductNameBangla}}</td>
+                                <td style="text-align:right;" class="bangla-font">{{item.qty}}</td>
+                                <td style="text-align:right;" class="bangla-font">{{item.cost}}</td>
+                                <td style="text-align:right;" class="bangla-font">{{item.discount}}</td>
+                                <td style="text-align:right;" class="bangla-font">{{item.qty * (item.cost-item.discount) | currency:""}}</td>
+                            </tr>
+                            <tr class="text-red text-bold">
+                                <td colspan="5">মোট খরচ:</td>
+                                <td style="text-align:right" class="bangla-font">{{total() | currency:""}}</td>
+                            </tr>
+                            <tr class=" text-bold">
+                                <td colspan="5">চূড়ান্ত ডিসকাউন্ট:</td>
+                                <td style="text-align:right;">
+                                    <span class="bangla-font">{{invoice.finalDiscount| currency:""}}</span>
+                                </td>
+                            </tr>
+                            <tr class="text-bold">
+                                <td colspan="5">অন্যান্য খরচ:</td>
+                                <td style="text-align:right">
+                                    <span class="bangla-font">{{invoice.otherExpencess| currency:""}}</span>
+                                </td>
+
+                            </tr>
+                            <tr class="text-green text-bold">
+                                <td colspan="5">সর্বমোট খরচ:</td>
+                                <td style="text-align:right">
+                                    <p class="bangla-font">{{grandTotal() | currency:""}}</p>
+                                </td>
+
+                            </tr>
+                            <tr class="text-bold">
+                                <td colspan="5">দেওয়া পরিমাণ:</td>
+                                <td style="text-align:right;">
+                                    <span class="bangla-font">{{invoice.payment| currency:""}}</span>
+                                </td>
+
+                            </tr>
+                            <tr class="text-bold">
+                                <td colspan="5">বাকি টাকা:</td>
+                                <td style="text-align:right">
+                                    <p class="bangla-font">{{dueTotal()| currency}}</p>
+                                </td>
+
+                            </tr>
+                        </table>
+                        <div class="signature-footer" style="clear:both;">
+                            <table class="table-signature">
+                                <tr>
+                                    <td style="width:29.5cm;">
+                                        <p></p>
+                                        <br />
+                                        <p class="text-left" style="margin-top:1.8em;">--------------------<br /><b>ক্রেতার স্বাক্ষর</b></p>
+                                    </td>
+                                    <td style="width:29.5cm;" align="right">
+                                        <p><strong>পাকিজা কালেকশন</strong></p>
+                                        <br />
+                                        <p>----------------------------------------<br /><b>অনুমোদিত বিক্রয় প্রতিনিধি</b></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="condition-footer" style="border-top:1px solid #000;padding-top:1em;">
+                            <p><strong>শর্তাবলী :</strong> ত্রুটিপূর্ণ ছাড়া বিক্রীত সামগ্রী ফেরতযোগ্য নহে।</p>
+                        </div>
+                        <div class="col-sm-12">
+                            <button id="" class="btn btn-primary pull-right print-hide-button" ng-click="printMemo('printable-memo-bangla')"><i class="fa fa-print"></i> মুদ্রণ </button>
+                        </div>
+                    </div>
+                </md-content>
+            </md-tab>
+
+        </md-tabs>
+    </md-content>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

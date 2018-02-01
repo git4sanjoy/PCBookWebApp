@@ -1,0 +1,108 @@
+﻿<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cubes"></i> Total Unit Users : {{}}</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <div class="row">
+            <!--Server side error messageing------>
+            <div class="col-sm-12">
+                <div class="" ng-hide="serverMessage">
+                    <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                        <ul>
+                            <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--End Server side error messageing-->
+            <!--Client side error messageing------>
+            <div class="col-sm-12">
+                <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-check"></i> {{messageType}}!</h4>
+                    {{message}}
+                </div>
+            </div>
+            <!--End Client side error messageing-->
+
+            <form name="userUnitsForm" novalidate role="form" class="form-horizontal" id="userUnitsForm" ng-submit="submitUserUnitsForm()">
+                <div class="col-lg-5 col-md-6 col-sm-12" style="">
+                    <label>Users</label>
+                    <div class="input-group" ng-class="{ 'has-error' : userUnitsForm.userListDdl.$invalid && (userUnitsForm.userListDdl.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-users"></i></span>
+                        <select id="userListDdl" name="userListDdl" class="form-control" tabindex="1" autofocus
+                                ng-focus="true"
+                                move-focus-by-enter-key
+                                ng-model="userListDdl"
+                                ng-options="u.text for u in userList track by u.id"
+                                ng-required="true">
+                            <option value="">--Select User Name--</option>
+                        </select>
+                    </div>
+                    <p ng-show="userUnitsForm.userListDdl.$error.required && (userUnitsForm.userListDdl.$dirty || submitted)" class="help-block">Select User Name</p>
+                </div>
+
+                <div class="col-lg-5 col-md-6 col-sm-12">
+                    <label>Units</label>
+                    <div class="input-group" ng-class="{ 'has-error' : userUnitsForm.unitListDdl.$invalid && (userUnitsForm.unitListDdl.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-tripadvisor"></i></span>
+                        <select name="unitListDdl" class="form-control" tabindex="2" autofocus
+                                ng-focus="true"
+                                move-focus-by-enter-key
+                                ng-model="unitListDdl"
+                                ng-options="r.text for r in unitList track by r.value"
+                                ng-required="true">
+                            <option value="">--Select Unit Name--</option>
+                        </select>
+                    </div>
+                    <p ng-show="userUnitsForm.unitListDdl.$error.required && (userUnitsForm.unitListDdl.$dirty || submitted)" class="help-block">Select Unit</p>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-12">
+                    <button type="submit" class="btn btn-default btn-block" style="margin-top:1.8em;" tabindex="3"><i class="fa fa-plus"></i>  Assign Unit</button>
+                </div>
+            </form>
+        </div>
+        <div class="row">
+            <div class="col-sm-12" style="margin-top:1em;">
+                <table class="table table-bordered table-hover table-condensed table-striped">
+                    <thead>
+                        <tr style="font-weight: bold" class="info">
+                            <td style="width:30%">Full Name</td>
+                            <td style="width:30%">User Name</td>
+                            <td style="width:30%">Unit Name</td>
+                            <td style="width:10%"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="userUnit in userUnitList">
+                            <td>{{ userUnit.FullName || 'empty' }}</td>
+                            <td>{{ userUnit.UserName || 'empty' }}</td>
+                            <td>{{ userUnit.UnitName || 'empty' }}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" ng-click="remove(userUnit.UnitUserId)"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>
+
+
+

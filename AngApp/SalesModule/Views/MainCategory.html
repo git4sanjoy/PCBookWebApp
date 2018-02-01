@@ -1,0 +1,92 @@
+﻿
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cube"></i> Main Category Add Form </h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <form name="mainCategoryForm" novalidate role="form" class="form-horizontal" id="mainCategoryForm" ng-submit="submitMainCategoryForm()">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <label>Main Category Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : mainCategoryForm.MainCategoryName.$invalid && (mainCategoryForm.MainCategoryName.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-cube"></i></span>
+                        <input id="MainCategoryName" type="text" class="form-control" name="MainCategoryName" autocomplete="off" tabindex="1" autofocus
+                               move-focus-by-enter-key
+                               ng-model="mainCategory.MainCategoryName"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="mainCategoryForm.MainCategoryName.$error.required && (mainCategoryForm.MainCategoryName.$dirty || submitted)" class="help-block">Main Category name is required.</p>
+                </div>
+            </div>
+        </div><!-- /.box-body -->
+        <div class="box-footer no-border">
+            <button type="submit" class="btn btn-success" tabindex="2"
+                    move-focus-by-enter-key
+                    ng-hide="addButton"
+                    ng-disabled="mainCategoryForm.$invalid">
+                <i class="fa fa-pencil"></i> Save Main Category
+            </button>
+            <button type="button" class="btn btn-default"
+                    ng-hide="cancelButton"
+                    ng-click="clear()">
+                <span class="glyphicon glyphicon-remove"></span> Clear
+            </button>
+        </div><!-- /.box-footer -->
+    </form>
+</div>
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cubes"></i> Main Categorories <small class="label label-success">{{mainCategoryList.length}}</small></h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <table class="table table-bordered table-hover table-condensed">
+            <tr style="font-weight: bold" class="danger">
+                <td style="width:80%">Main Category Name</td>
+                <td style="width:20%">Action</td>
+            </tr>
+
+            <tr ng-repeat="mainCategory in mainCategoryList">
+                <td>
+                    <!-- editable buyername (text with validation) -->
+                    <span editable-text="mainCategory.MainCategoryName" e-name="MainCategoryName" e-form="rowform" onbeforesave="checkName($data, mainCategory.MainCategoryId)" e-required>
+                        {{ mainCategory.MainCategoryName || 'empty' }}
+                    </span>
+                </td>
+
+                <td style="white-space: nowrap">
+                    <!-- form -->
+                    <form editable-form name="rowform" onbeforesave="update($data, mainCategory.MainCategoryId)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == mainCategory">
+                        <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-warning">
+                            <i class="fa fa-pencil"></i> Update
+                        </button>
+                        <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </form>
+                    <div class="buttons" ng-show="!rowform.$visible">
+                        <button class="btn btn-primary btn-sm" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" ng-click="remove($index, mainCategory.MainCategoryId)"><i class="glyphicon glyphicon-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>
+
+
+

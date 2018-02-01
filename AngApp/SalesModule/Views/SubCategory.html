@@ -1,0 +1,117 @@
+﻿<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cube"></i> Sub Category Add Form</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <form name="subCategoryForm" novalidate role="form" class="form-horizontal" id="subCategoryForm" ng-submit="submitSubCategoryForm()">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <label>Sub Category Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : subCategoryForm.SubCategoryName.$invalid && (subCategoryForm.SubCategoryName.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                        <input id="SubCategoryName" type="text" class="form-control" name="SubCategoryName" autocomplete="off" tabindex="1" autofocus
+                               move-focus-by-enter-key
+                               ng-model="subCategory.SubCategoryName"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="subCategoryForm.SubCategoryName.$error.required && (subCategoryForm.SubCategoryName.$dirty || submitted)" class="help-block">Sub Category name is required.</p>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <label>Main Category</label>
+                    <div class="input-group" ng-class="{ 'has-error' : subCategoryForm.ShowRoomId.$invalid && (subCategoryForm.ShowRoomId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-bookmark"></i></span>
+                        <select name="MainCategoryId" class="form-control" tabindex="2"
+                                ng-focus="true"
+                                move-focus-by-enter-key
+                                ng-model="subCategory.MainCategoryId"
+                                ng-options="l.MainCategoryName for l in mainCategoryList track by l.MainCategoryId"
+                                ng-required="true">
+                            <option value="">--Select Main Category Name--</option>
+                        </select>
+                    </div>
+                    <p ng-show="subCategoryForm.MainCategoryId.$error.required && (subCategoryForm.MainCategoryId.$dirty || submitted)" class="help-block">Select Main Category</p>
+
+                </div>
+
+
+            </div>
+        </div><!-- /.box-body -->
+        <div class="box-footer no-border">
+            <button type="submit" class="btn btn-success" tabindex="3"
+                    move-focus-by-enter-key
+                    ng-hide="addButton"
+                    ng-disabled="subCategoryForm.$invalid">
+                <i class="fa fa-pencil"></i> Save Show Room
+            </button>
+            <button type="button" class="btn btn-default"
+                    ng-hide="cancelButton"
+                    ng-click="cancel()">
+                <span class="glyphicon glyphicon-remove"></span> Clear
+            </button>
+        </div><!-- /.box-footer -->
+    </form>
+</div>
+
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cubes"></i> Sub Categories <small class="label label-success">{{subCategories.length}}</small></h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <table class="table table-bordered table-hover table-condensed">
+            <tr style="font-weight: bold" class="danger">
+                <td style="width:35%">Show Room Name</td>
+                <td style="width:40%">Unit</td>
+                <td style="width:25%">Action</td>
+            </tr>
+            <tr ng-repeat="user in subCategories">
+                <td>
+                    <!-- editable username (text with validation) -->
+                    <span editable-text="user.name" e-name="name" e-form="rowform" onbeforesave="checkName($data, user.id)" e-required>
+                        {{ user.name || 'empty' }}
+                    </span>
+                </td>
+
+                <td>
+                    <!-- editable group (select-remote) -->
+                    <span editable-select="user.group" e-name="group" onshow="loadGroups()" e-form="rowform" e-ng-options="g.id as g.text for g in mcgroups">
+                        {{ showGroup(user) }}
+                    </span>
+                </td>
+                <td style="white-space: nowrap">
+                    <!-- form -->
+                    <form editable-form name="rowform"
+                          onbeforesave="saveUser($data, user.id)"
+                          ng-show="rowform.$visible"
+                          class="form-buttons form-inline"
+                          shown="inserted == user">
+                        <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+                            save
+                        </button>
+                        <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                            cancel
+                        </button>
+                    </form>
+                    <div class="buttons" ng-show="!rowform.$visible">
+                        <button class="btn btn-primary" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>
+                        <button class="btn btn-danger" ng-click="remove($index,user.id)"><i class="glyphicon glyphicon-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>

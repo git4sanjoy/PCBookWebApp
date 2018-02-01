@@ -1,0 +1,98 @@
+﻿
+<md-card md-theme="{{ showDarkTheme ? 'dark-orange' : 'default' }}" md-theme-watch>
+    <md-card-title>
+        <md-card-title-text>
+            <span class="md-headline">Sales Report</span>
+            <span class="md-subhead">Selected Report: <span class="radioValue">{{ data.group2 }}</span></span>
+        </md-card-title-text>
+    </md-card-title>
+    <md-card-content>
+
+        <div layout="row" layout-xs="column">
+            <div flex>
+
+                <md-radio-group ng-model="data.group2" class="md-primary">
+
+                    <md-radio-button ng-repeat="d in radioData"
+                                     ng-value="d.value"
+                                     ng-disabled=" d.isDisabled "
+                                     ng-class="{'md-align-top-left': $index==1}">
+                        {{ d.label }}
+
+                    </md-radio-button>
+
+                </md-radio-group>
+            </div>
+            <div flex>
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <div class="form-group">
+                            <label for="invoiceDate">From Date</label>
+                            <input class="form-control" type="text" tabindex="" name="fromDate" id="fromDate"
+                                   move-focus-by-enter-key
+                                   ng-focus="FromDatePickerOpen()"
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="fromDatePickerIsOpen"
+                                   ng-click="FromDatePickerOpen()"
+                                   ng-required="true"
+                                   ng-model="searchPayment.fromDate" />
+                            <p ng-show="searchPaymentForm.fromDate.$error.required && (searchPaymentForm.fromDate.$dirty || submitted)" class="help-block">From Date is required.</p>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <div class="form-group">
+                            <label for="invoiceDate">To Date</label>
+                            <input class="form-control" type="text" tabindex="" name="toDate" id="toDate"
+                                   move-focus-by-enter-key
+                                   ng-focus="ToDatePickerOpen()"
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="toDatePickerIsOpen"
+                                   ng-click="ToDatePickerOpen()"
+                                   ng-required="true"
+                                   ng-model="searchPayment.toDate" />
+                            <p ng-show="searchPaymentForm.toDate.$error.required && (searchPaymentForm.toDate.$dirty || submitted)" class="help-block">To Date is required.</p>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <md-button ng-click="showSimpleToast()">
+                            Show Toast 
+                        </md-button>
+                    </md-input-container>
+                </div>
+                <div layout-gt-sm="row">
+                    <md-input-container>
+                        <label>Customer List</label>
+                        <md-select ng-model="selectedCustomers"
+                                   md-on-close="clearSearchTerm()"
+                                   data-md-container-class="selectdemoSelectHeader"
+                                   multiple>
+                            <md-select-header class="demo-select-header">
+                                <input id="searchTerm" ng-model="searchTerm"
+                                       type="search"
+                                       placeholder="Search for a customer."
+                                       class="demo-header-searchbox md-text">
+                            </md-select-header>
+                            <md-optgroup label="Customers">
+                                <md-option ng-value="customer" ng-repeat="customer in customerList | filter:searchTerm">{{customer.CustomerName}}</md-option>
+                            </md-optgroup>
+                        </md-select>
+                    </md-input-container>
+
+
+                </div>
+
+            </div>
+        </div>
+
+        <md-card-actions layout="row" layout-align="start center">
+            <md-button class="md-raised md-primary" aria-label="Show Report">Show Report</md-button>
+            <md-button class="md-raised md-default" aria-label="Comment">Clear</md-button>
+        </md-card-actions>
+
+    </md-card-content>
+</md-card>
+
+
+

@@ -1,0 +1,367 @@
+﻿
+<div class="box box-success">
+
+    <modal title="Payment/Receive Details" visible="showModal" class="">
+        <form name="" id="" role="form" class="form-horizontal">
+            <div class="modal-body">
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </form>
+    </modal>
+
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-plus"></i> Book-Keeping </h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <!--Server side error messageing------>
+        <div class="col-sm-12">
+            
+            <div class="" ng-hide="serverMessage">
+                <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                    <ul>
+                        <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!--End Server side error messageing-->
+        <!--Client side error messageing------>
+        <div class="col-sm-12">
+            <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+                {{message}}
+            </div>
+        </div>
+        <!--End Client side error messageing-->
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-3">
+                <div class="form-group">
+                    <label for="invoice-date">Voucher Date</label>
+                    <input class="form-control" type="text" tabindex="1" name="vouchrDate" id="vouchrDate"
+                           move-focus-by-enter-key
+                           ng-focus="VoucherDatePickerOpen()"
+                           datepicker-localdate
+                           datepicker-popup="dd/MM/yyyy"
+                           is-open="voucherDatePickerIsOpen"
+                           ng-click="VoucherDatePickerOpen()"
+                           ng-required="true"
+                           ng-model="voucher.vouchrDate" />
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-6 col-lg-3">
+                <div class="form-group">
+                    <label>Voucher Type</label>
+                    <select name="vouchrType" class="form-control" id="vouchrType" tabindex="2" 
+                            move-focus-by-enter-key
+                            ng-focus="true"
+                            ng-model="voucher.vouchrType"
+                            ng-options="v.VoucherTypeName for v in vouchrTypeList track by v.VoucherTypeId"
+                            ng-change="GetVoucherNo()"
+                            ng-keyup="$event.keyCode == 13 && GetVoucherNo()"
+                            ng-required="true">
+                        <option value="">--Select Voucher Type--</option>
+                    </select>
+
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3">
+                <div class="form-group">
+                    <label for="voucherNumber">Voucher No </label>
+                    <div class="form-control">
+                        <label ng-model="voucher.voucherNumber">{{voucher.voucherNumber}}</label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3">
+                <div class="form-group">
+                    <label for="PaymentOrReceive">Receive/Bank </label>
+                    <div class="form-control">
+                        <input id="PaymentOrReceive" type="checkbox" ng-model="PaymentOrReceive" ng-disabled="true"> Ok
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journal Voucher Display Table -->
+            <div ng-show="journalVoucher">
+                <div class="col-sm-12">
+                    <table class="table table-bordered table-responsive table-striped" style="" id="invoiceTable">
+                        <tr class="info">
+                            <th width="10%">Dr/Cr</th>
+                            <th width="50%" style="text-align:center">Ledger Name</th>
+                            <th width="15%" style="text-align:center">Dr</th>
+                            <th width="15%" style="text-align:center">Cr</th>
+                            <th width="5%">P/R</th>
+                            <th width="10%" style="text-align:center"></th>
+                        </tr>
+                        <tr class="success">
+                            <td>
+                                <select name="transctionType" class="form-control" id="transctionType" tabindex="3"
+                                        move-focus-by-enter-key
+                                        ng-focus="true"
+                                        ng-model="transctionType"
+                                        ng-change="drOrCrChange()"
+                                        ng-options="s.TransctionTypeName for s in transctionTypesList track by s.TransctionTypeId"
+                                        ng-required="true">
+                                    <option value="">Dr/Cr</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input id="ledgerNameTypeahead" type="text" name="ledgerNameTypeahead" class="form-control" autocomplete="off" placeholder="Ledger Name" tabindex="4"
+                                       move-focus-by-enter-key
+                                       ng-model="ledgerNameTypeahead"
+                                       ng-minlength="3"
+                                       ng-maxlength="45"
+                                       ng-required="true"
+                                       typeahead-on-select="changeSelectLedgerName($item)"
+                                       typeahead="c.LedgerName for c in ledgersList | filter:$viewValue | limitTo:8" />
+                            </td>
+                            <td>
+                                <div ng-show="drAmountTrueFalse">
+                                    <input class="form-control" type="number" id="drAmount" tabindex="5" placeholder="Dr. Amount"
+                                           move-focus-by-enter-key
+                                           ng-model="drAmount" />
+                                </div>
+                            </td>
+                            <td>
+                                <div ng-show="crAmountTrueFalse">
+                                    <input class="form-control" type="number" id="crAmount" tabindex="6" placeholder="Cr. Amount"
+                                           move-focus-by-enter-key
+                                           ng-model="crAmount" />
+                                </div>
+                            </td>
+                            <td>
+                                <label ng-show="PaymentOrReceive" for="paymentOrReceiveModel">
+                                    <input id="paymentOrReceiveModel" type="checkbox" tabindex="7" style="padding:0;margin:0;"
+                                           move-focus-by-enter-key
+                                           ng-click="toggleModal()"
+                                           ng-model="paymentOrReceiveModel">
+                                </label>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-block" tabindex="8"
+                                        move-focus-by-enter-key
+                                        ng-click="addItem()">
+                                    <i class="fa fa-plus"></i> Add
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr class="task-item" ng-repeat="item in voucher.items">
+
+                            <td>{{item.drOrCr}}</td>
+                            <td>{{item.description}}</td>
+                            <td><input class="form-control" type="number" ng-model="item.drAmount" ng-required></td>
+                            <td><input class="form-control" type="number" ng-model="item.crAmount" ng-required></td>
+                            <td><input type=checkbox ng-model="item.paymentOrReceive" ng-checked="item.paymentOrReceive" ng-disabled="true" /></td>
+                            <td>
+                                <a style="padding: 0px 4px;" href ng-click="removeItem($index)" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                            </td>
+                        </tr>
+
+                        <tr class="info" style="font-weight:bold">
+                            <td colspan="2" style="text-align:right"> Total:</td>
+                            <td style="text-align:right">{{totalDr() | currency:""}}</td>
+                            <td style="text-align:right">{{totalCr() | currency:""}}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="info">
+                            <td style="font-weight:bold">
+                                Narration
+                            </td>
+                            <td colspan="3">
+                                <input class="form-control" type="text" id="narration" name="narration" tabindex="" placeholder="Narration"
+                                       my-enter="moveToSaveButton()"
+                                       ng-model="voucher.narration" />
+                            </td>
+                            <td colspan="2">
+                                <button class="btn btn-success btn-block" tabindex="" id="saveButton"
+                                        ng-click="saveInvoice()">
+                                    <i class="fa fa-check-square-o"></i> Save
+                                </button>
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+            <!-- Bank Voucher Information -->
+            <div ng-show="bankVoucher">
+                    <form name="checkForm" ng-submit="submitForm()" novalidate role="form" id="checkForm">
+                        <div id="checkFormDiv">
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                <div class="form-group" ng-class="{ 'has-error' : checkForm.partyName.$invalid && (checkForm.partyName.$dirty || submitted)}">
+                                    <label>(Dr.) Ledger Name</label>
+                                    <input type="text" class="form-control" tabindex="3" name="partyName" autocomplete="off"
+                                           move-focus-by-enter-key
+                                           ng-model="Check.partyName"
+                                           ng-maxlength="150"
+                                           ng-required="true"
+                                           
+                                           typeahead-on-select="changeSelect($item)"
+                                           typeahead="state.LedgerName for state in states | filter:$viewValue | limitTo:20">
+                                    <p ng-show="checkForm.partyName.$error.required && (checkForm.partyName.$dirty || submitted)" class="help-block">Select Ledger Name.</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                <!-- honourDate Date -->
+                                <div class="form-group">
+                                    <label for="invoice-date">Honour Date</label>
+                                    <input class="form-control" type="text" tabindex="4" name="vouchrDate" id="vouchrDate"
+                                           move-focus-by-enter-key
+                                           ng-focus="HonourDatePickerOpen()"
+                                           datepicker-localdate
+                                           datepicker-popup="dd/MM/yyyy"
+                                           is-open="honourDatePickerIsOpen"
+                                           ng-click="HonourDatePickerOpen()"
+                                           ng-required="true"
+                                           ng-model="HonourDate" />
+                                    <p ng-show="checkForm.honourDate.$error.required && (checkForm.honourDate.$dirty || submitted)" class="help-block">Honour Date is required.</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                <!-- Account No -->
+                                <div class="form-group" ng-class="{ 'has-error' : checkForm.accountNo.$invalid && (checkForm.accountNo.$dirty || submitted)}">
+                                    <label>(Cr.) Bank Account No</label>
+                                    <select name="accountNo" class="form-control" tabindex="5" autofocus id="accountNo"
+                                            ng-focus="true"
+                                            move-focus-by-enter-key
+                                            ng-model="accountNo"
+                                            ng-change="GetCheckPageNoListByBankAccountId()"
+                                            ng-options="ba.BankAccountNumber for ba in userBankAccounts track by ba.LedgerId"
+                                            ng-required="true">
+                                        <option value="">--Select BankAcc No--</option>
+                                    </select>
+                                    <p ng-show="checkForm.accountNo.$error.required && (checkForm.accountNo.$dirty || submitted)" class="help-block">Select Account No.</p>
+                                </div>
+                            </div>
+
+                            
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                <!-- CheckNo -->
+                                <div class="form-group" ng-class="{ 'has-error' : checkForm.CheckNo.$invalid && (checkForm.CheckNo.$dirty || submitted)}">
+                                    <label>Check No</label>
+                                    <input id="" type="text" name="CheckNo" class="form-control" autocomplete="off" placeholder="Check No" tabindex="6"
+                                           move-focus-by-enter-key
+                                           ng-disabled="!checkBookPages"
+                                           ng-model="Check.CheckNumber"
+                                           ng-minlength="3"
+                                           ng-maxlength="20"
+                                           ng-required="true"
+                                           typeahead-on-select="changeSelectCheckNo($item)"
+                                           typeahead="c.CheckBookPageNo for c in checkBookPages | filter:$viewValue | limitTo:5" />
+                                    <p ng-show="checkForm.CheckNo.$error.required && (checkForm.CheckNo.$dirty || submitted)" class="help-block">You Check No is required.</p>
+                                    <p ng-show="checkForm.CheckNo.$error.minlength && (checkForm.CheckNo.$dirty || submitted)" class="help-block">Check No is too short.</p>
+                                    <p ng-show="checkForm.CheckNo.$error.maxlength && (checkForm.CheckNo.$dirty || submitted)" class="help-block">Check No is too long.</p>
+                                </div>
+                            </div>                           
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                <!-- amount -->
+                                <div class="form-group" ng-class="{ 'has-error' : checkForm.amount.$invalid && (checkForm.amount.$dirty || submitted) }">
+                                    <label>Amount</label>
+                                    <input type="text" name="amount" class="form-control" autocomplete="off"
+                                           move-focus-by-enter-key
+                                           ng-model="Check.Amount" placeholder="Amount" maxlength="10" ng-required="true" tabindex="7">
+                                    <p ng-show="checkForm.amount.$error.required && (checkForm.amount.$dirty || submitted)" class="help-block">Enter a valid Amount.</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-9 col-md-6 col-sm-12">
+                                <!-- Remarks -->
+                                <div class="form-group">
+                                    <label>Remarks</label>
+                                    <input type="text" name="Remarks" class="form-control" autocomplete="off"
+                                           move-focus-by-enter-key
+                                           ng-model="Check.Remarks" placeholder="Remarks" tabindex="8">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success" tabindex="9" style="margin-left:1em;"
+                                ng-hide="addButton"
+                                ng-disabled="checkForm.$invalid">
+                            <i class="fa fa-pencil"></i> Save
+                        </button>
+                    </form>
+
+            </div>
+            <!-- End Bank Voucher Information -->
+            <!-- Payment or Receive Voucher Information -->
+            <div ng-show="PaymentOrReceive">
+
+                <div class="col-sm-12">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr class="info">
+                                <th width="25%">Check No</th>
+                                <th width="15%">Honour Date</th>
+                                <th width="15%">Amount</th>
+                                <th width="40%">Remarks</th>
+                                <th width="5%"></th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="info">
+                                <td>
+                                    <input class="form-control" type="text" id="checkMoneyReceiptNo" tabindex="" placeholder="Number"
+                                           move-focus-by-enter-key
+                                           ng-model="checkMoneyReceiptNo" />
+                                </td>
+                                <td>
+                                    <input class="form-control" type="text" tabindex="" name="honourDate" id="honourDate"
+                                           move-focus-by-enter-key
+                                           ng-focus="HonourDatePickerOpen()"
+                                           datepicker-localdate
+                                           datepicker-popup="dd/MM/yyyy"
+                                           is-open="honourDatePickerIsOpen"
+                                           ng-click="HonourDatePickerOpen()"
+                                           ng-required="true"
+                                           ng-model="honourDate" />
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" id="amount" tabindex="" name="amount" placeholder="Amount"
+                                           move-focus-by-enter-key
+                                           ng-model="amount" />
+                                </td>
+                                <td>
+                                    <input class="form-control" type="text" id="accountNo" tabindex="" name="accountNo" placeholder="Remarks"
+                                           move-focus-by-enter-key
+                                           ng-model="accountNo" />
+                                </td>
+                                <td>
+                                    <button class="btn btn-info btn-block" tabindex="" style="margin-top:5px;"
+                                            move-focus-by-enter-key
+                                            ng-click="addAdditionalItem()">
+                                        <i class="fa fa-plus"></i> Add
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr ng-repeat="a in paymentOrReceiveDetail">
+                                <td>{{a.checkOrMReceiptNo}}</td>                               
+                                <td>{{a.honourDate|date:"dd-MM-yyyy"}}</td>
+                                <td>{{a.amount}}</td>
+                                <td>{{a.bankAccountNo}}</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <!-- Additional Information -->
+
+        </div>
+
+    </div>
+</div><!-- /.box-body -->

@@ -1,0 +1,300 @@
+﻿
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-apple"></i> Product</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <!--Server side error messageing------>
+    <div class="col-sm-12" style="margin-top:1em;">
+
+        <div class="" ng-hide="serverMessage">
+            <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                <ul>
+                    <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--End Server side error messageing-->
+    <!--Client side error messageing------>
+    <div class="col-sm-12">
+        <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+            {{message}}
+        </div>
+    </div>
+    <!--End Client side error messageing-->
+    <form name="productForm" novalidate role="form" class="form-horizontal" id="productForm" ng-submit="submitProductForm()">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Product Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : productForm.ProductName.$invalid && (productForm.ProductName.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-apple"></i></span>
+                        <input id="ProductName" type="text" class="form-control" name="ProductName" autocomplete="off" tabindex="1" autofocus placeholder="Product Name"
+                               move-focus-by-enter-key
+                               ng-model="product.ProductName"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="productForm.ProductName.$error.required && (productForm.ProductName.$dirty || submitted)" class="help-block">Product name is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>কাপড়ের নাম বাংলা</label>
+                    <div class="input-group" ng-class="{ 'has-error' : productForm.ProductNameBangla.$invalid && (productForm.ProductNameBangla.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-apple"></i></span>
+                        <input id="ProductNameBangla" type="text" class="form-control" name="ProductNameBangla" autocomplete="off" tabindex="2" placeholder="কাপড়ের নাম বাংলা"
+                               move-focus-by-enter-key
+                               ng-model="product.ProductNameBangla"
+                               ng-required="true">
+                    </div>
+                    
+                    <p ng-show="productForm.ProductNameBangla.$error.required && (productForm.ProductNameBangla.$dirty || submitted)" class="help-block">Product name Bangla is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Sub Category</label>
+                    <div class="input-group" ng-class="{ 'has-error' : productForm.SubCategoryId.$invalid && (productForm.SubCategoryId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-cubes"></i></span>
+                        <select name="SubCategoryId" class="form-control" tabindex="3"
+                                ng-focus="true"
+                                move-focus-by-enter-key
+                                ng-model="product.SubCategoryId"
+                                ng-options="l.SubCategoryName for l in subCategories track by l.SubCategoryId"
+                                ng-required="true">
+                            <option value="">--Sub Category Name--</option>
+                        </select>
+                    </div>
+                    <p ng-show="productForm.SubCategoryId.$error.required && (productForm.SubCategoryId.$dirty || submitted)" class="help-block">Select Sub Category</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Convert To Yard</label>
+                    <div class="input-group" ng-class="{ 'has-error' : productForm.MultiplyWith.$invalid && (productForm.MultiplyWith.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-pencil-square-o"></i></span>
+                        <input id="Rate" type="text" class="form-control" name="Rate" autocomplete="off" tabindex="4" placeholder="Conver To Yard"
+                               move-focus-by-enter-key
+                               ng-model="product.MultiplyWith"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="productForm.MultiplyWith.$error.required && (productForm.MultiplyWith.$dirty || submitted)" class="help-block">Multiply With is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Rate</label>
+                    <div class="input-group" ng-class="{ 'has-error' : productForm.Rate.$invalid && (productForm.Rate.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                        <input id="Rate" type="text" class="form-control" name="Rate" autocomplete="off" tabindex="5" placeholder="Rate"
+                               move-focus-by-enter-key
+                               ng-model="product.Rate"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="productForm.Rate.$error.required && (productForm.Rate.$dirty || submitted)" class="help-block">Product rate is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Discount</label>
+                    <div class="input-group" ng-class="{ 'has-error' : productForm.Discount.$invalid && (productForm.Discount.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                        <input id="Discount" type="text" class="form-control" name="Discount" autocomplete="off" tabindex="6" placeholder="Discount"
+                               move-focus-by-enter-key
+                               ng-model="product.Discount" />
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <label for="exampleInputFile">Product Image</label>
+                    <!--<input name="myFile" upload-file="myFile" type="file">
+                    <!-- image-preview-filename input [CUT FROM HERE]-->
+                    <div class="input-group image-preview">
+                        <input type="text" class="form-control image-preview-filename" disabled="disabled"> <!-- don't give a name === doesn't send on POST/GET -->
+                        <span class="input-group-btn">
+                            <!-- image-preview-clear button -->
+                            <button type="button" class="btn btn-default image-preview-clear" style="display:none;">
+                                <span class="glyphicon glyphicon-remove"></span> Clear
+                            </button>
+                            <!-- image-preview-input -->
+                            <div class="btn btn-default image-preview-input">
+                                <span class="glyphicon glyphicon-folder-open"></span>
+                                <span class="image-preview-input-title">Browse</span>
+                                <input upload-file="myFile" type="file" accept="image/png, image/jpeg" name="myFile" /> <!-- rename it -->
+                            </div>
+                        </span>
+                    </div><!-- /input-group image-preview [TO HERE]--> 
+                </div>               
+
+            </div>
+        </div><!-- /.box-body -->
+        <div class="box-footer no-border">
+            <button type="submit" class="btn btn-success" tabindex="7"
+                    move-focus-by-enter-key
+                    ng-hide="addButton"
+                    ng-disabled="productForm.$invalid">
+                <i class="fa fa-pencil"></i> Save Product
+            </button>
+            <button type="button" class="btn btn-default"
+                    ng-hide="cancelButton"
+                    ng-click="cancel()">
+                <span class="glyphicon glyphicon-remove"></span> Clear
+            </button>
+        </div><!-- /.box-footer -->
+    </form>
+</div>
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-apple"></i> Products <small class="label label-success">{{filteredList.length}}</small></h3>
+            <input ng-model="searchText" class="searchTextBox" type="text" value="" placeholder="Filter" style="margin:0em 1em;">
+        </div>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+
+        <table class="table table-bordered table-hover table-condensed">
+            <tr style="font-weight: bold" class="danger">
+                <td style="width:20%" ng-click="sort('name')"><span class="glyphicon sort-icon" ng-show="sortKey=='name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Product Name</td>
+                <td style="width:20%" ng-click="sort('ProductNameBangla')"><span class="glyphicon sort-icon" ng-show="sortKey=='ProductNameBangla'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> কাপড়ের নাম বাংলা </td>
+                <td style="width:20%" ng-click="sort('group')"><span class="glyphicon sort-icon" ng-show="sortKey=='group'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Sub Category</td>
+                <td style="width:15%" ng-click="sort('MultiplyWith')"><span class="glyphicon sort-icon" ng-show="sortKey=='MultiplyWith'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Convert To Yard</td>
+                <td style="width:15%" ng-click="sort('Rate')"><span class="glyphicon sort-icon" ng-show="sortKey=='Rate'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Rate</td>
+                <td style="width:15%" ng-click="sort('Discount')"><span class="glyphicon sort-icon" ng-show="sortKey=='Discount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Discount</td>
+                <td style="width:15%">Action</td>
+            </tr>
+            <tr ng-repeat="aProduct in (filteredList = (productList | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                <td>
+                    <!-- editable username (text with validation) -->
+                    <span editable-text="aProduct.name" e-name="name" e-form="rowform" onbeforesave="checkName($data, aProduct.id)" e-required>
+                        {{ aProduct.name || 'empty' }}
+                    </span>
+                </td>
+                <td>
+                    <span editable-text="aProduct.ProductNameBangla" e-name="ProductNameBangla" e-form="rowform"  e-required>
+                        {{ aProduct.ProductNameBangla || 'empty' }}
+                    </span>
+                </td>
+                <td>
+                    <span editable-select="aProduct.group" e-name="group" onshow="loadGroups()" e-form="rowform" e-ng-options="g.id as g.text for g in productGroups">
+                        {{ showGroup(aProduct) }}
+                    </span>
+                </td>
+                <td>
+                    <span editable-text="aProduct.MultiplyWith" e-name="MultiplyWith" e-form="rowform" e-required>
+                        {{ aProduct.MultiplyWith }}
+                    </span>
+                </td>
+                <td>
+                    <span editable-text="aProduct.Rate" e-name="Rate" e-form="rowform"  e-required>
+                        {{ aProduct.Rate }}
+                    </span>
+                </td>
+                <td>
+                    <span editable-text="aProduct.Discount" e-name="Discount" e-form="rowform" >
+                        {{ aProduct.Discount }}
+                    </span>
+                </td>
+                <td style="white-space: nowrap">
+                    <!-- form -->
+                    <form editable-form name="rowform"
+                          onbeforesave="saveUser($data, aProduct.id)"
+                          ng-show="rowform.$visible"
+                          class="form-buttons form-inline"
+                          shown="inserted == aProduct">
+                        <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+                            save
+                        </button>
+                        <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                            cancel
+                        </button>
+                    </form>
+                    <div class="buttons" ng-show="!rowform.$visible">
+                        <button class="btn btn-primary" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>
+                        <button class="btn btn-danger" ng-click="remove($index,aProduct.id)"><i class="glyphicon glyphicon-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+        <pagination ng-model="currentPage"
+                    total-items="filteredList.length"
+                    max-size="maxSize"
+                    items-per-page="pageSize"
+                    boundary-links="true">
+        </pagination>
+    </div><!-- /.box-footer -->
+
+</div>
+
+<script type="text/javascript">
+        $(function () {
+            
+
+        });
+
+        $(document).on('click', '#close-preview', function () {
+            $('.image-preview').popover('hide');
+            // Hover befor close the preview
+            $('.image-preview').hover(
+                function () {
+                    $('.image-preview').popover('show');
+                },
+                function () {
+                    $('.image-preview').popover('hide');
+                }
+            );
+        });
+
+        $(function () {
+            // Create the close button
+            var closebtn = $('<button/>', {
+                type: "button",
+                text: 'x',
+                id: 'close-preview',
+                style: 'font-size: initial;',
+            });
+            closebtn.attr("class", "close pull-right");
+            // Set the popover default content
+            $('.image-preview').popover({
+                trigger: 'manual',
+                html: true,
+                title: "<strong>Preview</strong>" + $(closebtn)[0].outerHTML,
+                content: "There's no image",
+                placement: 'bottom'
+            });
+            // Clear event
+            $('.image-preview-clear').click(function () {
+                $('.image-preview').attr("data-content", "").popover('hide');
+                $('.image-preview-filename').val("");
+                $('.image-preview-clear').hide();
+                $('.image-preview-input input:file').val("");
+                $(".image-preview-input-title").text("Browse");
+            });
+            // Create the preview image
+            $(".image-preview-input input:file").change(function () {
+                var img = $('<img/>', {
+                    id: 'dynamic',
+                    width: 250,
+                    height: 200
+                });
+                var file = this.files[0];
+                var reader = new FileReader();
+                // Set preview image into the popover data-content
+                reader.onload = function (e) {
+                    $(".image-preview-input-title").text("Change");
+                    $(".image-preview-clear").show();
+                    $(".image-preview-filename").val(file.name);
+                    img.attr('src', e.target.result);
+                    $(".image-preview").attr("data-content", $(img)[0].outerHTML).popover("show");
+                }
+                reader.readAsDataURL(file);
+            });
+        });
+</script>

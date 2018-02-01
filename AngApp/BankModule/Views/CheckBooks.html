@@ -1,0 +1,225 @@
+﻿<div class="alert alert-danger alert-dismissable" ng-hide="loginAlertMessage ">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+    {{Message}}
+</div>
+<div class="alert alert-success alert-dismissable" ng-hide="successMessage">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4><i class="icon fa fa-check"></i> Success!</h4>
+    {{Message}}
+</div>
+<div class="box box-success">
+    <div class="box-header ui-sortable-handle" style="cursor: move;">
+        <i class="fa fa-plus"></i>
+        <h3 class="box-title">Check Book Form</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <div class="box-body border-radius-none">
+        <div class="">
+
+            <form name="checkBookForm" ng-submit="submitCheckBookForm()" novalidate role="form" class="form-horizontal">
+                <div class="box-body" id="MyCheckBookForm">
+
+                    <div class="col-md-6 col-lg-3">
+                        <!-- Account No -->
+                        <div class="form-group" ng-class="{ 'has-error' : checkBookForm.accountNo.$invalid && (checkBookForm.accountNo.$dirty || submitted)}">
+                            <label>Account No</label>
+                            <select name="accountNo" class="form-control" tabindex="1" id="field1" autofocus
+                                    ng-focus="true"
+                                    move-focus-by-enter-key
+                                    ng-model="CheckBook.accountNo"
+                                    ng-options="ba.BankAccountNumber for ba in userBankAccounts track by ba.BankAccountId"
+                                    ng-required="true">
+                                <option value="">--Select BankAcc No--</option>
+                            </select>
+                            <p ng-show="checkBookForm.accountNo.$error.required && (checkBookForm.accountNo.$dirty || submitted)" class="help-block">Select Account No.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <!-- Book No -->
+                        <div class="form-group" ng-class="{ 'has-error' : checkBookForm.BookNo.$invalid && (checkBookForm.BookNo.$dirty || submitted)}">
+                            <label>Book No</label>
+                            <input name="BookNo" type="text" placeholder="Book No" class="form-control" id="BookNo" tabindex="2" autocomplete="off"
+                                   move-focus-by-enter-key
+                                   ng-attr-tabindex="2"
+                                   ng-model="CheckBook.BookNo"
+                                   ng-required="true" />    
+                            <p ng-show="checkBookForm.BookNo.$error.required && (checkBookForm.BookNo.$dirty || submitted)" class="help-block">Book No Is Required.</p>                       
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div style="width:50%;display:block;float:left;">
+                            <!-- Start Suffices -->
+                            <div class="form-group">
+                                <label>Start Suffices</label>
+                                <input name="StartCheckNo" type="text" placeholder="Start Suffices" class="form-control" id="StartCheckNo" tabindex="3" autocomplete="off"
+                                       move-focus-by-enter-key
+                                       ng-attr-tabindex="3"
+                                       ng-model="CheckBook.StartSuffices" />
+                            </div>
+                        </div>
+                        <div style="width:50%;display:block;float:left;">
+                            <!-- Start Check No -->
+                            <div class="form-group" ng-class="{ 'has-error' : checkBookForm.StartCheckNo.$invalid && (checkBookForm.StartCheckNo.$dirty || submitted)}">
+                                <label>Start Check No</label>
+                                <input name="StartCheckNo" type="number" placeholder="56000001" class="form-control" id="StartCheckNo" tabindex="3" autocomplete="off"
+                                       move-focus-by-enter-key
+                                       ng-attr-tabindex="3"
+                                       ng-model="CheckBook.StartNo"
+                                       ng-required="true" />
+                                <p ng-show="checkBookForm.StartCheckNo.$error.required && (checkBookForm.StartCheckNo.$dirty || submitted)" class="help-block">Start Check No Is Required.</p>
+                            </div>
+                        </div>
+                        
+
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div style="width:50%;">
+                            <!-- End Check No -->
+                            <div class="form-group" ng-class="{ 'has-error' : checkBookForm.EndCheckNo.$invalid && (checkBookForm.EndCheckNo.$dirty || submitted)}">
+                                <label>End Check No</label>
+                                <input name="EndCheckNo" type="number" placeholder="56000100" class="form-control" id="EndCheckNo" tabindex="4" autocomplete="off"
+                                       move-focus-by-enter-key
+                                       ng-attr-tabindex="3"
+                                       ng-model="CheckBook.EndNo"
+                                       ng-required="true" />
+                                <p ng-show="checkBookForm.EndCheckNo.$error.required && (checkBookForm.EndCheckNo.$dirty || submitted)" class="help-block">End Check No Is Required.</p>
+                            </div>
+                        </div>
+                        <div style="width:50%;">
+
+                        </div>
+                        
+                    </div>
+
+                </div><!-- /.box-body -->
+                <div class="box-footer" style="display: block;">
+                    <button id="field5" type="submit" class="btn btn-success" tabindex="5"
+                            ng-attr-tabindex="5"
+                            ng-hide="addButton"
+                            ng-disabled="checkBookForm.$invalid">
+                        <i class="fa fa-pencil"></i> Add New Check Book
+                    </button>
+                    <button type="button" class="btn btn-warning"
+                            ng-hide="updateButton" ng-click="updateCheckBook()">
+                        <span class="glyphicon glyphicon-edit"></span> Update Check Book
+                    </button>
+                    <button type="button" class="btn btn-default"
+                            ng-hide="cancelButton"
+                            ng-click="cancel()">
+                        <span class="glyphicon glyphicon-remove"></span> Clear
+                    </button>
+                </div><!-- /.box-footer-->
+            </form>
+
+
+        </div>
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+    <!-- Loading (remove the following to stop the loading)-->
+    <div class="overlay" ng-hide="loading">
+        <i class="fa fa-refresh fa-spin"></i>
+    </div>
+    <!-- end loading -->
+</div>
+
+<div class="box box-success direct-chat direct-chat-success">
+    <div class="box-header with-border">
+        <h3 class="box-title">Check Book List</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div><!-- /.box-header -->
+    <div class="box-body">
+        <table class="table table-bordered table-striped table-responsive todo-list ui-sortable">
+            <thead>
+                <tr class="success" style="color:#03025a;">
+                    <th ng-click="sort('BankAccountNumber')">
+                        Bank Account No
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='BankAccountNumber'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('CheckBookNo')">
+                        Book No
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='CheckBookNo'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('StartSuffices')">
+                        StartSuffices
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='CheckBookNo'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('StartNo')">
+                        Start Check No
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='StartNo'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('EndNo')">
+                        End Check No
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='EndNo'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr style="padding-left: 5px;
+                               padding-bottom:3px;
+                               color:#000000;"
+                    ng-repeat="aParty in checkBookList | filter:searchText |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+
+                    <td>{{aParty.BankAccountNumber}}</td>
+                    <td>{{aParty.CheckBookNo}}</td>
+                    <td>{{aParty.StartSuffices}}</td>
+                    <td>{{aParty.StartNo}}</td>
+                    <td>{{aParty.EndNo}}</td>
+                    <td>
+                        <div class="btn-group">                            
+                            <a popover="Delete" popover-trigger="mouseenter" style="padding: 2px 5px;" title="Delete Party" 
+                               data-ng-click="deleteCheckBook(aParty)" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span></a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div><!-- /.box-body -->
+    <div class="box-footer" style="display: block;">
+        <pagination ng-model="currentPage"
+                    total-items="checkBookList.length"
+                    max-size="maxSize"
+                    items-per-page="pageSize"
+                    boundary-links="true">
+        </pagination>
+
+    </div><!-- /.box-footer-->
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

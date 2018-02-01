@@ -1,0 +1,161 @@
+﻿
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-users"></i> Sales Manager</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <!--Server side error messageing------>
+    <div class="col-sm-12">
+
+        <div class="" ng-hide="serverMessage">
+            <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                <ul>
+                    <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--End Server side error messageing-->
+    <!--Client side error messageing------>
+    <div class="col-sm-12">
+        <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+            {{message}}
+        </div>
+    </div>
+    <!--End Client side error messageing-->
+    <form name="salesManForm" novalidate role="form" class="form-horizontal" id="salesManForm" ng-submit="submitSalesManForm()">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Sales Manager Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : salesManForm.SalesManName.$invalid && (salesManForm.SalesManName.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                        <input id="SalesManName" type="text" class="form-control" name="SalesManName" autocomplete="off" tabindex="1" autofocus
+                               move-focus-by-enter-key
+                               ng-model="salesMan.SalesManName"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="salesManForm.SalesManName.$error.required && (salesManForm.SalesManName.$dirty || submitted)" class="help-block">Main Category name is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Address</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
+                        <input id="Address" type="text" class="form-control" name="Address" autocomplete="off" tabindex="2" autofocus
+                               move-focus-by-enter-key
+                               ng-model="salesMan.Address">
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Phone</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+                        <input id="Phone" type="text" class="form-control" name="Phone" autocomplete="off" tabindex="3" autofocus
+                               move-focus-by-enter-key
+                               ng-model="salesMan.Phone">
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Email</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-at"></i></span>
+                        <input id="Email" type="text" class="form-control" name="Email" autocomplete="off" tabindex="4" autofocus
+                               move-focus-by-enter-key
+                               ng-model="salesMan.Email">
+                    </div>
+                </div>
+
+
+            </div>
+        </div><!-- /.box-body -->
+        <div class="box-footer no-border">
+            <button type="submit" class="btn btn-success" tabindex="5"
+                    move-focus-by-enter-key
+                    ng-hide="addButton"
+                    ng-disabled="salesManForm.$invalid">
+                <i class="fa fa-pencil"></i> Save Sales Manager
+            </button>
+            <button type="button" class="btn btn-default"
+                    ng-hide="cancelButton"
+                    ng-click="clear()">
+                <span class="glyphicon glyphicon-remove"></span> Clear
+            </button>
+        </div><!-- /.box-footer -->
+    </form>
+</div>
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-users"></i> Sales Managers <small class="label label-success">{{salesManList.length}}</small></h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <table class="table table-bordered table-hover table-condensed">
+            <tr style="font-weight: bold" class="danger">
+                <td style="width:20%">Sales Manager Name</td>
+                <td style="width:20%">Address</td>
+                <td style="width:20%">Phone</td>
+                <td style="width:20%">Email</td>
+                <td style="width:20%">Action</td>
+            </tr>
+
+            <tr ng-repeat="salesMan in salesManList">
+                <td>
+                    <!-- editable buyername (text with validation) -->
+                    <span editable-text="salesMan.SalesManName" e-name="SalesManName" e-form="rowform" onbeforesave="checkName($data, salesMan.SalesManId)" e-required>
+                        {{ salesMan.SalesManName || 'empty' }}
+                    </span>
+                </td>
+                <td>
+                    <span editable-text="salesMan.Address" e-name="Address" e-form="rowform">
+                        {{ salesMan.Address || 'empty' }}
+                    </span>
+                </td>
+                <td>
+                    <span editable-text="salesMan.Phone" e-name="Phone" e-form="rowform">
+                        {{ salesMan.Phone || 'empty' }}
+                    </span>
+                </td>
+                <td>
+                    <span editable-text="salesMan.Email" e-name="Email" e-form="rowform">
+                        {{ salesMan.Email || 'empty' }}
+                    </span>
+                </td>
+                <td style="white-space: nowrap">
+                    <!-- form -->
+                    <form editable-form name="rowform" onbeforesave="update($data, salesMan.SalesManId,salesMan.ShowRoomId)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == salesMan">
+                        <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-warning">
+                            <i class="fa fa-pencil"></i> Update
+                        </button>
+                        <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </form>
+                    <div class="buttons" ng-show="!rowform.$visible">
+                        <button class="btn btn-primary btn-sm" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" ng-click="remove($index, salesMan.SalesManId)"><i class="glyphicon glyphicon-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>
+
+
+

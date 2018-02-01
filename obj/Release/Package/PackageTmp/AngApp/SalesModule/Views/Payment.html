@@ -1,0 +1,371 @@
+﻿
+<md-input-container class="md-block" flex-gt-sm>
+    <md-radio-group layout="row" ng-model="data.formType" ng-click="formTypeChange()" style="margin-left:.5em;">
+        <md-radio-button value="Collections" class="md-primary">Collections</md-radio-button>
+        <md-radio-button value="Search">Search Collections</md-radio-button>
+    </md-radio-group>
+</md-input-container>
+
+<md-card ng-show="collectionForm">
+    <md-card-title>
+        <md-card-title-text>
+            <span class="md-headline">৳ Add Collections </span>
+        </md-card-title-text>
+    </md-card-title>
+
+    <md-card-content>
+        <form name="paymentForm" novalidate role="form" class="" id="paymentForm" ng-submit="savePaymentForm()">
+
+            <md-card-content style="padding-bottom:0">
+                <div class="row" ng-show="Address">
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-aqua"><img ng-src="{{Image ? 'Upload/Customers/'+Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Address</span>
+                                <span class="info-box-number" style="font-size:.9em;">{{Address}}</span>
+                            </div><!-- /.info-box-content -->
+                        </div><!-- /.info-box -->
+                    </div><!-- /.col -->
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-green">৳</span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Credit Limit</span>
+                                <span class="info-box-number">{{CreditLimit| currency:"৳":0}}</span>
+                            </div><!-- /.info-box-content -->
+                        </div><!-- /.info-box -->
+                    </div><!-- /.col -->
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-yellow"><i class="fa fa-files-o"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Credit</span>
+                                <span class="info-box-number">{{TotalCredit| currency:"৳":0}}</span>
+                            </div><!-- /.info-box-content -->
+                        </div><!-- /.info-box -->
+                    </div><!-- /.col -->
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-red"><i class="fa fa-star-o"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Balance</span>
+                                <span class="info-box-number">{{(CreditLimit-TotalCredit) | currency:"৳":0}}</span>
+                            </div><!-- /.info-box-content -->
+                        </div><!-- /.info-box -->
+                    </div><!-- /.col -->
+                </div>
+
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <div class="form-group">
+                            <label for="invoiceDate">Collection Date</label>
+                            <input class="form-control" type="text" tabindex="1" name="invoiceDate" id="invoiceDate"
+                                   move-focus-by-enter-key
+                                   ng-focus="InvoiceDatePickerOpen()"
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="invoiceDatePickerIsOpen"
+                                   ng-click="InvoiceDatePickerOpen()"
+                                   ng-required="true"
+                                   ng-model="payment.invoiceDate" />
+                            <p ng-show="paymentForm.honourDate.$error.required && (paymentForm.honourDate.$dirty || submitted)" class="help-block">Honour Date is required.</p>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Customer Name</label>
+                        <input id="customerAutoComplite" type="text" class="form-control" name="customerAutoComplite" autocomplete="off" tabindex="2"
+                               ng-model="payment.customerAutoComplite"
+                               move-focus-by-enter-key
+                               ng-minlength="2"
+                               ng-maxlength="145"
+                               ng-required="true"
+                               ng-change="GetNewMemoId()"
+                               ng-keydown='$event.keyCode == 13 && GetCustomerDetailById()'
+                               ng-keyup="updatePartyTypeaheadList(payment.customerAutoComplite)"
+                               typeahead-on-select="changeSelectCustomerName($item)"
+                               typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:8">
+                    </md-input-container>
+
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Collection Amount</label>
+                        <input id="SCAmount" type="number" class="form-control" name="SCAmount" autocomplete="off" tabindex="3"
+                               move-focus-by-enter-key
+                               ng-model="payment.SCAmount"
+                               ng-required="true">
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Adjustment Discount</label>
+                        <input id="TCAmount" type="number" class="form-control" name="TCAmount" autocomplete="off" tabindex="4"
+                               move-focus-by-enter-key
+                               ng-disabled="discountTextBoxEditable"
+                               ng-model="payment.SDiscount">
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <md-radio-group layout="row" ng-model="data.paymentType" ng-click="paymentTypeChange()">
+                            <md-radio-button value="Cash" class="md-primary">Cash</md-radio-button>
+                            <md-radio-button value="Bank">Bank</md-radio-button>
+                        </md-radio-group>
+                    </md-input-container>
+                </div>
+
+                <div layout-gt-sm="row" ng-show="checkCollection">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <div class="form-group">
+                            <label for="invoice-date">Honour Date</label>
+                            <input class="form-control" type="text" tabindex="5" name="honourDate" id="honourDate"
+                                   move-focus-by-enter-key
+                                   ng-focus="HonourDatePickerOpen()"
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="honourDatePickerIsOpen"
+                                   ng-click="HonourDatePickerOpen()"
+                                   ng-model="payment.honourDate" />
+                            <p ng-show="paymentForm.honourDate.$error.required && (paymentForm.honourDate.$dirty || submitted)" class="help-block">Honour Date is required.</p>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Check No</label>
+                        <input ng-model="payment.checkNo" id="checkNo" name="checkNo" tabindex="6">
+                    </md-input-container>
+
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Bank Account No</label>
+                        <input ng-model="payment.bankAccNo" id="bankAccNo" name="bankAccNo" tabindex="7">
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Remarks</label>
+                        <input ng-model="payment.remarks" id="remarks" name="remarks" tabindex="8">
+                    </md-input-container>
+                </div>
+
+            </md-card-content>
+
+            <md-card-actions layout="row" layout-align="end center" style="margin-right:1.2em;">
+
+                <md-checkbox ng-change="adjustPartyAccountChange()" ng-model="data.adjustPartyAccount" aria-label="Adjust Account Balance" tabindex="9" style="margin-right:2em;font-weight:bold;">
+                    Adjust Account Balance
+                </md-checkbox>
+                <md-button class="md-raised md-primary" tabindex="10" type="submit"
+                           aria-label="Favorite"
+                           move-focus-by-enter-key
+                           ng-disabled="paymentForm.$invalid">
+                    <i class="fa fa-edit"></i> Save
+                </md-button>
+
+            </md-card-actions>
+
+        </form>
+        <table class="table table-bordered table-hover table-condensed" ng-show="users.length>0">
+            <tr style="font-weight: bold" class="info">
+                <td style="width:10%">Date</td>
+                <td style="width:40%">Customer Name</td>
+                <td style="width:15%">Collection</td>
+                <td style="width:15%">Discount</td>
+                <td style="width:10%">PaymentType</td>
+                <td style="width:10%">Action</td>
+            </tr>
+            <tr ng-repeat="user in users">
+                <td>{{ (user.PaymentDate | date : "dd-MM-yyyy") || 'empty' }}</td>
+                <td>{{ user.CustomerName }}</td>
+                <td>{{ user.SCAmount || 'empty' }}</td>
+                <td>{{ user.SDiscount }}</td>
+                <td>{{ user.PaymentType }}</td>
+                <td style="white-space: nowrap"></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:right">Total:</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td colspan="2"></td>
+            </tr>
+        </table>
+
+
+
+        <!-- Loading (remove the following to stop the loading)-->
+        <div ng-class="class" ng-show="loading">
+            <i class="fa fa-refresh fa-spin"></i>
+        </div>
+    </md-card-content>
+</md-card>
+
+<md-card ng-show="collectionSearchForm">
+    <md-card-title>
+        <md-card-title-text>
+            <span class="md-headline"><i class="fa fa-search"></i> Search Collections </span>
+        </md-card-title-text>
+    </md-card-title>
+
+
+    <md-card-content>
+        <form name="searchPaymentForm" novalidate role="form" class="" id="searchPaymentForm" ng-submit="searchPayments()">
+
+            <md-card-content style="padding-bottom:0">
+
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <div class="form-group">
+                            <label for="invoiceDate">From Date</label>
+                            <input class="form-control" type="text" tabindex="" name="fromDate" id="fromDate"
+                                   move-focus-by-enter-key
+                                   ng-focus="FromDatePickerOpen()"
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="fromDatePickerIsOpen"
+                                   ng-click="FromDatePickerOpen()"
+                                   ng-required="true"
+                                   ng-model="searchPayment.fromDate" />
+                            <p ng-show="searchPaymentForm.fromDate.$error.required && (searchPaymentForm.fromDate.$dirty || submitted)" class="help-block">From Date is required.</p>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <div class="form-group">
+                            <label for="invoiceDate">To Date</label>
+                            <input class="form-control" type="text" tabindex="" name="toDate" id="toDate"
+                                   move-focus-by-enter-key
+                                   ng-focus="ToDatePickerOpen()"
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="toDatePickerIsOpen"
+                                   ng-click="ToDatePickerOpen()"
+                                   ng-required="true"
+                                   ng-model="searchPayment.toDate" />
+                            <p ng-show="searchPaymentForm.toDate.$error.required && (searchPaymentForm.toDate.$dirty || submitted)" class="help-block">To Date is required.</p>
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Customer Name</label>
+                        <input style="min-width:200px;" id="customerAutoCompliteSerch" type="text" class="form-control" name="customerAutoCompliteSerch" autocomplete="off" tabindex=""
+                               ng-model="searchPayment.customerAutoComplite"
+                               move-focus-by-enter-key
+                               ng-change="GetNewMemoId()"
+                               ng-keydown='$event.keyCode == 13 && GetCustomerDetailByIdSearch()'
+                               ng-keyup="updatePartyTypeaheadList(searchPayment.customerAutoComplite)"
+                               typeahead-on-select="changeSelectCustomerNameSearch($item)"
+                               typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:20">
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <md-checkbox  ng-model="data.PartyAccount" aria-label="Register" tabindex="" style="margin-right:2em;font-weight:bold;">
+                            With Sales
+                        </md-checkbox>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <md-button class="md-raised md-primary" tabindex="10" type="submit"
+                                   aria-label="Favorite"
+                                   move-focus-by-enter-key
+                                   ng-disabled="searchPaymentForm.$invalid">
+                            <i class="fa fa-search"></i> Search
+                        </md-button>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <md-button class="md-raised md-default" tabindex="10" type="button" ng-click="clear()">
+                            <i class="fa fa-refresh"></i> Clear
+                        </md-button>
+                    </md-input-container>
+                </div>
+
+                <div class="row" ng-show="searchPayment.Address">
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-aqua"><img ng-src="{{searchPayment.Image ? 'Upload/Customers/'+searchPayment.Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Address</span>
+                                <span class="info-box-number" style="font-size:.9em;">{{searchPayment.Address}}</span>
+                            </div><!-- /.info-box-content -->
+                        </div><!-- /.info-box -->
+                    </div><!-- /.col -->
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-green">৳</span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Credit Limit</span>
+                                <span class="info-box-number">{{searchPayment.CreditLimit| currency:"৳":0}}</span>
+                            </div><!-- /.info-box-content -->
+                        </div><!-- /.info-box -->
+                    </div><!-- /.col -->
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-yellow"><i class="fa fa-files-o"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Credit</span>
+                                <span class="info-box-number">{{searchPayment.TotalCredit| currency:"৳":0}}</span>
+                            </div><!-- /.info-box-content -->
+                        </div><!-- /.info-box -->
+                    </div><!-- /.col -->
+                    <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-red"><i class="fa fa-star-o"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Balance</span>
+                                <span class="info-box-number">{{(searchPayment.CreditLimit-TotalCredit) | currency:"৳":0}}</span>
+                            </div><!-- /.info-box-content -->
+                        </div><!-- /.info-box -->
+                    </div><!-- /.col -->
+                </div>
+            </md-card-content>
+
+        </form>
+
+        <table class="table table-bordered table-hover table-condensed" ng-show="customerLedgers.length>0">
+            <tr style="font-weight: bold" class="danger">
+                <td style="width:10%">Date</td>
+                <td style="width:30%">Customer Name</td>
+                <td style="width:15%;">Sales Amount</td>
+                <td style="width:15%;">Collection</td>
+                <td style="width:15%;">Discount</td>
+                <td style="width:10%">Remark</td>
+                <td style="width:5%">Action</td>
+            </tr>
+
+            <tr ng-repeat="aSaleLedger in customerSaleLedgers">
+                <td>{{ (aSaleLedger.MemoDate | date : "dd-MM-yyyy") || 'empty' }}</td>
+                <td>{{ aSaleLedger.CustomerName }}</td>
+                <td style="text-align:right">{{ aSaleLedger.NetMemoAmount || 0 }}</td>
+                <td style="text-align:right">{{ 0 }}</td>
+                <td style="text-align:right">{{ 0 }}</td>
+                <td>{{ 'Invoice' }}</td>
+                <td style="white-space: nowrap"></td>
+            </tr>
+
+            <tr ng-repeat="aCustomerLedger in customerLedgers">
+                <td>{{ (aCustomerLedger.PaymentDate | date : "dd-MM-yyyy") || 'empty' }}</td>
+                <td>{{ aCustomerLedger.CustomerName }}</td>
+                <td  style="text-align:right">{{ aCustomerLedger.SSAmount || 0 }}</td>
+                <td  style="text-align:right">{{ aCustomerLedger.SCAmount || 0 }}</td>
+                <td  style="text-align:right">{{ aCustomerLedger.SDiscount || 0  }}</td>
+                <td>{{ aCustomerLedger.PaymentType }}</td>
+                <td style="white-space: nowrap"></td>
+            </tr>
+
+
+            <tr class="danger text-bold">
+                <td colspan="2" style="text-align:right">Total:</td>
+                <td style="text-align:right">{{customerSaleLedgers |sumByKey:'NetMemoAmount' |currency:"":"0"}}</td>
+                <td style="text-align:right">{{customerLedgers |sumByKey:'SCAmount' |currency:"":"0"}}</td>
+                <td style="text-align:right">{{customerLedgers |sumByKey:'SDiscount' |currency:"":"0"}}</td>
+                <td colspan="2"></td>
+            </tr>
+        </table>
+
+
+
+        <!-- Loading (remove the following to stop the loading)-->
+        <div ng-class="class" ng-show="loading">
+            <i class="fa fa-refresh fa-spin"></i>
+        </div>
+
+    </md-card-content>
+</md-card>
+
+
+
+
+
+
+
+
+
+
+

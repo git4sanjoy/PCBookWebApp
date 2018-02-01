@@ -1,0 +1,350 @@
+﻿<div class="alert alert-danger alert-dismissable" ng-hide="loginAlertMessageCheck">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+    {{Message}}
+</div>
+<div class="alert alert-success alert-dismissable" ng-hide="successMessageCheck">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4><i class="icon fa fa-check"></i> Success!</h4>
+    {{Message}}
+</div>
+
+<div class="box box-success">
+    <div class="box-header ui-sortable-handle" style="cursor: move;">
+        <i class="fa fa-calendar-minus-o"></i>
+        <h3 class="box-title">Check Form</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <div class="box-body border-radius-none">
+        <div class="">
+
+            <!--Server side error messageing------>
+            <div class="" ng-show="validationErrors">
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                    <ul>
+                        <li ng-repeat="error in message.ModelState.check">{{error}}</li>
+                        <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                    </ul>
+                </div>
+            </div>
+            <!--End Server side error messageing-->
+
+            <form name="checkForm" ng-submit="submitForm()" novalidate role="form" class="form-horizontal" id="checkForm">
+                <div id="checkFormDiv">
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <!-- Account No -->
+                        <div class="form-group" ng-class="{ 'has-error' : checkForm.accountNo.$invalid && (checkForm.accountNo.$dirty || submitted)}">
+                            <label>Account No</label>
+                            <select name="accountNo" class="form-control" tabindex="1" autofocus id="accountNo"
+                                    ng-focus="true"
+                                    move-focus-by-enter-key
+                                    ng-model="accountNo"
+                                    ng-change="GetCheckPageNoListByBankAccountId()"
+                                    ng-options="ba.BankAccountNumber for ba in userBankAccounts track by ba.BankAccountId"
+                                    ng-required="true">
+                                <option value="">--Select BankAcc No--</option>
+                            </select>
+                            <p ng-show="checkForm.accountNo.$error.required && (checkForm.accountNo.$dirty || submitted)" class="help-block">Select Account No.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <!-- Issue Date -->
+                        <div class="form-group" ng-class="{ 'has-error' : checkForm.issueDate.$invalid && (userForm.issueDate.$dirty || submitted)}">
+                            <label>Issue Date</label>
+                            <input name="issueDate" type="text" class="form-control" placeholder="Issue Date" autocomplete="off" dateformat="dd/MM/yyyy" tabindex="2"
+                                   ng-focus="IssueDatePickerOpen()"
+                                   move-focus-by-enter-key
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="issueDatePickerIsOpen"
+                                   ng-click="IssueDatePickerOpen()"
+                                   ng-model="IssueDate"
+                                   ng-required="true" />
+                            <p ng-show="checkForm.issueDate.$error.required && (checkForm.issueDate.$dirty || submitted)" class="help-block">Issue Date is required.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <!-- Check Date -->
+                        <div class="form-group" ng-class="{ 'has-error' : checkForm.checkDate.$invalid && (userForm.checkDate.$dirty || submitted)}">
+                            <label>Check Date</label>
+                            <input name="checkDate" type="text" class="form-control" placeholder="Check Date" autocomplete="off" dateformat="dd/MM/yyyy" tabindex="3"
+                                   ng-focus="CheckDatePickerOpen()"
+                                   move-focus-by-enter-key
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="checkDatePickerIsOpen"
+                                   ng-click="CheckDatePickerOpen()"
+                                   ng-model="CheckDate"
+                                   ng-required="true" />
+                            <p ng-show="checkForm.checkDate.$error.required && (checkForm.checkDate.$dirty || submitted)" class="help-block">Check Date is required.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <!-- honourDate Date -->
+                        <div class="form-group" ng-class="{ 'has-error' : checkForm.honourDate.$invalid && (userForm.honourDate.$dirty || submitted)}">
+                            <label>Honour Date</label>
+                            <input name="honourDate" type="text" class="form-control" placeholder="Honour Date" autocomplete="off" dateformat="dd/MM/yyyy" tabindex="4"
+                                   ng-focus="HonourDatePickerOpen()"
+                                   move-focus-by-enter-key
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="honourDatePickerIsOpen"
+                                   ng-click="HonourDatePickerOpen()"
+                                   ng-model="HonourDate"
+                                   ng-required="true" />
+                            <p ng-show="checkForm.honourDate.$error.required && (checkForm.honourDate.$dirty || submitted)" class="help-block">Honour Date is required.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <!-- CheckNo -->
+                        <div class="form-group" ng-class="{ 'has-error' : checkForm.CheckNo.$invalid && (checkForm.CheckNo.$dirty || submitted)}">
+                            <label>Check No</label>
+                            <input id="" type="text" name="CheckNo" class="form-control" autocomplete="off" placeholder="Check No" tabindex="5"
+                                   move-focus-by-enter-key
+                                   ng-disabled="!checkBookPages"
+                                   ng-model="Check.CheckNumber"
+                                   ng-minlength="3"
+                                   ng-maxlength="20"
+                                   ng-required="true"
+                                   typeahead-on-select="changeSelectCheckNo($item)"
+                                   typeahead="c.CheckBookPageNo for c in checkBookPages | filter:$viewValue | limitTo:8" />
+                            <p ng-show="checkForm.CheckNo.$error.required && (checkForm.CheckNo.$dirty || submitted)" class="help-block">You Check No is required.</p>
+                            <p ng-show="checkForm.CheckNo.$error.minlength && (checkForm.CheckNo.$dirty || submitted)" class="help-block">Check No is too short.</p>
+                            <p ng-show="checkForm.CheckNo.$error.maxlength && (checkForm.CheckNo.$dirty || submitted)" class="help-block">Check No is too long.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <div class="form-group" ng-class="{ 'has-error' : checkForm.partyName.$invalid && (checkForm.partyName.$dirty || submitted)}">
+                            <label>Party Name</label>
+                            <input type="text" class="form-control" tabindex="6" name="partyName" autocomplete="off"
+                                   move-focus-by-enter-key
+                                   ng-model="Check.partyName"
+                                   ng-required="true"
+                                   ng-keyup="updatePartyTypeaheadList(Check.partyName)"
+                                   typeahead-on-select="changeSelect($item)"
+                                   typeahead="state.PartyName for state in states | filter:$viewValue | limitTo:20">
+                            <p ng-show="checkForm.partyName.$error.required && (checkForm.partyName.$dirty || submitted)" class="help-block">Select Party Name.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <!-- amount -->
+                        <div class="form-group" ng-class="{ 'has-error' : checkForm.amount.$invalid && (checkForm.amount.$dirty || submitted) }">
+                            <label>Amount</label>
+                            <input type="text" name="amount" class="form-control" autocomplete="off"
+                                   move-focus-by-enter-key
+                                   ng-model="Check.Amount" placeholder="Amount" maxlength="10" ng-required="true" tabindex="7">
+                            <p ng-show="checkForm.amount.$error.required && (checkForm.amount.$dirty || submitted)" class="help-block">Enter a valid Amount.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-md-6 col-sm-12">
+                        <!-- Remarks -->
+                        <div class="form-group">
+                            <label>Remarks</label>
+                            <input type="text" name="Remarks" class="form-control" autocomplete="off"
+                                   move-focus-by-enter-key
+                                   ng-model="Check.Remarks" placeholder="Remarks" tabindex="8">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success" tabindex="9"
+                        ng-hide="addButton"
+                        ng-disabled="checkForm.$invalid">
+                    <i class="fa fa-pencil"></i> Add Check
+                </button>
+                <button type="button" class="btn btn-warning"
+                        ng-hide="updateButton"
+                        ng-click="updateCheck()">
+                    <span class="glyphicon glyphicon-edit"></span> Update Check
+                </button>
+                <button type="button" class="btn btn-default"
+                        ng-hide="cancelButton"
+                        ng-click="cancel()">
+                    <span class="glyphicon glyphicon-remove"></span> Clear
+                </button>
+            </form>
+        </div>
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+    <!-- Loading (remove the following to stop the loading)-->
+    <div class="overlay" ng-hide="loading">
+        <i class="fa fa-refresh fa-spin"></i>
+    </div>
+    <!-- end loading -->
+</div>
+
+
+<div class="box box-success direct-chat direct-chat-success">
+    <div class="box-header with-border">
+        <h3 class="box-title">Check List</h3>
+
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div><!-- /.box-header -->
+    <div class="box-body" style="display: block;">
+        <div class="">
+
+            <form name="searchForm" ng-submit="submitSearchForm()" novalidate role="form" class="form-inline">
+
+                <div class="col-md-12">
+                    <label class="radio-inline" ng-repeat="person in personArray">
+                        <label>
+                            <input name="SearchBy" type="radio" ng-value="person" ng-model="$parent.SearchBy" />
+                            {{person.Text}}
+                        </label>
+                    </label>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="">From Date</label>
+                    <div class="form-group" ng-class="{ 'has-error' : searchForm.FromDate.$invalid && (userForm.FromDate.$dirty || submitted)}">
+                        <label class="sr-only" for="fromDate">From Date</label>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                            <input type="text" class="form-control" id="fromDate" placeholder="From Date" name="FromDate" autocomplete="off"
+                                   ng-focus="FromDatePickerOpen()"
+                                   move-focus-by-enter-key
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="fromDatePickerIsOpen"
+                                   ng-click="FromDatePickerOpen()"
+                                   ng-model="FromDate"
+                                   ng-required="true">
+
+                        </div>
+                        <p ng-show="searchForm.FromDate.$error.required && (searchForm.FromDate.$dirty || submitted)" class="help-block">From Date is required.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="">To Date</label>
+                    <div class="form-group" ng-class="{ 'has-error' : searchForm.ToDate.$invalid && (userForm.ToDate.$dirty || submitted)}">
+                        <label class="sr-only" for="toDate">To Date</label>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                            <input type="text" class="form-control" id="toDate" placeholder="To Date" name="ToDate" autocomplete="off"
+                                   ng-focus="ToDatePickerOpen()"
+                                   move-focus-by-enter-key
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="toDatePickerIsOpen"
+                                   ng-click="ToDatePickerOpen()"
+                                   ng-model="ToDate"
+                                   ng-required="true">
+
+                        </div>
+                        <p ng-show="searchForm.ToDate.$error.required && (searchForm.ToDate.$dirty || submitted)" class="help-block">To Date is required.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Check No</label>
+                        <input type="text" name="checkNo" class="form-control" autocomplete="off"
+                               ng-model="checkNo" placeholder="Check No" maxlength="145">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-success" style="margin-top:1.5em;"
+                            ng-disabled="searchkForm.$invalid">
+                        <i class="fa fa-search"></i> Search
+                    </button>
+                </div>
+
+
+
+            </form>
+        </div>
+
+
+
+    </div><!-- /.box-body -->
+    <div class="box-footer" style="display: block;">
+
+        <table class="table table-bordered table-striped table-responsive">
+            <thead>
+                <tr class="success" style="color:#03025a;">
+                    <th ng-click="sort('BankAccountNumber')">
+                        Account No
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='BankAccountNumber'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('CheckBookNo')">
+                        BookNo
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='CheckNumber'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('CheckNumber')">
+                        Check No
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='CheckNumber'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('Amount')">
+                        Amount
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='Amount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('PartyName')">
+                        Party Name
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='PartyName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('CheckDate')">
+                        Check Date
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='CheckDate'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('IssueDate')">
+                        Issue Date
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='IssueDate'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('HonourDate')">
+                        Honour Date
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='HonourDate'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('Remarks')">
+                        Remarks
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='Remarks'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="padding-left: 5px;
+                               padding-bottom:3px;
+                               color:#000000;"
+                    ng-repeat="aCheck in checkList | orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                    <td>{{aCheck.BankAccountNumber}}</td>
+                    <td>{{aCheck.CheckBookNo}}</td>
+                    <td>{{aCheck.CheckNo}}</td>
+                    <td style="text-align:right">{{aCheck.Amount | currency : "":0}}</td>
+                    <td>{{aCheck.PartyName}}</td>
+                    <td>{{aCheck.CheckDate |  date: 'dd/MM/yyyy' }}</td>
+                    <td>{{aCheck.IssueDate |  date: 'dd/MM/yyyy'}}</td>
+                    <td>{{aCheck.HonourDate | date: 'dd/MM/yyyy'}}</td>
+                    <td>{{aCheck.Remarks}}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a popover="Edit" popover-trigger="mouseenter" style="padding: 2px 5px;" title="Edit Party" data-ng-click="getSingleCheck(aCheck)" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-edit"></span></a>
+                            <a popover="delete" popover-trigger="mouseenter" style="padding: 2px 5px;" title="Delete Party" data-ng-click="deleteCheck(aCheck)" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span></a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" style="text-align:right"><label>Total:</label></td>
+                    <td style="text-align:right"><b>{{ Total | currency : "" :0}}</b></td>
+                    <td colspan="6"></td>
+                </tr>
+            </tfoot>
+        </table>
+        <pagination ng-model="currentPage"
+                    total-items="checkList.length"
+                    max-size="maxSize"
+                    items-per-page="pageSize"
+                    boundary-links="true">
+        </pagination>
+    </div><!-- /.box-footer-->
+</div>
+

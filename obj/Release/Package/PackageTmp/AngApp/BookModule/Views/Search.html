@@ -1,0 +1,170 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <form class="form-inline">
+                    <span class="box-title"><i class="fa fa-search"></i> Voucher Search : </span>
+                    
+                </form>
+
+                <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+                <div class="row">
+                    <!--Server side error messageing------>
+                    <div class="col-sm-12" ng-hide="serverMessage" style="margin-top:1em;">
+                        <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                            <ul>
+                                <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!--End Server side error messageing-->
+                    <!--Client side error messageing------>
+                    <div class="col-sm-12" ng-hide="clientMessage" style="margin-top:1em;">
+                        <div class="alert alert-{{messageType}} alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h4><i class="icon fa fa-check"></i> {{messageType}}!</h4>
+                            {{message}}
+                        </div>
+                    </div>
+                    <!--End Client side error messageing-->
+                </div>
+                    <div layout="row">
+                        <md-input-container>
+                            <!--<label>Book Date</label>-->
+                            <md-datepicker ng-model="voucherDate" md-placeholder="Book Date" md-open-on-focus></md-datepicker>
+
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Voucher Type</label>
+                            <md-select id="vouchrType" placeholder="Select Voucher Type" ng-model="vouchrType" md-on-open="loadVoucherTypeList()" style="min-width: 250px;">
+                                <md-option><em>None</em></md-option>
+                                <md-option ng-value="v" ng-repeat="v in vouchrTypeList">{{v.VoucherTypeName}}</md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Voucher No</label>
+                            <input id="voucherNo" ng-model="voucherNo">
+                        </md-input-container>
+                        <md-input-container>
+                            <md-button md-no-ink="" class="md-raised md-primary" ng-click="searchVoucher()">Search</md-button>
+                        </md-input-container>
+                        <!--<md-input-container>
+                            <md-button class="md-primary md-raised" ng-click="showAlert($event)">
+                                Alert Dialog
+                            </md-button>
+                            <md-button class="md-primary md-raised" ng-click="showConfirm($event)">
+                                Confirm Dialog
+                            </md-button>
+                        </md-input-container>
+                        
+                        <md-input-container>
+                            <md-radio-group ng-model="data.group1">
+                                <md-radio-button value="Apple" class="md-primary">Apple</md-radio-button>
+                                <md-radio-button value="Banana"> Banana </md-radio-button>
+                                <md-radio-button value="Mango">Mango</md-radio-button>
+                            </md-radio-group>
+                        </md-input-container>-->
+                        <md-input-container>
+                            
+                        </md-input-container>
+                    </div>
+
+                <div class="col-sm-12" ng-hide="voucherTable">
+                    <table class="table table-bordered table-responsive table-striped" style="" id="voucherTable">
+                        <tr class="info">
+                            <td colspan="5" style="text-align:center">
+                                <h3 style="padding:0;margin:0;">{{aVoucher[0].ShowRoomName}}</h3>
+                            </td>
+                        </tr>
+                        <tr style="font-weight:bold">
+                            <td>Date: {{aVoucher[0].VoucherDate | date : "dd-MM-yyyy"}}      </td>
+                            <td style="text-align:center">Voucher Type: {{aVoucher[0].VoucherTypeName}}</td>
+                            <td colspan="3" style="text-align:right">Voucher No: {{aVoucher[0].VoucherNo}}</td>
+                        </tr>
+                        <tr class="">
+                            <th width="15%">Dr/Cr</th>
+                            <th width="55%" style="text-align:center">Ledger Name</th>
+                            <th width="15%" style="text-align:center">Dr Amount</th>
+                            <th width="15%" style="text-align:center">Cr Amount</th>
+                            <th width="5%">P/R</th>
+                        </tr>
+                        <tr class="task-item" ng-repeat="item in aVoucher">
+
+                            <td>{{item.TransctionTypeName}}</td>
+                            <td>{{item.LedgerName}}</td>
+                            <td style="text-align:right">{{item.DrAmount}}</td>
+                            <td style="text-align:right">{{item.CrAmount}}</td>
+                            <td><input type=checkbox ng-model="item.IsBank" ng-checked="item.IsBank" ng-disabled="true" /></td>
+
+                        </tr>
+
+                        <tr class="info" style="font-weight:bold">
+                            <td colspan="2" style="text-align:right"> Total:</td>
+                            <td style="text-align:right">{{totalDr() | currency:""}}</td>
+                            <td style="text-align:right">{{totalCr() | currency:""}}</td>
+                            <td></td>
+                        </tr>
+                        <tr class="">
+                            <td style="font-weight:bold">
+                                Narration
+                            </td>
+                            <td>{{aVoucher[0].Naration}}</td>
+                            <td>
+                                <md-button md-no-ink="" class="md-raised md-warn btn-block" ng-click="deleteVoucher(aVoucher[0].VoucherId)">Delete</md-button>
+                            </td>
+                            <td colspan="2">
+                                <md-button md-no-ink="" class="md-raised md-primary btn-block" ng-click="printVoucher()">Print</md-button>
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div class="col-sm-12" ng-hide="bookDataTable">
+                    <table class="table table-bordered table-responsive table-striped" style="" id="voucherTable">
+                        <tr class="primary">
+                            <th width="5%">Dr/Cr</th>
+                            <th width="35%" style="text-align:center">Ledger Name</th>
+                            <th width="20%" style="text-align:center">Voucher Trpe</th>
+                            <th width="10%" style="text-align:center">Voucher No</th>
+                            <th width="15%" style="text-align:center">Dr Amount</th>
+                            <th width="15%" style="text-align:center">Cr Amount</th>
+                            <th width="5%">IsBank</th>
+                        </tr>
+                        <tr class="task-item" ng-repeat="a in bookData">
+
+                            <td>{{a.TransctionTypeName}}</td>
+                            <td>{{a.LedgerName}}</td>
+                            <td>{{a.VoucherTypeName}}</td>
+                            <td>{{a.VoucherNo}}</td>
+                            <td style="text-align:right">{{a.DrAmount}}</td>
+                            <td style="text-align:right">{{a.CrAmount}}</td>
+                            <td><input type=checkbox ng-model="a.IsBank" ng-checked="a.IsBank" ng-disabled="true" /></td>
+
+                        </tr>
+
+                        <tr class="info" style="font-weight:bold">
+                            <td colspan="4" style="text-align:right"> Total:</td>
+                            <td style="text-align:right">{{totalDr() | currency:""}}</td>
+                            <td style="text-align:right">{{totalCr() | currency:""}}</td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div><!-- /.box-body -->
+            <!-- Loading (remove the following to stop the loading)-->
+            <div ng-class="class" ng-show="loading">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+            <!-- end loading -->
+        </div><!-- /.box -->
+    </div>
+</div>
+
+ 

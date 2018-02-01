@@ -1,0 +1,59 @@
+﻿
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+        line-height: 1.1em;
+        word-spacing: 1px;
+        letter-spacing: 0.2px;
+        font: 11px Arial, Helvetica,"Lucida Grande", serif;
+        color: #000;
+        box-shadow: 0;
+    }
+
+    body, page {
+        margin: 0;
+        box-shadow: 0;
+    }
+
+    #printHeaderImage {
+        display: none;
+    }
+
+    table {
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
+
+    .table {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+        border: 1px solid #f4f4f4;
+    }
+    .table-print > thead > tr > th,
+    .table-print > tbody > tr > th,
+    .table-print > tfoot > tr > th,
+    .table-print > thead > tr > td,
+    .table-print > tbody > tr > td,
+    .table-print > tfoot > tr > td {
+        border-top: 0px solid #f4f4f4 !important;
+    }
+    #signatureFooter {
+        margin-top: 2em;
+    }
+
+    div.divFooter {
+        margin-top: 2em;
+        position: fixed;
+        bottom: 0;
+    }
+
+    .bangla-font {
+        font-family: sutonnymjbold;
+        font-size: 18px;
+    }
+}

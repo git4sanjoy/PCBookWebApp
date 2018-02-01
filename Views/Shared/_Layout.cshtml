@@ -1,0 +1,565 @@
+﻿@using Microsoft.AspNet.Identity;
+@using PCBookWebApp.Models;
+@using Microsoft.AspNet.Identity.EntityFramework;
+@using Microsoft.AspNet.Identity;
+@{
+    string themeColor = "skin-blue";
+    string themeCss = "skin-blue.min.css";
+    if (Request.IsAuthenticated)
+    {
+
+        if (User.IsInRole("Show Room Manager") || User.IsInRole("Show Room Sales"))
+        {
+            themeColor = "skin-red";
+            themeCss = "skin-red.min.css";
+        }
+        if (User.IsInRole("Accounts Manager") || User.IsInRole("Accounts"))
+        {
+            themeColor = "skin-green";
+            themeCss = "skin-green.min.css";
+        }
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - PCBooks App. V-1.0.1</title>
+
+    @Styles.Render("~/Content/css")
+    <!-- Theme style -->
+    <link href="~/Content/dist/css/AdminLTE.min.css" rel="stylesheet">
+    <link href="~/Content/dist/css/skins/@(themeCss)" rel="stylesheet">
+    <!-- Angular -->
+    <link href="~/Scripts/angular-xeditable/css/xeditable.min.css" rel="stylesheet" />
+    <link href="~/Content/loading-bar.min.css" rel="stylesheet" />
+    <link href="~/Content/btnUpload.min.css" rel="stylesheet" />
+    <link href="~/Content/angular-material.min.css" rel="stylesheet" />
+
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+
+<body class="@(themeColor) hold-transition fixed sidebar-mini">
+    <!-- Site wrapper -->
+    <div class="wrapper" ng-app="PCBookWebApp">
+        <!-- Main Header -->
+        <div ng-controller="navController">
+            <header class="main-header">
+                <a href="@Url.Action("Index", "Home")" class="logo">
+                    <span class="logo-mini"><b>PC</b>A</span>
+                    <span class="logo-lg"><b>PC</b>App</span>
+                </a>
+                <!-- Header Navbar -->
+                <nav class="navbar navbar-static-top" role="navigation">
+                    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+
+                            <li ng-if="token === null">@Html.ActionLink("Contact", "Index", "Contact", new { area = "" }, null)</li>
+                            <li ng-if="token === null">@Html.ActionLink("About", "Index", "About", new { area = "" }, null)</li>
+                            <li ng-if="token === null">@Html.ActionLink("Login", "Index", "Login", new { area = "" }, null)</li>
+                            @{
+                                if (Request.IsAuthenticated)
+                                {
+                                    var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+                                    var currentUser = manager.FindById(User.Identity.GetUserId());
+                                    if (User.IsInRole("Accounts") || User.IsInRole("Admin") || User.IsInRole("Manager"))
+                                    {
+                                        <li ng-if="token !== null"><p class="navbar-btn" style="margin-right:1em;"><a href="/Bookkeeping" class="btn btn-info"><i class="fa fa-plus"></i> Bookkeeping</a></p></li>
+                                        <li ng-if="token !== null"><p class="navbar-btn" style="margin-right:1em;"><a href="/Reports" class="btn btn-info"><i class="fa fa-print"></i> Reports</a></p></li>
+                                    }
+                                    <!-- User Account Menu -->
+                                    <li class="dropdown user user-menu" ng-if="token !== null">
+                                        <!-- Menu Toggle Button -->
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            <!-- The user image in the navbar-->
+                                            <img src="~/Upload/@currentUser.UserImage" class="user-image" alt="User Image">
+                                            <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                                            <span class="hidden-xs">{{userName}}</span>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <!-- The user image in the menu -->
+                                            <li class="user-header">
+                                                <img src="~/Upload/@currentUser.UserImage" class="img-circle" alt="User Image">
+                                                <p>@currentUser.FullName <small>Member since Nov. 2012</small></p>
+                                            </li>
+
+                                            <!-- Menu Footer-->
+                                            <li class="user-footer">
+                                                <div class="pull-left">
+                                                    <a href="/Accounts" class="btn btn-default btn-flat">Manage</a>
+                                                </div>
+                                                <div class="pull-right">
+                                                    <a ng-click="logout()" href="javascript:void(0)" class="btn btn-default btn-flat">Log off</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <!-- Control Sidebar Toggle Button -->
+                                    <li>
+                                        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </nav>
+            </header>
+            <!-- Left side column. contains the logo and sidebar -->
+            <aside class="main-sidebar">
+                <!-- sidebar: style can be found in sidebar.less -->
+                <section class="sidebar">
+                    @if (Request.IsAuthenticated)
+                    {
+                        var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+                        var currentUser = manager.FindById(User.Identity.GetUserId());
+                        <!-- Sidebar user panel (optional) -->
+                        <div class="user-panel" ng-if="token !== null">
+                            <div class="pull-left image">
+                                <img src="~/Upload/@currentUser.UserImage" class="img-circle" alt="User Image">
+                            </div>
+                            <div class="pull-left info">
+                                <p style="font-size:0.9em;">@currentUser.FullName</p>
+                                <!-- Status -->
+                                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                            </div>
+                        </div>
+                    }
+                    <!-- Sidebar Menu -->
+                    <ul ng-if="token !== null" class="sidebar-menu" bs-active-link>
+                        @if (Request.IsAuthenticated)
+                        {
+                            if (User.IsInRole("Admin"))
+                            {
+                                <li class="header">ADMIN MENU</li>
+
+                                <li class="treeview active">
+                                    <a href="#">
+                                        <i class="fa  fa-clone"></i> <span>APP CUSTOMIZATION</span>
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </a>
+                                    <ul class="treeview-menu" style="display: none;">
+
+
+                                        <li class="">
+                                            <a href="#"><i class="fa fa-cubes"></i> Unit Management <i class="fa fa-angle-left pull-right"></i></a>
+                                            <ul class="treeview-menu" style="display: none;">
+
+                                                <li><a href="/Projects"><i class="fa fa-circle-o"></i> Projects</a></li>
+                                                <li><a href="/Units"><i class="fa fa-circle-o"></i> Units</a></li>
+                                                <li><a href="/ShowRoom"><i class="fa fa-circle-o"></i> Show Room</a></li>
+                                                <li><a href="/ShowRoomUser"><i class="fa fa-circle-o"></i> Show Room Officer</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="">
+                                            <a href="#"><i class="fa fa-users"></i> Users Management <i class="fa fa-angle-left pull-right"></i></a>
+                                            <ul class="treeview-menu" style="display: none;">
+                                                <li><a href="/Roles"><i class="fa fa-circle-o"></i> Roles</a></li>
+                                                <li><a href="/Register"><i class="fa fa-circle-o"></i> Register</a></li>
+                                            </ul>
+                                        </li>
+
+                                    </ul>
+                                </li>
+                                <li class="header">SHOWROOM MENU</li>
+
+                                <li><a href="/Invoice"><i class="fa fa-shopping-cart text-red"></i> <span>Invoice</span></a></li>
+                                <li><a href="/Payment"><i class="fa fa-cc-mastercard text-yellow"></i> <span>Collection</span></a></li>
+                                <li><a href="/SalesSearch"><i class="fa fa-search text-green"></i> <span>Search</span></a></li>
+                                <li><a href="/SalesReports"><i class="fa fa-print text-green"></i> <span>Reports</span></a></li>
+                                <li class="treeview">
+                                    <a href="#"><i class="fa fa-building"></i> <span>SR MANAGER</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu">
+                                        <li><a href="/District"><i class="fa fa-circle-o"></i> District</a></li>
+                                        <li><a href="/Upazila"><i class="fa fa-circle-o"></i> Upazilla</a></li>
+                                        <li><a href="/MainCategory"><i class="fa fa-circle-o"></i> Main Categories</a></li>
+                                        <li><a href="/SubCategory"><i class="fa fa-circle-o"></i> Sub Categories</a></li>
+                                    </ul>
+                                </li>
+                                <li class="treeview">
+                                    <a href="#"><i class="fa fa-building"></i> <span>SR OFFICER</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu">
+                                        <li><a href="/Product"><i class="fa fa-circle-o"></i> Products</a></li>
+                                        <li><a href="/SalesMan"><i class="fa fa-circle-o"></i> Sales Manager</a></li>
+                                        <li><a href="/Customers"><i class="fa fa-circle-o"></i> Customers</a></li>
+                                    </ul>
+                                </li>
+                                <li class="header">ACCOUNTS MENU</li>
+                                <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
+                                <li><a href="/Bookkeeping"><i class="fa fa-plus text-blue"></i> <span>Bookkeeping</span></a></li>
+                                <li><a href="/Provision"><i class="fa fa-magic text-blue"></i> <span>Provision</span></a></li>
+                                <li><a href="/Search"><i class="fa fa-search text-blue"></i> <span>Search</span></a></li>
+                                <li><a href="/Reports"><i class="fa fa-print text-green"></i> <span>Reports</span></a></li>
+                                <li class="treeview ">
+                                    <a href="#"><i class="fa fa-calculator"></i> ACCOUNTS MANAGER <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <li><a href="/TransctionTypes"><i class="fa fa-circle-o"></i> Transction Types</a></li>
+                                        <li><a href="/Primaries"><i class="fa fa-circle-o"></i> Primaries</a></li>
+                                        <li><a href="/VoucherTypes"><i class="fa fa-circle-o"></i> Voucher Types</a></li>
+                                        <li><a href="/Groups"><i class="fa fa-circle-o"></i> Groups</a></li>
+                                        <li>
+                                            <a href="#"><i class="fa fa-bank"></i> Bank Management <i class="fa fa-angle-left pull-right"></i></a>
+                                            <ul class="treeview-menu">
+                                                <li><a href="/Banks"><i class="fa fa-circle-o"></i> Banks</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="treeview">
+                                    <a href="#"><i class="fa fa-calculator"></i> <span>ACCOUNTS OFFICER</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu">                                                                               
+                                        <li><a href="/Ledgers"><i class="fa fa-plus"></i> Ledgers</a></li>
+                                        <li><a href="/BankAccounts"><i class="fa fa-plus"></i> Bank Accounts</a></li>
+                                        <li><a href="/CheckBooks"><i class="fa fa-plus"></i> Check Books</a></li>
+                                    </ul>
+                                </li>
+                                <li class="header">NEXT MENU</li>
+
+
+                            }
+                            else if (User.IsInRole("Cashier"))
+                            {
+                                <li class="header">Menu</li>
+                                <li><a href="/Dashboard"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
+                                <li><a href="/MaterialsRate"><i class="fa fa-edit"></i> <span>Materials Rate</span></a></li>
+                            }
+                            else if (User.IsInRole("Accounts"))
+                            {
+                                <li class="header">MENU</li>
+                                <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
+                                <li><a href="/Bookkeeping"><i class="fa fa-calculator text-blue"></i> <span>Bookkeeping</span></a></li>
+                                <li><a href="/Provision"><i class="fa fa-magic text-blue"></i> <span>Provision</span></a></li>
+                                <li><a href="/Search"><i class="fa fa-search text-blue"></i> <span>Search</span></a></li>
+                                <li><a href="/Reports"><i class="fa fa-print text-green"></i> <span>Reports</span></a></li>
+                                <li class="treeview">
+                                    <a href="#"><i class="fa fa-cog"></i> <span>ACCOUNTS OFFICER</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu">
+                                        <li><a href="/Ledgers"><i class="fa fa-plus"></i> Ledgers</a></li>
+                                        <li><a href="/BankAccounts"><i class="fa fa-plus"></i> Bank Accounts</a></li>
+                                        <li><a href="/CheckBooks"><i class="fa fa-plus"></i> Check Books</a></li>
+                                    </ul>
+                                </li>
+
+                            }
+                            else if (User.IsInRole("Accounts Manager"))
+                            {
+                                <li class="header">Menu</li>
+                                <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
+                                <li><a href="/Bookkeeping"><i class="fa fa-calculator text-blue"></i> <span>Bookkeeping</span></a></li>
+                                <li><a href="/Provision"><i class="fa fa-magic text-blue"></i> <span>Provision</span></a></li>
+                                <li><a href="/Search"><i class="fa fa-search text-blue"></i> <span>Search</span></a></li>
+                                <li><a href="/Reports"><i class="fa fa-print text-green"></i> <span>Reports</span></a></li>
+                                <li class="treeview ">
+                                    <a href="#"><i class="fa fa-cog"></i>ACCOUNTS MANAGER<i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <li><a href="/TransctionTypes"><i class="fa fa-circle-o"></i> Transction Types</a></li>
+                                        <li><a href="/Primaries"><i class="fa fa-circle-o"></i> Primaries</a></li>
+                                        <li><a href="/VoucherTypes"><i class="fa fa-circle-o"></i> Voucher Types</a></li>
+                                        <li><a href="/Groups"><i class="fa fa-circle-o"></i> Groups</a></li>
+                                        <li>
+                                            <a href="#"><i class="fa fa-bank"></i> Bank Management <i class="fa fa-angle-left pull-right"></i></a>
+                                            <ul class="treeview-menu">
+                                                <li><a href="/Banks"><i class="fa fa-circle-o"></i> Banks</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="treeview">
+                                    <a href="#"><i class="fa fa-cog"></i> <span>ACCOUNTS OFFICER</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu">
+                                        <li><a href="/Ledgers"><i class="fa fa-plus"></i> Ledgers</a></li>
+                                        <li><a href="/BankAccounts"><i class="fa fa-plus"></i> Bank Accounts</a></li>
+                                        <li><a href="/CheckBooks"><i class="fa fa-plus"></i> Check Books</a></li>
+                                    </ul>
+                                </li>
+                            }
+                            else if (User.IsInRole("Show Room Manager"))
+                            {
+                                <li class="header">Menu</li>
+                                <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
+                                <li><a href="/Invoice"><i class="fa fa-shopping-cart text-red"></i> <span>Invoice</span></a></li>
+                                <li><a href="/Payment"><i class="fa fa-cc-mastercard text-purple"></i> <span>Collection</span></a></li>
+                                <li><a href="/SalesSearch"><i class="fa fa-search text-blue"></i> <span>Search</span></a></li>
+                                <li><a href="/SalesReports"><i class="fa fa-print text-green"></i> <span>Reports</span></a></li>
+                                <li class="treeview">
+                                    <a href="#"><i class="fa fa-cog"></i> <span>SR MANAGER</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu">
+                                        <li><a href="/District"><i class="fa fa-circle-o"></i> District</a></li>
+                                        <li><a href="/Upazila"><i class="fa fa-circle-o"></i> Upazilla</a></li>
+                                        <li><a href="/MainCategory"><i class="fa fa-circle-o"></i> Main Categories</a></li>
+                                        <li><a href="/SubCategory"><i class="fa fa-circle-o"></i> Sub Categories</a></li>
+                                    </ul>
+                                </li>
+                                <li class="treeview">
+                                    <a href="#"><i class="fa fa-cog"></i> <span>SR OFFICER</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu">
+                                        <li><a href="/Products"><i class="fa fa-circle-o"></i> Products</a></li>
+                                        <li><a href="/SalesMan"><i class="fa fa-circle-o"></i> Sales Manager</a></li>
+                                        <li><a href="/Customers"><i class="fa fa-circle-o"></i> Customers</a></li>
+                                    </ul>
+                                </li>
+
+                            }
+                            else if (User.IsInRole("Show Room Sales"))
+                            {
+                                <li class="header">Menu</li>
+                                <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
+                                <li><a href="/Invoice"><i class="fa fa-shopping-cart text-red"></i> <span>Invoice</span></a></li>
+                                <li><a href="/Payment"><i class="fa fa-cc-mastercard text-purple"></i> <span>Collection</span></a></li>
+                                <li><a href="/SalesSearch"><i class="fa fa-search text-blue"></i> <span>Search</span></a></li>
+                                <li><a href="/SalesReports"><i class="fa fa-print text-green"></i> <span>Reports</span></a></li>
+                            }
+                        }
+                    </ul><!-- /.sidebar-menu -->
+                </section>
+                <!-- /.sidebar -->
+            </aside>
+        </div>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Main content -->
+            <section class="content body-content view-animate-container">            
+                @RenderBody()
+            </section><!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+
+        <!-- Main Footer -->
+        <footer class="main-footer">
+            <div class="pull-right hidden-xs">
+                Developed By: Abid Ahmed. Sanjoy Debnath.
+            </div>
+            <strong>PC App V-1.0.1 Copyright &copy; @DateTime.Now.Year <a href="http://www.pakizagroup.com" target="_blank">Pakiza Group</a>.</strong> All rights reserved.
+        </footer>
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Create the tabs -->
+            <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+                <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+                <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <!-- Home tab content -->
+                <div class="tab-pane" id="control-sidebar-home-tab">
+                    <h3 class="control-sidebar-heading">Recent Activity</h3>
+                    <ul class="control-sidebar-menu">
+                        <li>
+                            <a href="javascript::;">
+                                <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+                                <div class="menu-info">
+                                    <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+                                    <p>Will be 23 on April 24th</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <i class="menu-icon fa fa-user bg-yellow"></i>
+                                <div class="menu-info">
+                                    <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
+                                    <p>New phone +1(800)555-1234</p>
+                                </div>
+                            </a>
+                        </li>
+
+                    </ul><!-- /.control-sidebar-menu -->
+                    <h3 class="control-sidebar-heading">Tasks Progress</h3>
+                    <ul class="control-sidebar-menu">
+                        <li>
+                            <a href="javascript::;">
+                                <h4 class="control-sidebar-subheading">
+                                    Custom Template Design
+                                    <span class="label label-danger pull-right">70%</span>
+                                </h4>
+                                <div class="progress progress-xxs">
+                                    <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <h4 class="control-sidebar-subheading">
+                                    Update Resume
+                                    <span class="label label-success pull-right">95%</span>
+                                </h4>
+                                <div class="progress progress-xxs">
+                                    <div class="progress-bar progress-bar-success" style="width: 95%"></div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <h4 class="control-sidebar-subheading">
+                                    Laravel Integration
+                                    <span class="label label-warning pull-right">50%</span>
+                                </h4>
+                                <div class="progress progress-xxs">
+                                    <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript::;">
+                                <h4 class="control-sidebar-subheading">
+                                    Back End Framework
+                                    <span class="label label-primary pull-right">68%</span>
+                                </h4>
+                                <div class="progress progress-xxs">
+                                    <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul><!-- /.control-sidebar-menu -->
+                </div><!-- /.tab-pane -->
+                <!-- Stats tab content -->
+                <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div><!-- /.tab-pane -->
+                <!-- Settings tab content -->
+                <div class="tab-pane" id="control-sidebar-settings-tab">
+                    <form method="post">
+                        <h3 class="control-sidebar-heading">General Settings</h3>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Report panel usage
+                                <input type="checkbox" class="pull-right" checked>
+                            </label>
+                            <p>
+                                Some information about this general settings option
+                            </p>
+                        </div><!-- /.form-group -->
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Allow mail redirect
+                                <input type="checkbox" class="pull-right" checked>
+                            </label>
+                            <p>
+                                Other sets of options are available
+                            </p>
+                        </div><!-- /.form-group -->
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Expose author name in posts
+                                <input type="checkbox" class="pull-right" checked>
+                            </label>
+                            <p>
+                                Allow the user to show his name in blog posts
+                            </p>
+                        </div><!-- /.form-group -->
+                        <h3 class="control-sidebar-heading">Chat Settings</h3>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Show me as online
+                                <input type="checkbox" class="pull-right" checked>
+                            </label>
+                        </div><!-- /.form-group -->
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Turn off notifications
+                                <input type="checkbox" class="pull-right">
+                            </label>
+                        </div><!-- /.form-group -->
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                Delete chat history
+                                <a href="javascript::;" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
+                            </label>
+                        </div><!-- /.form-group -->
+                    </form>
+                </div><!-- /.tab-pane -->
+            </div>
+        </aside><!-- /.control-sidebar -->
+        <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
+        <div class="control-sidebar-bg"></div>
+    </div><!-- ./wrapper -->
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+
+    <script src="~/Scripts/bootstrapvalidator.min.js"></script>
+    <!-- SlimScroll -->
+    <script src="~/Scripts/slimScroll/jquery.slimscroll.min.js"></script>
+    <!-- FastClick -->
+    <script src="~/Scripts/fastclick/fastclick.min.js"></script>
+
+    <!-- AdminLTE App -->
+    <script src="~/Content/dist/js/app.min.js"></script>
+    <script src="~/Content/dist/js/demo.js"></script>
+
+
+
+    <!-- Angular 1.5.5 -->
+    @Scripts.Render("~/bundles/angularLib")
+
+    <!-- Angular Chart JS -->
+    <script src="~/Scripts/angular-moment/moment.js"></script>
+    <script src="~/Scripts/angular-moment/angular-moment.js"></script>
+
+    <script src="~/Scripts/angular-chart/Chart.min.js"></script>
+    <script src="~/Scripts/angular-chart/angular-chart.js"></script>
+
+    <script src="~/Scripts/angular-xeditable/js/xeditable.min.js"></script>
+    <script src="~/Scripts/angular/loading-bar.min.js"></script>
+    <script src="~/Scripts/angular/angular-upload.min.js"></script>
+    <script src="~/Scripts/angular/uploadButton.js"></script>
+
+    <script src="~/Scripts/angular/angular-filter.js"></script>
+    <script src="~/Scripts/angular/angular-material.min.js"></script>
+    <script src="~/Scripts/angular/lodash.min.js"></script>
+    <script src="~/Scripts/underscore-min.js"></script>
+    
+    @Scripts.Render("~/bundles/angularApp")
+    @Scripts.Render("~/bundles/angularControllers")
+    @Scripts.Render("~/bundles/angularBookControllers")
+    @Scripts.Render("~/bundles/angularBankControllers")
+    @Scripts.Render("~/bundles/angularSaleControllers")
+
+    @Scripts.Render("~/bundles/angularDirectives")
+    @Scripts.Render("~/bundles/angularFactories")
+    @RenderSection("scripts", required: false)
+
+    @*<script type="text/javascript">
+        $(function () {
+            
+            //$('#CustomerNameBangla').focusout(function () {
+            //    alert(0);
+            //    //Call the Google API
+            //    $.ajax({
+            //        type: "GET",
+            //        url: "https://ajax.googleapis.com/ajax/services/language/translate",
+            //        dataType: 'jsonp',
+            //        cache: false,
+            //        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+            //        data: "v=1.0&q=" + $('#CustomerNameBangla').val() + "&langpair=en|bn",
+            //        success: function (iData) {
+            //            //update the value
+            //            $('#CustomerNameBangla').val(iData["responseData"]["translatedText"]);                        
+            //        },
+            //        error: function (xhr, ajaxOptions, thrownError) { }
+            //    });
+
+            //});
+            
+        });
+
+    </script>*@
+    @*<script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement
+                ({
+                    pageLanguage: 'en',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+                },
+                'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>*@
+    
+
+</body>
+</html>

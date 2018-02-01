@@ -1,0 +1,130 @@
+﻿<div class="box box-success">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cubes"></i> Total Provisions : {{users.length}}</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <div class="row">
+            <!--Server side error messageing------>
+            <div class="col-sm-12">
+                <div class="" ng-hide="serverMessage">
+                    <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                        <ul>
+                            <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--End Server side error messageing-->
+            <!--Client side error messageing------>
+            <div class="col-sm-12">
+                <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+                    {{message}}
+                </div>
+            </div>
+            <!--End Client side error messageing-->
+        </div>
+        <form class="form-inline" style="margin-bottom:1em;">
+            
+            <div class="form-group">
+                <label for="exampleInputNameYear" style="margin-left:1em;">Year</label>
+                <select name="exampleInputNameYear"
+                        ng-model="yearDdl"
+                        ng-change="changedYear()"
+                        class="form-control">
+                    <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputNameMonth" style="margin-left:1em;">Month</label>
+                <select name="exampleInputNameMonth"
+                        ng-model="monthDdl"
+                        ng-change="changedMonth()"
+                        ng-options="x as x.name for x in months track by x.id"
+                        class="form-control">
+                    <option value="">--Month--</option>
+                </select>
+
+            </div>
+            <button class="btn btn-primary" ng-click="loadLastProvision()"><i class="fa fa-refresh"></i> Load</button>
+            <button class="btn btn-success" ng-click="saveProvision()"><i class="fa fa-edit"></i> Save</button>
+        </form>
+        <table class="table table-bordered table-hover table-condensed table-striped">
+            <thead>
+                <tr style="font-weight: bold" class="info">
+                    <td style="width:30%">Ledger Name</td>
+                    <td style="width:15%">OpeningAmount</td>
+                    <td style="width:15%">ProvisionAmount</td>
+                    <td style="width:15%">ActualAmount</td>
+                    <td style="width:15%">ClosingAmount</td>
+                    <td style="width:10%"></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="success">
+                    <td>
+                        <div class="form-group">
+                            
+                            <select name="vouchrType" class="form-control" id="vouchrType" tabindex="1"
+                                    move-focus-by-enter-key
+                                    ng-focus="true"
+                                    ng-model="provision.ledgerListDdl"
+                                    ng-options="v.text for v in ledgerList track by v.id"
+                                    ng-required="true">
+                                <option value="">--Select Ledger Name--</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td><input class="form-control" type="number" ng-model="provision.openingAmount" ng-required></td>
+                    <td><input class="form-control" type="number" ng-model="provision.provisionAmount" ng-required></td>
+                    <td><input class="form-control" type="number" ng-model="provision.actualAmount" ng-required></td>
+                    <td>{{provision.openingAmount+provision.provisionAmount-provision.actualAmount}}</td>
+                    <td><a href ng-click="addNewProvisionItem()" class="btn btn-primary btn-block"><i class="fa fa-plus"></i></a></td>
+                </tr>
+                <tr ng-repeat="productObj in users">
+                    <td>{{ productObj.groupName}}
+                    </td>
+                    <td>{{ productObj.OpeningAmount}}
+                    </td>
+                    <td>                
+                        <input class="form-control" type="number" ng-model="productObj.ProvisionAmount" ng-required>                                          
+                    </td>
+                    <td>       
+                        <input class="form-control" type="number" ng-model="productObj.ActualAmount" ng-required>                                        
+                    </td>
+                    <td>                        
+                        {{ productObj.OpeningAmount + productObj.ProvisionAmount - productObj.ActualAmount }}
+                    </td>
+                    <td style="white-space: nowrap">
+                        <a href ng-click="remove($index)" class="btn btn-danger btn-block"><i class="fa fa-times"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>
+
+
+
+
+<!--<page size="A4"></page>
+<page size="A4"></page>
+<page size="A4" layout="portrait"></page>
+<page size="A5"></page>
+<page size="A5" layout="portrait"></page>
+<page size="A3"></page>
+<page size="A3" layout="portrait"></page>-->

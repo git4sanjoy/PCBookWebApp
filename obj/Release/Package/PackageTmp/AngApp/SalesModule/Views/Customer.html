@@ -1,0 +1,337 @@
+﻿<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-users"></i> Customer</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <form name="customerForm" novalidate role="form" class="form-horizontal" id="customerForm" ng-submit="submitCustomerForm()">
+        <div class="box-body">
+            <div class="row">
+                <!--Server side error messageing------>
+                <div class="col-sm-12">
+
+                    <div class="" ng-hide="serverMessage">
+                        <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                            <ul>
+                                <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!--End Server side error messageing-->
+                <!--Client side error messageing------>
+                <div class="col-sm-12">
+                    <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+                        {{message}}
+                    </div>
+                </div>
+                <!--End Client side error messageing-->
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Shop Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : customerForm.ShopName.$invalid && (customerForm.ShopName.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-bank"></i></span>
+                        <input id="ShopName" type="text" class="form-control" name="ShopName" autocomplete="off" tabindex="1" autofocus placeholder="Shop Name"
+                               move-focus-by-enter-key
+                               ng-model="customer.ShopName"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="customerForm.ShopName.$error.required && (customerForm.ShopName.$dirty || submitted)" class="help-block">Shop name is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Customer Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : customerForm.CustomerName.$invalid && (customerForm.CustomerName.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                        <input id="CustomerName" type="text" class="form-control" name="CustomerName" autocomplete="off" tabindex="2" autofocus placeholder="Customer Name"
+                               move-focus-by-enter-key
+                               ng-model="customer.CustomerName"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="customerForm.CustomerName.$error.required && (customerForm.CustomerName.$dirty || submitted)" class="help-block">Show Room name is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>ক্রেতার নাম বাংলা</label>
+                    <div class="input-group" ng-class="{ 'has-error' : customerForm.CustomerNameBangla.$invalid && (customerForm.CustomerNameBangla.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                        <input id="CustomerNameBangla" type="text" class="form-control" name="CustomerNameBangla" autocomplete="off" tabindex="3" placeholder="ক্রেতার নাম বাংলা"
+                               move-focus-by-enter-key
+                               ng-model="customer.CustomerNameBangla"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="customerForm.CustomerNameBangla.$error.required && (customerForm.CustomerNameBangla.$dirty || submitted)" class="help-block">Show Room name is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Sales Manager</label>
+                    <div class="input-group" ng-class="{ 'has-error' : customerForm.SalesManId.$invalid && (customerForm.SalesManId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-user-secret"></i></span>
+                        <select name="SalesManId" class="form-control" tabindex="4"
+                                ng-focus="true"
+                                move-focus-by-enter-key
+                                ng-model="customer.SalesManId"
+                                ng-options="l.SalesManName for l in salesManList track by l.SalesManId"
+                                ng-required="true">
+                            <option value="">--Sales Manager Name--</option>
+                        </select>
+                    </div>
+                    <p ng-show="customerForm.SalesManId.$error.required && (customerForm.SalesManId.$dirty || submitted)" class="help-block">Select Sales Manager Name</p>
+                </div>
+
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                
+                    <!-- Party Address -->
+                    <div class="input-group" ng-class="{ 'has-error' : customerForm.Address.$invalid && (customerForm.Address.$dirty || submitted)}">
+                        <label>Address</label>
+
+                        <input type="text" placeholder="Locations via http://google.com" class="form-control" id="field1" name="Address" tabindex="5" autocomplete="off"
+                               move-focus-by-enter-key
+                               ng-attr-tabindex="2"
+                               ng-model="customer.Address"
+                               typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations">
+                        <i ng-show="loadingLocations" class="fa fa-spin"></i>
+                    </div>
+                    <p ng-show="customerForm.Address.$error.required && (customerForm.Address.$dirty || submitted)" class="help-block">Address is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+
+                    <!-- Party Address Bangla-->
+                    <div class="input-group" ng-class="{ 'has-error' : customerForm.AddressBangla.$invalid && (customerForm.AddressBangla.$dirty || submitted)}">
+                        <label>ঠিকানা বাংলা</label>
+                        <input type="text" placeholder="ঠিকানা বাংলা" class="form-control" id="AddressBangla" name="AddressBangla" tabindex="6" autocomplete="off"
+                               move-focus-by-enter-key
+                               ng-attr-tabindex="2"
+                               ng-model="customer.AddressBangla">
+                        
+                    </div>
+                    <p ng-show="customerForm.AddressBangla.$error.required && (customerForm.AddressBangla.$dirty || submitted)" class="help-block">Address Bangla is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Upazila</label>
+                    <div class="input-group" ng-class="{ 'has-error' : customerForm.UpazilaId.$invalid && (customerForm.UpazilaId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-map-pin"></i></span>
+                        <select name="UnitId" class="form-control" tabindex="7"
+                                ng-focus="true"
+                                move-focus-by-enter-key
+                                ng-model="customer.UpazilaId"
+                                ng-options="l.UpazilaName for l in upazilaList track by l.UpazilaId"
+                                ng-required="true">
+                            <option value="">--Select Upazila Name--</option>
+                        </select>
+                    </div>
+                    <p ng-show="customerForm.UpazilaId.$error.required && (customerForm.UpazilaId.$dirty || submitted)" class="help-block">Select Upazilla Name</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Phone</label>
+                    <div class="input-group" ng-class="{ 'has-error' : customerForm.Phone.$invalid && (customerForm.Phone.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+                        <input id="Phone" type="text" class="form-control" name="Phone" autocomplete="off" tabindex="8" placeholder="Phono No"
+                               move-focus-by-enter-key
+                               ng-model="customer.Phone"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="customerForm.Phone.$error.required && (customerForm.Phone.$dirty || submitted)" class="help-block">Phone is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Email</label>
+                    <div class="input-group" ng-class="{ 'has-error' : customerForm.Email.$invalid && (customerForm.Email.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-at"></i></span>
+                        <input id="Email" type="text" class="form-control" name="Email" autocomplete="off" tabindex="9" placeholder="Email"
+                               move-focus-by-enter-key
+                               ng-model="customer.Email"
+                               />
+                    </div>
+                    <p ng-show="customerForm.Email.$error.required && (customerForm.Email.$dirty || submitted)" class="help-block">Address is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Credit Limit</label>
+                    <div class="input-group" ng-class="{ 'has-error' : customerForm.CreditLimit.$invalid && (customerForm.CreditLimit.$dirty || submitted)}">
+                        <span class="input-group-addon">৳</span>
+                        <input id="Phone" type="number" class="form-control" name="Phone" autocomplete="off" tabindex="10" placeholder="Credit Limit"
+                               move-focus-by-enter-key
+                               ng-model="customer.CreditLimit"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="customerForm.CreditLimit.$error.required && (customerForm.CreditLimit.$dirty || submitted)" class="help-block">Credit Limit is required.</p>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <label for="exampleInputFile">Customer Image</label>
+                    <!-- image-preview-filename input [CUT FROM HERE]-->
+                    <div class="input-group image-preview">
+                        <input type="text" class="form-control image-preview-filename" disabled="disabled"> <!-- don't give a name === doesn't send on POST/GET -->
+                        <span class="input-group-btn">
+                            <!-- image-preview-clear button -->
+                            <button type="button" class="btn btn-default image-preview-clear" style="display:none;">
+                                <span class="glyphicon glyphicon-remove"></span> Clear
+                            </button>
+                            <!-- image-preview-input -->
+                            <div class="btn btn-default image-preview-input">
+                                <span class="glyphicon glyphicon-folder-open"></span>
+                                <span class="image-preview-input-title">Browse</span>
+                                <input upload-file="myFile" type="file" accept="image/jpeg" name="myFile" /> <!-- rename it -->
+                            </div>
+                        </span>
+                    </div><!-- /input-group image-preview [TO HERE]-->
+                </div> 
+                <div class="col-lg-3 col-md-6 col-sm-12 hide">
+                    <button style="margin-top:2em;" type="button" ng-click="doUpload()" class="btn btn-default">Upload</button>
+                </div>
+            </div>
+        </div><!-- /.box-body -->
+        <div class="box-footer no-border">
+            <button type="submit" class="btn btn-success" tabindex="11"
+                    move-focus-by-enter-key
+                    ng-hide="addButton"
+                    ng-disabled="customerForm.$invalid">
+                <i class="fa fa-pencil"></i> Save Customer
+            </button>
+            <button type="button" class="btn btn-warning"
+                    ng-hide="updateButton"
+                    ng-click="update()">
+                <span class="glyphicon glyphicon-edit"></span> Update Customer
+            </button>
+            <button type="button" class="btn btn-default"
+                    ng-hide="cancelButton"
+                    ng-click="cancel()">
+                <span class="glyphicon glyphicon-remove"></span> Clear
+            </button>
+        </div><!-- /.box-footer -->
+    </form>
+</div>
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-users"></i> Customers <small class="label label-success">{{filteredList.length}}</small></h3>
+            <input ng-model="searchText" class="searchTextBox" type="text" value="" placeholder="Filter" style="margin:0em 1em;">
+        </div>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <div class="table-responsive">
+            
+            <table class="table">
+                <tr style="font-weight: bold" class="danger">
+                    <td style="" ng-click="sort('statusName')"><span class="glyphicon sort-icon" ng-show="sortKey=='statusName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
+                    <td style="" ng-click="sort('ShopName')"><span class="glyphicon sort-icon" ng-show="sortKey=='ShopName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ShopName</td>
+                    <td style="" ng-click="sort('name')"><span class="glyphicon sort-icon" ng-show="sortKey=='name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CustomerName</td>
+                    <td style="" ng-click="sort('CreditLimit')"><span class="glyphicon sort-icon" ng-show="sortKey=='CreditLimit'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Limit</td>
+                    <td style="" ng-click="sort('Address')"><span class="glyphicon sort-icon" ng-show="sortKey=='Address'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Address</td>
+                    <td style="" ng-click="sort('groupName')"><span class="glyphicon sort-icon" ng-show="sortKey=='groupName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Upazilla</td>
+                    <td style="" ng-click="sort('Phone')"><span class="glyphicon sort-icon" ng-show="sortKey=='Phone'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Phone</td>
+                    <td style="" ng-click="sort('Email')"><span class="glyphicon sort-icon" ng-show="sortKey=='Email'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Email</td>
+                    <td style="" ng-click="sort('CustomerNameBangla')"><span class="glyphicon sort-icon" ng-show="sortKey=='CustomerNameBangla'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ক্রেতার নাম</td>
+                    <td style="" ng-click="sort('AddressBangla')"><span class="glyphicon sort-icon" ng-show="sortKey=='AddressBangla'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ঠিকানা বাংলা</td>
+                    <td style=""></td>
+                </tr>
+                <tr ng-repeat="user in (filteredList = (users | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                    <td>{{ user.statusName }}</td>
+                    <td>{{ user.ShopName }}</td>
+                    <td>{{ user.name || 'empty' }}</td>
+                    <td>{{ user.CreditLimit }}</td>
+                    <td>{{ user.Address }}</td>
+                    <td>{{ user.groupName }}</td>
+                    <td>{{ user.Phone }}</td>
+                    <td>{{ user.Email }}</td>
+                    <td class="bangla-font">{{ user.CustomerNameBangla }}</td>
+                    <td class="bangla-font">{{ user.AddressBangla }}</td>
+
+                    <td style="white-space: nowrap">
+                        <div class="buttons">
+                            <button class="btn btn-primary btn-sm" ng-click="getSingle(user)"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-danger btn-sm" ng-click="remove(user)"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+            <!--<button class="btn btn-default" ng-click="addUser()">Add row</button>-->
+
+
+
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+        <pagination ng-model="currentPage"
+                    total-items="filteredList.length"
+                    max-size="maxSize"
+                    items-per-page="pageSize"
+                    boundary-links="true">
+        </pagination>
+    </div><!-- /.box-footer -->
+
+</div>
+<script type="text/javascript">
+        $(function () {
+
+
+        });
+
+        $(document).on('click', '#close-preview', function () {
+            $('.image-preview').popover('hide');
+            // Hover befor close the preview
+            $('.image-preview').hover(
+                function () {
+                    $('.image-preview').popover('show');
+                },
+                function () {
+                    $('.image-preview').popover('hide');
+                }
+            );
+        });
+
+        $(function () {
+            // Create the close button
+            var closebtn = $('<button/>', {
+                type: "button",
+                text: 'x',
+                id: 'close-preview',
+                style: 'font-size: initial;',
+            });
+            closebtn.attr("class", "close pull-right");
+            // Set the popover default content
+            $('.image-preview').popover({
+                trigger: 'manual',
+                html: true,
+                title: "<strong>Preview</strong>" + $(closebtn)[0].outerHTML,
+                content: "There's no image",
+                placement: 'bottom'
+            });
+            // Clear event
+            $('.image-preview-clear').click(function () {
+                $('.image-preview').attr("data-content", "").popover('hide');
+                $('.image-preview-filename').val("");
+                $('.image-preview-clear').hide();
+                $('.image-preview-input input:file').val("");
+                $(".image-preview-input-title").text("Browse");
+            });
+            // Create the preview image
+            $(".image-preview-input input:file").change(function () {
+                var img = $('<img/>', {
+                    id: 'dynamic',
+                    width: 250,
+                    height: 200
+                });
+                var file = this.files[0];
+                var reader = new FileReader();
+                // Set preview image into the popover data-content
+                reader.onload = function (e) {
+                    $(".image-preview-input-title").text("Change");
+                    $(".image-preview-clear").show();
+                    $(".image-preview-filename").val(file.name);
+                    img.attr('src', e.target.result);
+                    $(".image-preview").attr("data-content", $(img)[0].outerHTML).popover("show");
+                }
+                reader.readAsDataURL(file);
+            });
+        });
+</script>
