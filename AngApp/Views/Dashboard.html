@@ -131,7 +131,7 @@
                 <p>Credits</p>
             </div>
             <div class="icon">
-                <i class="fa fa-book"></i>
+                <i class="fa fa-edit"></i>
             </div>
 
         </div>
@@ -165,9 +165,244 @@
 
 </div>
 
-<div class="box box-danger" ng-show="userRole=='Show Room Manager' || userRole=='Show Room Sales'">
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Manager' || userRole=='Show Room Sales'">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-map-marker"></i> Sales in Google Map</h3>
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-bar-chart"></i> Managers Monthly Sale and Collection</h3>
+            <div class="form-group">
+                <label for="yearDdlMonthlySales" style="margin-left:1em;">Year</label>
+                <select name="yearDdlMonthlySales" id="yearDdlMonthlySales"
+                        ng-model="yearDdlMonthlySales"
+                        ng-change="changedYearDdlMonthlySales()"
+                        class="form-control">
+                    <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="monthDdlMonthlySales" style="margin-left:1em;">Month</label>
+                <select name="monthDdlMonthlySales" id="monthDdlMonthlySales"
+                        ng-model="monthDdlMonthlySales"
+                        ng-change="changedMonthDdlMonthlySales()"
+                        ng-options="x as x.name for x in months track by x.id"
+                        class="form-control">
+                    <option value="">--Month--</option>
+                </select>
+
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <canvas id="bar" class="chart chart-bar"
+                        chart-data="dataBar" chart-labels="labelsBar"
+                        chart-series="seriesBar"></canvas>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                
+                <div class="table-responsive" ng-show="salesManWiseMonthlySale.length>0">
+                    <table class="table table-bordered table-condensed table-hover">
+                        <tr style="font-weight: bold">
+                            <td style="" ng-click="sort('SalesManName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='SalesManName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
+                            <td style="" ng-click="sort('TotalSaleTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalSaleTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleAmount</td>
+                            <td style="" ng-click="sort('TotalCollectionTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalCollectionTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CollectionAmount</td>
+                        </tr>
+                        <tr ng-repeat="s in (salesManFilteredList = (salesManWiseMonthlySale | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                            <td>{{ s.SalesManName }}</td>
+                            <td style="text-align:right">{{ s.TotalSaleTaka }}</td>
+                            <td style="text-align:right">{{ s.TotalCollectionTaka }}</td>
+                        </tr>
+                        <tr class="text-bold">
+                            <td style="text-align:right">Total:</td>
+                            <td style="text-align:right">{{salesManFilteredList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
+                            <td style="text-align:right">{{salesManFilteredList |sumByKey:'TotalCollectionTaka' | currency:"" :"0"}}</td>
+                        </tr>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /.box -->
+
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Manager' || userRole=='Show Room Sales'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-pie-chart"></i> Managers Yearly Sale and Collection</h3>
+            <div class="form-group">
+                <label for="exampleInputNameYear" style="margin-left:1em;">Year</label>
+                <select name="exampleInputNameYear" id="yearDdlYearlySales"
+                        ng-model="yearDdlYearlySales"
+                        ng-change="changedYearDdlYearlySales()"
+                        class="form-control">
+                    <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                </select>
+            </div>
+
+            
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <canvas id="barYear" class="chart chart-bar"
+                        chart-data="dataBarYear" chart-labels="labelsBarYear"
+                        chart-series="seriesBarYear"></canvas>
+            </div>
+            <div class="col-md-6 col-sm-12">
+
+                <div class="table-responsive" ng-show="salesManWiseYearlySale.length>0">
+                    <table class="table table-bordered table-condensed table-hover">
+                        <tr style="font-weight: bold">
+                            <td style="" ng-click="sort('SalesManName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='SalesManName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
+                            <td style="" ng-click="sort('TotalSaleTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalSaleTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleAmount</td>
+                            <td style="" ng-click="sort('TotalCollectionTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalCollectionTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CollectionAmount</td>
+                        </tr>
+                        <tr ng-repeat="y in (salesManFilteredYearList = (salesManWiseYearlySale | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                            <td>{{ y.SalesManName }}</td>
+                            <td style="text-align:right">{{ y.TotalSaleTaka }}</td>
+                            <td style="text-align:right">{{ y.TotalCollectionTaka }}</td>
+                        </tr>
+                        <tr class="text-bold">
+                            <td style="text-align:right">Total:</td>
+                            <td style="text-align:right">{{salesManFilteredYearList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
+                            <td style="text-align:right">{{salesManFilteredYearList |sumByKey:'TotalCollectionTaka' | currency:"" :"0"}}</td>
+                        </tr>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /.box -->
+
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Manager' || userRole=='Show Room Sales'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-users"></i> Customers Closing Balances <small class="label label-default text-red">{{filteredList.length}}</small></h3>
+            <input ng-model="searchText" class="searchTextBox" type="text" value="" placeholder="Filter" style="margin:0em 1em;">
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-condensed table-hover table-striped">
+                <tr style="font-weight: bold" class="">
+                    <td style="" ng-click="sort('DistrictName')"><span class="glyphicon sort-icon" ng-show="sortKey=='DistrictName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> District</td>
+                    <td style="" ng-click="sort('SalesManName')"><span class="glyphicon sort-icon" ng-show="sortKey=='SalesManName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
+                    <td style="" ng-click="sort('CustomerName')"><span class="glyphicon sort-icon" ng-show="sortKey=='CustomerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CustomerName</td>
+                    <td style="" ng-click="sort('Limit')"><span class="glyphicon sort-icon" ng-show="sortKey=='Limit'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Limit</td>
+                    <td style="" ng-click="sort('SaleCost')"><span class="glyphicon sort-icon" ng-show="sortKey=='SaleCost'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleAmount</td>
+                    <td style="" ng-click="sort('GatOther')"><span class="glyphicon sort-icon" ng-show="sortKey=='GatOther'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Other</td>
+                    <td style="" ng-click="sort('MemoDiscount')"><span class="glyphicon sort-icon" ng-show="sortKey=='MemoDiscount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Discount</td>
+                    <td style="" ng-click="sort('PaymentAmount')"><span class="glyphicon sort-icon" ng-show="sortKey=='PaymentAmount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Payment</td>
+                    <td style="" ng-click="sort('Adjustment')"><span class="glyphicon sort-icon" ng-show="sortKey=='Adjustment'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Adjustment</td>
+                    <td style="" ng-click="sort('Balance')"><span class="glyphicon sort-icon" ng-show="sortKey=='Balance'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Balance</td>
+                    <td style="" ng-click="sort('MemoDate')"><span class="glyphicon sort-icon" ng-show="sortKey=='MemoDate'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> LastMemo</td>
+                    <td style="" ng-click="sort('PaymentDate')"><span class="glyphicon sort-icon" ng-show="sortKey=='PaymentDate'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> LastPayment</td>
+
+                </tr>
+                <tr ng-repeat="user in (filteredList = (customerClosingBalances | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                    <td>{{ user.DistrictName }}</td>
+                    <td>{{ user.SalesManName }}</td>
+
+                    <td>{{ user.CustomerName || 'empty' }}</td>
+                    <td style="text-align:right">{{ user.Limit }}</td>
+                    <td style="text-align:right">{{ user.SaleCost }}</td>
+                    <td style="text-align:right">{{ user.GatOther }}</td>
+                    <td style="text-align:right">{{ user.MemoDiscount }}</td>
+                    <td style="text-align:right">{{ user.PaymentAmount }}</td>
+                    <td style="text-align:right">{{ user.Adjustment }}</td>
+                    <td style="text-align:right">{{ user.Balance }}</td>
+                    <td>{{ user.MemoDate|date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ user.PaymentDate|date: 'dd/MM/yyyy' | hideIfEmpty: 'dd.MM.yyyy'}}</td>
+
+                </tr>
+                <tr class="text-bold">
+                    <td colspan="3" style="text-align:right">Total:</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'Limit' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'SaleCost' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'GatOther' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'MemoDiscount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'PaymentAmount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'Adjustment' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'Balance' |currency:"":"0"}}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+
+        </div>
+        <pagination ng-model="currentPage"
+                    total-items="filteredList.length"
+                    max-size="maxSize"
+                    items-per-page="pageSize"
+                    boundary-links="true">
+        </pagination>
+
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /.box -->
+
+<div class="box box-default" ng-show="userRole=='Show Room Manager' || userRole=='Show Room Sales'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-calendar"></i> Sales on Date</h3>
+            <div class="form-group">
+                <input class="form-control" type="text" tabindex="" name="saleDate" id="saleDate" 
+                        ng-change="dateSaleInGoogleMap()"
+                        move-focus-by-enter-key
+                        ng-focus="FromDatePickerOpen()"
+                        datepicker-localdate
+                        datepicker-popup="dd/MM/yyyy"
+                        is-open="fromDatePickerIsOpen"
+                        ng-click="FromDatePickerOpen()"
+                        ng-model="saleDate" />
+                   
+            </div>
+            <div class="form-group">
+                <label for="" style="margin-left:1em;">Manager</label>
+                <select name="SalesManId" class="form-control" tabindex=""
+                        move-focus-by-enter-key
+                        ng-model="customer.SalesManId"
+                        ng-options="l.SalesManName for l in salesManList track by l.SalesManId">
+                    <option value="">--Sales Manager Name--</option>
+                </select>
+            </div>
+        </div>
+
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -177,102 +412,78 @@
     <div class="box-body">
         <div class="row">
             <div class="col-md-6 col-sm-12">
-                <div class="panel panel-info">
-                    <div class="panel-heading"><i class="fa fa-users"></i></div>
-                    <div class="panel-body">
-                        <!--The calendar -->
-                        <style>
-                            #map {
-                                height: 600px;
-                            }
+                <h4 class="text-red">Districts wise Sales: {{saleDate| date : "dd-MM-yyyy"}}</h4>
+                <div class="table-responsive" ng-show="dateSalesinMapList.length>0">
+                    <table class="table table-bordered table-condensed table-hover">
+                        <tr style="font-weight: bold">
+                            <td style="" ng-click="sort('DistrictName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='DistrictName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> District</td>
+                            <td style="" ng-click="sort('TotalSaleTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalSaleTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleAmount</td>
+                        </tr>
+                        <tr ng-repeat="b in (dateSalesinMapFilteredList = (dateSalesinMapList | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                            <td>{{ b.DistrictName }}</td>
+                            <td style="text-align:right">{{ b.TotalSaleTaka }}</td>
+                        </tr>
+                        <tr class="text-bold">
+                            <td style="text-align:right">Total:</td>
+                            <td style="text-align:right">{{dateSalesinMapFilteredList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
+                        </tr>
+                    </table>
 
-                            #floating-panel {
-                                position: absolute;
-                                top: 5px;
-                                left: 20%;
-                                z-index: 5;
-                                background-color: #fff;
-                                padding: 5px;
-                                border: 1px solid #999;
-                                text-align: center;
-                                font-family: 'Roboto','sans-serif';
-                                line-height: 13px;
-                                padding-left: 10px;
-                                color: #000000;
-                                padding-right: 10px;
-                            }
-
-                            #floating-panel {
-                                margin-left: -52px;
-                            }
-                        </style>
-
-                        <div id="floating-panel">
-                            <button id="drop" onclick="drop()">Drop Sales</button>
-                        </div>
-                        <div id="map"></div>
-                    </div>
                 </div>
             </div>
             <div class="col-md-6 col-sm-12">
-                <div class="panel panel-info">
-                    <div class="panel-heading"><i class="fa fa-industry"></i> Factories Balance </div>
-                    <div class="panel-body">
-                        <div class="table-responsive">
-
-                            <style type="text/css">
-                                #map_bd {
-                                    height: 600px;
-                                }
-                            </style>
-
-                            <div id="map_bd"></div>
-                            <div>
-                                <h3> Enter an adress and press the button</h3>
-
-                                <input id="address" type="text" placeholder="Enter address here" />
-                                <button id="btn">Get LatLong</button>
-                                <div>
-                                    <p>
-                                        Latitude:
-                                        <input type="text" id="latitude" readonly />
-                                    </p>
-                                    <p>
-                                        Longitude:
-                                        <input type="text" id="longitude" readonly />
-                                    </p>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!--The GoogleMap -->
+                <style>
+                    #map {
+                        height: 600px;
+                    }
+                </style>
+                <h4 class="text-red">Sales: {{today| date : "dd-MM-yyyy"}}</h4>
+                <div id="map"></div>
+                
             </div>
         </div>
     </div><!-- /.box-body -->
 
-    <div class="box-footer no-border">
 
-    </div>
     <!-- /.box-footer -->
 </div>
 <!--End Sales Manager-->
 
-
 <script>
-    // If you're adding a number of markers, you may want to drop them on the map
-    // consecutively rather than all at once. This example shows how to use
-    // window.setTimeout() to space your markers' animation.
 
-    var neighborhoods = [
-        { lat: 23.810332, lng: 90.41251809999994 },
-        { lat: 22.6737735, lng: 89.39665809999997 },
-        { lat: 22.6602436, lng: 89.78954780000004 },
-        { lat: 22.3586174, lng: 90.33172030000003 },
-        { lat: 24.7105776, lng: 88.94138650000002 },
-        { lat: 24.8949294, lng: 91.86870629999999 },
-    ];
+    (function () {
 
+        //Onload Document
+
+    })();
+
+    var districtSaleList = [];
+
+    //Get Current date
+    var date = new Date();
+    var yyyy = date.getFullYear().toString();
+    var mm = (date.getMonth() + 1).toString();
+    var dd = date.getDate().toString();
+    var mmChars = mm.split('');
+    var ddChars = dd.split('');
+    var saleDate = ( yyyy + '-' + (mmChars[1] ? mm : "0" + mmChars[0]) + '-' + (ddChars[1] ? dd : "0" + ddChars[0]));
+
+    //End Current Date
+    $.ajax({
+        url: '/Dashboard/GetDateSalesInMapJQueryCall/?Date=' + saleDate,
+        type: "GET",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({Date :'2018-02-03', SalesManId: 0}),
+        success: function (data) {
+            var arr = [];           
+            $.each(data, function (index, value) {
+                arr.push({ place: JSON.stringify(value.DistrictName), TotalSaleTaka: JSON.stringify(value.TotalSaleTaka) });
+            })
+            districtSaleList = arr;
+        },
+    });
     var markers = [];
     var map;
 
@@ -281,125 +492,45 @@
             zoom: 7,
             center: { lat: 23.684994, lng: 90.35633099999995 }
         });
-
-
-
-        var dhaka = { lat: 23.684994, lng: 90.35633099999995 };
-        var my_map = new google.maps.Map(document.getElementById('map_bd'), {
-            zoom: 7,
-            center: dhaka
-        });
-
-        var contentString = '<div id="content">' +
-            '<div id="siteNotice">' +
-            '</div>' +
-            '<h1 id="firstHeading" class="firstHeading">Dhaka</h1>' +
-            '<div id="bodyContent">' +
-            '<p><b>dhaka</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-            'sandstone rock formation ' +
-            'Heritage Site.</p>' +
-            '<p>Site: dhaka, <a href="https://en.wikipedia.org/w/index.php?title=dhaka&oldid=297882194">' +
-            'https://en.wikipedia.org/w/index.php?title=dhaka</a> ' +
-            '(June 22, 2009).</p>' +
-            '</div>' +
-            '</div>';
-
-        var my_infowindow = new google.maps.InfoWindow({
-            content: contentString
-        });
-
-        var my_marker = new google.maps.Marker({
-            position: dhaka,
-            map: my_map,
-            title: 'Dhaka Sales'
-        });
-        my_marker.addListener('click', function () {
-            my_infowindow.open(my_map, my_marker);
-        });
-
+        setMarkers(map, districtSaleList)
     }
 
 
-    function drop() {
-        clearMarkers();
-        for (var i = 0; i < neighborhoods.length; i++) {
-            addMarkerWithTimeout(neighborhoods[i], i * 200);
-        }
-    }
+    function setMarkers(map, locations) {
+        var marker, i
+        var geocoder = new google.maps.Geocoder();
+        for (idx in locations) {
+            var location = locations[idx];
+            var address = location['place'];
+            geocoder.geocode({ 'address': address }, function (location, idx) {
+                return (function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        var latlng = results[0].geometry.location;
+                        var plaseObj = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng() };
+                        //console.log(location);
+                        //console.log(idx);
+                        var marker = new google.maps.Marker({
+                            map: map, title: location.place, position: plaseObj
+                        });
+                        //map.setCenter(marker.getPosition())
 
-    function addMarkerWithTimeout(position, timeout) {
-        window.setTimeout(function () {
-            markers.push(new google.maps.Marker({
-                position: position,
-                map: map,
-                animation: google.maps.Animation.DROP
-            }));
-        }, timeout);
-    }
+                        var content = '<h4>' + location.place + ': ' + location.TotalSaleTaka + '</h4>';
+                        var infowindow = new google.maps.InfoWindow()
+                        google.maps.event.addListener(marker, 'click', (function (marker, content, infowindow) {
+                            return function () {
+                                infowindow.setContent(content);
+                                infowindow.open(map, marker);
+                            };
+                        })(marker, content, infowindow));
 
-    function clearMarkers() {
-        for (var i = 0; i < markers.length; i++) {
-            markers[i].setMap(null);
-        }
-        markers = [];
-    }
-
-    function placeDetails() {
-        var infowindow = new google.maps.InfoWindow();
-        var service = new google.maps.places.PlacesService(map);
-
-        service.getDetails({
-            placeId: 'ChIJN1t_tDeuEmsRUsoyG83frY4'
-        }, function (place, status) {
-            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: place.geometry.location
+                    }
                 });
-                google.maps.event.addListener(marker, 'click', function () {
-                    infowindow.setContent('<div><strong>' + place.name + '</strong><br>' +
-                        'Place ID: ' + place.place_id + '<br>' +
-                        place.formatted_address + '</div>');
-                    infowindow.open(map, this);
-                });
-            }
-        });
-    }
-
-    /* This showResult function is used as the callback function*/
-    //window.initMap = function () {
-    //    //...
-    //}
-
-    function showResult(result) {
-        document.getElementById('latitude').value = result.geometry.location.lat();
-        document.getElementById('longitude').value = result.geometry.location.lng();
-    }
-
-    function getLatitudeLongitude(callback, address) {
-        // If adress is not supplied, use default value 'Ferrol, Galicia, Spain'
-        address = address || 'Ferrol, Galicia, Spain';
-        // Initialize the Geocoder
-        geocoder = new google.maps.Geocoder();
-        if (geocoder) {
-            geocoder.geocode({
-                'address': address
-            }, function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    callback(results[0]);
-                }
-            });
+            }(location, idx));
         }
     }
 
-    var button = document.getElementById('btn');
-
-    button.addEventListener("click", function () {
-        var address = document.getElementById('address').value;
-        getLatitudeLongitude(showResult, address)
-    });
+    //document.getElementById("saleDate").onchange()
 </script>
-
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9-411AYtIuknkcqsKJabhUDc5-L-9XEY&callback=initMap&language=bn&region=BD" ">
 </script>

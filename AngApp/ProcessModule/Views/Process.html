@@ -1,0 +1,221 @@
+﻿
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-users"></i> Process</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <!--Server side error messageing------>
+    <div class="col-sm-12">
+        <div class="" ng-hide="serverMessage">
+            <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                <ul>
+                    <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--End Server side error messageing-->
+    <!--Client side error messageing------>
+    <div class="col-sm-12">
+        <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+            {{message}}
+        </div>
+    </div>
+    <!--End Client side error messageing-->
+    <form name="entryForm" novalidate role="form" class="form-horizontal" id="entryForm">
+        <div class="box-body">
+            <div class="row1">
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Process Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.ProcessListId.$invalid && (entryForm.ProcessListId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-ship"></i></span>
+                        <select class="form-control" data-val="true" data-ng-options="item.ProcessListId as item.ProcessListName for item in ProsessList" id="ProcessListId" name="ProcessListId" ng-model="process.ProcessListId" ng-required="true"></select>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Process Date</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.ProcessDate.$invalid && (entryForm.ProcessDate.$dirty || submitted)}">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>                        
+                        <input name="ProcessDate" type="text" class="form-control" placeholder="Pocess Date" autocomplete="off" dateformat="dd/MM/yyyy" tabindex="2"
+                               ng-focus="IssueDatePickerOpen()"
+                               move-focus-by-enter-key
+                               datepicker-localdate
+                               datepicker-popup="dd/MM/yyyy"
+                               is-open="processDatePickerIsOpen"
+                               ng-click="ProcessDatePickerOpen()"
+                               ng-model="process.ProcessDate"
+                               ng-required="true" />
+                        <p ng-show="entryForm.ProcessDate.$error.required && (entryForm.ProcessDate.$dirty || submitted)" class="help-block">Process Date is required.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Lot No.</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-shopping-cart"></i></span>
+                        <input id="LotNo" type="text" class="form-control" name="LotNo" placeholder="Lot No." autocomplete="off" tabindex="3" autofocus
+                               move-focus-by-enter-key
+                               ng-model="process.LotNo">
+                    </div>
+                </div>                
+            </div>
+            <div class="row2">
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Product Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.PurchasedProductId.$invalid && (entryForm.PurchasedProductId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-ship"></i></span>
+                        <select class="form-control" data-val="true" data-ng-options="item.PurchasedProductId as item.PurchasedProductName for item in PurchasedProductList" id="PurchasedProductId" name="PurchasedProductId" ng-model="process.PurchasedProductId" ng-required="true"></select>
+                    </div>
+                </div>               
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Delivery Quantity</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-paste"></i></span>
+                        <input id="DeliveryQuantity" type="text" class="form-control" name="DeliveryQuantity" autocomplete="off" tabindex="6" autofocus
+                               move-focus-by-enter-key
+                               ng-model="process.DeliveryQuantity">
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Location Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.ProcesseLocationId.$invalid && (entryForm.ProcesseLocationId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-map-marker"></i></span>
+                        <select class="form-control" data-val="true" data-ng-options="item.ProcesseLocationId as item.ProcesseLocationName for item in ProcesseLocationList" id="ProcesseLocationId" name="ProcesseLocationId" ng-model="process.ProcesseLocationId" ng-required="true"></select>
+                    </div>
+                </div>              
+            </div>           
+            <div class="row3"> 
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Conversion Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.ConversionId.$invalid && (entryForm.ConversionId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-ship"></i></span>
+                        <select class="form-control" data-val="true" data-ng-options="item.ConversionId as item.ConversionName for item in ConversionList" id="ConversionId" name="ConversionId" ng-model="process.ConversionId" ng-required="true"></select>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>S/E Quantity</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-money"></i></span>
+                        <input id="SE" type="text" class="form-control" name="Rate" autocomplete="off" tabindex="7" autofocus
+                               move-focus-by-enter-key
+                               ng-model="process.SE">
+                    </div>
+                </div>
+                <!--<div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Show Room Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.ShowRoomId.$invalid && (entryForm.ShowRoomId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-institution"></i></span>
+                        <select class="form-control" data-val="true" data-ng-options="item.ShowRoomId as item.ShowRoomName for item in ShowRoomList" id="ShowRoomId" name="ShowRoomId" ng-model="process.ShowRoomId" ng-required="true"></select>
+                    </div>
+                </div>-->
+            </div>
+            <div class="row4" hidden>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Rate</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-money"></i></span>
+                        <input id="Rate" type="text" class="form-control" name="Rate" autocomplete="off" tabindex="8" autofocus
+                               move-focus-by-enter-key
+                               ng-model="process.Rate">
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Amount</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-money"></i></span>
+                        <input id="Amount" type="text" class="form-control" name="Amount" autocomplete="off" tabindex="9" autofocus
+                               move-focus-by-enter-key
+                               ng-model="process.Amount">
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Discount</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-money"></i></span>
+                        <input id="Discount" type="text" class="form-control" name="Discount" autocomplete="off" tabindex="10" autofocus
+                               move-focus-by-enter-key
+                               ng-model="process.Discount">
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.box-body -->
+
+        <div class="box-footer no-border">
+            <div class="form-actions text-center">
+                <div class="form-group" style="margin-bottom: 0">
+                    <button type="button" ng-click="Save(process)" ng-disabled="entryForm.$invalid" class="btn btn-success uppercase saveButton">Save</button>
+                    <button type="button" ng-click="Update(process)" ng-disabled="entryForm.$invalid" class="btn btn-success uppercase updateButton">Update</button>
+                    <button type="button" ng-click="Cancel()" class="btn btn-default uppercase cancelButton">Cancel</button>
+                </div>
+            </div>
+        </div><!-- /.box-footer -->
+
+    </form>
+</div>
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-users"></i> Process List</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <table class="table table-bordered table-hover table-condensed">
+            <thead>
+                <tr style="font-weight: bold" class="danger">
+                    <td class="hidden" style="width:20%">Id</td>
+                    <td style="width:20%">Process Name</td>
+                    <td style="width:20%">Process Date</td>
+                    <td style="width:20%">Lot No.</td>
+                    <td style="width:20%">Product Name</td>
+                    <td style="width:20%">Receive Quantity</td>
+                    <td style="width:20%">Delivery Quantity</td>
+                    <!--<td style="width:20%">Rate</td>
+                    <td style="width:20%">Amount</td>
+                    <td style="width:20%">Discount</td>-->
+                    <td style="width:20%">Location Name</td>
+                    <td style="width:20%">Conversion Name</td>
+                    <td style="width:20%">Show Room Name</td>
+                    <td colspan="2" style="width:20%">Action</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in List">                   
+                    <td>{{item.ProcessListName}}</td>
+                    <td>{{item.ProcessDate |  date: 'dd/MM/yyyy'}}</td>
+                    <td>{{item.LotNo}}</td>
+                    <td>{{item.PurchasedProductName}}</td>                    
+                    <td>{{item.ReceiveQuantity}}</td>
+                    <td>{{item.DeliveryQuantity}}</td>
+                    <!--<td>{{item.Rate}}</td>
+                    <td>{{item.Amount | currency : "":0}}</td>
+                    <td>{{item.Discount}}</td>-->
+                    <td>{{item.ProcesseLocationName}}</td>
+                    <td>{{item.ConversionName}}</td>
+                    <td>{{item.ShowRoomName}}</td>
+                    <td class="text-center"><i class="fa fa-edit" ng-click="Edit(item)" data-toggle="tooltip" data-placement="left" title="Edit"></i></td>
+                    <td class="text-center"><i class="fa fa-trash-o" ng-click="Delete(item)" data-toggle="tooltip" data-placement="right" title="Delete"></i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>
+
+
+
+

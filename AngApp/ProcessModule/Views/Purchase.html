@@ -1,0 +1,214 @@
+﻿
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-users"></i> Purchase</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <!--Server side error messageing------>
+    <div class="col-sm-12">
+        <div class="" ng-hide="serverMessage">
+            <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                <ul>
+                    <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--End Server side error messageing-->
+    <!--Client side error messageing------>
+    <div class="col-sm-12">
+        <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+            {{message}}
+        </div>
+    </div>
+    <!--End Client side error messageing-->
+    <form name="entryForm" novalidate role="form" class="form-horizontal" id="entryForm">
+        <div class="box-body">
+            <div class="row1">
+
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Purchase Date</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.PurchaseDate.$invalid && (entryForm.PurchaseDate.$dirty || submitted)}">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        <input name="PurchaseDate" type="text" class="form-control" placeholder="Purchase Date" autocomplete="off" dateformat="dd/MM/yyyy" tabindex="2"
+                               ng-focus="purchaseDatePickerOpen()"
+                               move-focus-by-enter-key
+                               datepicker-localdate
+                               datepicker-popup="dd/MM/yyyy"
+                               is-open="purchaseDatePickerOpen"
+                               ng-click="PurchaseDatePickerOpen()"
+                               ng-model="purchase.PurchaseDate"
+                               ng-required="true" />
+                        <p ng-show="entryForm.ProcessDate.$error.required && (entryForm.ProcessDate.$dirty || submitted)" class="help-block">Process Date is required.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>PChallan No</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-shopping-cart"></i></span>
+                        <input id="PChallanNo" type="text" class="form-control" name="PChallanNo" placeholder="PChallan No." autocomplete="off" tabindex="3" autofocus
+                               move-focus-by-enter-key
+                               ng-model="purchase.PChallanNo">
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Quantity</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.Quantity.$invalid && (entryForm.Quantity.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-ship"></i></span>
+                        <input id="Quantity" type="text" class="form-control" name="Quantity" placeholder="Quantity" autocomplete="off" tabindex="1" autofocus
+                               move-focus-by-enter-key
+                               ng-model="purchase.Quantity">
+
+                    </div>
+                    <!--<p ng-show="entryForm.SupplierName.$error.required && (entryForm.SupplierName.$dirty || submitted)" class="help-block">Main Category name is required.</p>-->
+                </div>
+
+            </div>
+            <div class="row2">
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>SE</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.SE.$invalid && (entryForm.SE.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-ship"></i></span>
+                        <input id="SE" type="text" class="form-control" name="SE" placeholder="SE" autocomplete="off" tabindex="1" autofocus
+                               move-focus-by-enter-key
+                               ng-model="purchase.SE"
+                               ng-required="true">
+                    </div>
+                    <!--<p ng-show="entryForm.SupplierName.$error.required && (entryForm.SupplierName.$dirty || submitted)" class="help-block">Main Category name is required.</p>-->
+                </div>
+
+
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Amount</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-money"></i></span>
+                        <input id="Amount" type="text" class="form-control" name="Amount" placeholder="Amount" autocomplete="off" tabindex="8" autofocus
+                               move-focus-by-enter-key
+                               ng-model="purchase.Amount">
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Discount</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-money"></i></span>
+                        <input id="Discount" type="text" class="form-control" name="Discount" placeholder="Discount" autocomplete="off" tabindex="9" autofocus
+                               move-focus-by-enter-key
+                               ng-model="purchase.Discount">
+                    </div>
+                </div>
+            </div>
+            <div class="row3">
+
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Purchased Product</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.PurchasedProductId.$invalid && (entryForm.PurchasedProductId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-codepen"></i></span>
+                        <select class="form-control" data-val="true" data-ng-options="item.PurchasedProductId as item.PurchasedProductName for item in PurchasedProductList" id="PurchasedProductId" name="PurchasedProductId" ng-model="purchase.PurchasedProductId" ng-required="true">
+                            <option value="">Select Product</option>
+                        </select>
+                    </div>
+                    <!--<p ng-show="entryForm.ProductTypeId.$error.required && (entryForm.ProductTypeId.$dirty || submitted)" class="help-block">Product type is required.</p>-->
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Supplier</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.SupplierId.$invalid && (entryForm.SupplierId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-codepen"></i></span>
+                        <select class="form-control" data-val="true" data-ng-options="item.SupplierId as item.SupplierName for item in SupplierList" id="SupplierId" name="SupplierId" ng-model="purchase.SupplierId" ng-required="true">
+                            <option value="">Select Supplier</option>
+                        </select>
+                    </div>
+                    <!--<p ng-show="entryForm.ProductTypeId.$error.required && (entryForm.ProductTypeId.$dirty || submitted)" class="help-block">Product type is required.</p>-->
+                </div>
+                <!--<div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Show Room</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.ShowRoomId.$invalid && (entryForm.ShowRoomId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-ship"></i></span>
+                        <select class="form-control" data-val="true" data-ng-options="item.ShowRoomId as item.ShowRoomName for item in ShowRoomList" id="ShowRoomId" name="ShowRoomId" ng-model="purchase.ShowRoomId" ng-required="true">
+                            <option value="">Select Show Room</option>
+                        </select>
+                    </div>
+                    <p ng-show="entryForm.ProductTypeId.$error.required && (entryForm.ProductTypeId.$dirty || submitted)" class="help-block">Product type is required.</p>
+                </div>-->
+
+            </div>
+        </div><!-- /.box-body -->
+
+        <div class="box-footer no-border">
+            <div class="form-actions text-left">
+                <div class="form-group" style="margin-bottom: 0">
+                    <button type="button" ng-click="Save(purchase)" ng-disabled="entryForm.$invalid" class="btn btn-success uppercase saveButton">Save</button>
+                    <button type="button" ng-click="Update(purchase)" ng-disabled="entryForm.$invalid" class="btn btn-success uppercase updateButton">Update</button>
+                    <button type="button" ng-click="Cancel()" class="btn btn-default uppercase cancelButton">Cancel</button>
+                </div>
+            </div>
+        </div><!-- /.box-footer -->
+
+    </form>
+</div>
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-users"></i> Purchase List</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <table class="table table-bordered table-hover table-condensed">
+            <thead>
+                <tr style="font-weight: bold" class="danger">
+                    <td style="width:12%">Purchase Date</td>
+                    <td style="width:12%">PChallan No</td>
+                    <td style="width:10%">Quantity</td>
+                    <td style="width:10%">SE</td>
+                    <td style="width:10%">Amount</td>
+                    <td style="width:10%">Discount</td>
+                    <td style="width:17%">Supplier</td>
+                    <td style="width:15%">Purchased Product</td>
+                    <!--<td style="width:14%">Show Room</td>-->
+                    <td colspan="2" style="width:100%">Action</td>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in List">
+                    <td>{{item.PurchaseDate |  date: 'dd/MM/yyyy'}}</td>
+                    <td>{{item.PChallanNo}}</td>
+                    <td>{{item.Quantity}}</td>
+                    <td>{{item.SE}}</td>
+                    <td>{{item.Amount | currency : "":0}}</td>
+                    <td>{{item.Discount | currency : "":0}}</td>
+                    <td>{{item.SupplierName}}</td>
+                    <td>{{item.PurchasedProductName}}</td>
+                    <!--<td>{{item.ShowRoomName}}</td>-->
+                    <td> <button class="btn btn-primary btn-sm" ng-click="Edit(item)"data-toggle="tooltip"><i class="glyphicon glyphicon-edit"></i></button></td>
+                    <td> <button class="btn btn-primary btn-sm" ng-click="Delete(item)" data-toggle="tooltip"><i class="glyphicon glyphicon-trash"></i></button></td>
+                    <!--<td class="text-center"><i class="fa fa-edit" ng-click="Edit(item)" data-toggle="tooltip" data-placement="left" title="Edit"></i></td>-->
+                    <!--<td class="text-center"><i class="fa fa-trash-o" ng-click="Delete(item)" data-toggle="tooltip" data-placement="right" title="Delete"></i></td>-->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>
+
+
+
+
+
+
+

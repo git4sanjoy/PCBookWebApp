@@ -314,7 +314,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
                 var innerContents = document.getElementById('printable-memo-bangla').innerHTML;
                 var popupWinindow = window.open('', '_blank', 'width=900,height=700,scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no');
                 popupWinindow.document.open();
-                popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="http://books.pakizagroup.com/Content/Site.css" /></head><body onload="window.print()">' + innerContents + '</html>');
+                popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="http://localhost:12005/Content/Site.css" /></head><body onload="window.print()">' + innerContents + '</html>');
                 popupWinindow.document.close();
 
                 //Rset Form
@@ -459,7 +459,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
         var innerContents = document.getElementById(printSectionId).innerHTML;
         var popupWinindow = window.open('', '_blank', 'width=900,height=700,scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no');
         popupWinindow.document.open();
-        popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="http://books.pakizagroup.com/Content/Site.css" /></head><body onload="window.print()">' + innerContents + '</html>');
+        popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="http://localhost:12005/Content/Site.css" /></head><body onload="window.print()">' + innerContents + '</html>');
         popupWinindow.document.close();
     };
     $scope.printMemoWithTableBorder = function (printSectionId) {
@@ -498,8 +498,8 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
 
     //Toster
     var last = {
-        bottom: false,
-        top: true,
+        bottom: true,
+        top: false,
         left: false,
         right: true
     };
@@ -529,9 +529,9 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
         //$("#overlay").show();
         $mdToast.show(
             $mdToast.simple()
-                .textContent('Simple Toast!')
+                .textContent('Invoice saved successfully.')
                 .position(pinTo)
-                .hideDelay(90000)
+                .hideDelay(3000)
         );
     };
     $scope.showActionToast = function () {

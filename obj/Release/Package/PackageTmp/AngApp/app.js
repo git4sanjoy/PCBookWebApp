@@ -43,7 +43,15 @@ app.filter('sumByKey', function () {
         return sum;
     };
 });
-
+app.filter('hideIfEmpty', function ($filter) {
+    return function (dateString, format) {
+        if (dateString === '01/01/0001') {
+            return "";
+        } else {
+            return $filter('date')(dateString, format.toString());
+        }
+    };
+});
 app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
 
     function ($locationProvider, $routeProvider, $ariaProvider) {
@@ -64,15 +72,12 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
             controller: 'homeController'
         })
         .when('/Dashboard', {
-            templateUrl: '/AngApp/BookModule/Views/Dashboard.html',
+            templateUrl: '/AngApp/Views/Dashboard.html',
             controller: 'dashboardController'
         }) 
-        .when('/Bookkeeping', {
-            templateUrl: '/AngApp/BookModule/Views/Bookkeeping.html',
-            controller: 'BookkeepingController'
-        })
 
-            .when('/Invoice', { // For Home Page
+
+            .when('/Invoice', { // For Sales Management
                 templateUrl: '/AngApp/SalesModule/Views/Cart.html',
                 controller: 'CartController'
             })
@@ -84,7 +89,7 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
                 templateUrl: '/AngApp/SalesModule/Views/SubCategory.html',
                 controller: 'SubCategoryController'
             })
-            .when('/Product', {
+            .when('/Products', {
                 templateUrl: '/AngApp/SalesModule/Views/Product.html',
                 controller: 'ProductController'
             })
@@ -116,6 +121,12 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
                 templateUrl: '/AngApp/SalesModule/Views/SalesReport.html',
                 controller: 'SalesReportController'
             })
+
+
+        .when('/Bookkeeping', {// For Accounts  Module Management
+            templateUrl: '/AngApp/BookModule/Views/Bookkeeping.html',
+            controller: 'BookkeepingController'
+        })
         .when('/Primaries', {
             templateUrl: '/AngApp/BookModule/Views/Primaries.html',
             controller: 'PrimariesController'
@@ -168,7 +179,9 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
             templateUrl: '/AngApp/BankModule/Views/CheckBooks.html',
             controller: 'CheckBooksController'
         })
-        .when('/Roles', {
+
+
+        .when('/Roles', {// Admin Managements
             templateUrl: '/AngApp/Views/Roles.html',
             controller: 'RolesController'
         })
@@ -196,7 +209,9 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
             templateUrl: '/AngApp/Views/Accounts.html',
             controller: 'AccountsController'
         })
-        .when('/About', {
+
+
+        .when('/About', { // Anonymous User
             templateUrl: '/AngApp/Views/About.html',
             controller: 'AboutController'
         })

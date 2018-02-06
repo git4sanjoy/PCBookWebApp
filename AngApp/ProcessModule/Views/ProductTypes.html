@@ -1,0 +1,144 @@
+﻿
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-users"></i> Product Type</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <!--Server side error messageing------>
+    <div class="col-sm-12">
+        <div class="" ng-hide="serverMessage">
+            <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                <ul>
+                    <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--End Server side error messageing-->
+    <!--Client side error messageing------>
+    <div class="col-sm-12">
+        <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+            {{message}}
+        </div>
+    </div>
+    <!--End Client side error messageing-->
+    <form name="entryForm" novalidate role="form" class="form-horizontal" id="entryForm">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Product Type Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : entryForm.ProductTypeName.$invalid && (entryForm.ProductTypeName.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-ship"></i></span>
+                        <input id="SupplierName" type="text" class="form-control" name="ProductTypeName" autocomplete="off" tabindex="1" autofocus
+                               move-focus-by-enter-key
+                               ng-model="productType.ProductTypeName"
+                               ng-required="true">
+                    </div>
+                    <!--<p ng-show="entryForm.ProductTypeName.$error.required && (entryForm.ProductTypeName.$dirty || submitted)" class="help-block">Main Category name is required.</p>-->
+                </div> 
+                
+                <div class="col-lg-3 col-md-6 col-sm-12">  
+                    <label> </label>
+                        <div class="form-group" style="margin-top: 5px">
+                            <button type="button" ng-click="Save(productType)" ng-disabled="entryForm.$invalid" class="btn btn-success uppercase saveButton">Save</button>
+                            <button type="button" ng-click="UpdateInput(productType)" ng-disabled="entryForm.$invalid" class="btn btn-success uppercase updateButton">Update</button>
+                            <button type="button" ng-click="Cancel()" class="btn btn-default uppercase cancelButton">Cancel</button>
+                        </div>                    
+                </div>  
+                
+            </div>
+        </div><!-- /.box-body -->
+
+        <!--<div class="box-footer no-border">
+            <div class="form-actions text-center">
+                <div class="form-group" style="margin-bottom: 0">
+                    <button type="button" ng-click="Save(productType)" ng-disabled="entryForm.$invalid" class="btn btn-success uppercase saveButton">Save</button>
+                    <button type="button" ng-click="Update(productType)" ng-disabled="entryForm.$invalid" class="btn btn-success uppercase updateButton">Update</button>
+                    <button type="button" ng-click="Cancel()" class="btn btn-default uppercase cancelButton">Cancel</button>
+                </div>
+            </div>
+        </div>--><!-- /.box-footer -->
+
+    </form>
+</div>
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-users"></i> Product Type List</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <!--<div class="box-body">
+        <table class="table table-bordered table-hover table-condensed">
+            <thead>
+                <tr style="font-weight: bold" class="danger">
+                    <td class="hidden" style="width:20%">Id</td>
+                    <td style="width:20%">Product Type Name</td>                   
+                    <td colspan="2" style="width:20%">Action</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in List">
+                    <td class="hidden">{{item.ProductTypeId}}</td>
+                    <td>{{item.ProductTypeName}}</td>                    
+                    <td class="text-center"><i class="fa fa-edit" ng-click="Edit(item)" data-toggle="tooltip" data-placement="left" title="Edit"></i></td>
+                    <td class="text-center"><i class="fa fa-trash-o" ng-click="Delete(item)" data-toggle="tooltip" data-placement="right" title="Delete"></i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>-->
+    <div class="box-body">
+        <table class="table table-bordered table-hover table-condensed">
+            <tr style="font-weight: bold" class="danger">               
+                <td style="width:20%">Product Type Name</td>
+                <td colspan="2" style="width:20%">Action</td>
+            </tr>
+            <tr ng-repeat="item in List">
+                <td>
+                    <!-- editable buyername (text with validation) -->
+                    <span editable-text="item.ProductTypeName" e-name="ProductTypeName" e-form="rowform" onbeforesave="checkName($data, item.id)" e-required>
+                        {{ item.ProductTypeName || 'empty' }}
+                    </span>
+                </td>
+               
+
+                <td style="white-space: nowrap">
+                    <!-- form -->
+                    <form editable-form name="rowform" onbeforesave="Update($data, item.ProductTypeId)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == item">
+                        <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-warning">
+                            <i class="fa fa-pencil"></i> Update
+                        </button>
+                        <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </form>
+                    <div class="buttons" ng-show="!rowform.$visible">
+                        <button class="btn btn-primary btn-sm" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" ng-click="Delete(item)"><i class="glyphicon glyphicon-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>
+
+
+
+

@@ -120,6 +120,10 @@ D:\apps\PCBookWebApp\PCBookWebApp\bin\CrystalDecisions.ReportAppServer.CommonObj
 D:\apps\PCBookWebApp\PCBookWebApp\bin\CrystalDecisions.ReportAppServer.ObjectFactory.dll
 D:\apps\PCBookWebApp\PCBookWebApp\bin\CrystalDecisions.ReportAppServer.CommonControls.dll
 D:\apps\PCBookWebApp\PCBookWebApp\bin\stdole.dll
+D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.Migrations.InitialCreate.resources
+D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.Migrations.AddAdjustmentBfToPayments.resources
+D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.csproj.GenerateResource.Cache
+D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.csproj.CoreCompileInputs.cache
 D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\bin\ApplicationInsights.config
 D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\bin\roslyn\csc.exe
 D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\bin\roslyn\csc.exe.config
@@ -237,13 +241,9 @@ D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\bin\Microsoft.AI.DependencyCo
 D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\bin\Microsoft.AI.ServerTelemetryChannel.xml
 D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\bin\Microsoft.AI.WindowsServer.xml
 D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\bin\Microsoft.AI.Web.xml
-D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.csproj.CoreCompileInputs.cache
 D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.dll
 D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.pdb
 D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.csprojResolveAssemblyReference.cache
-D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.Migrations.InitialCreate.resources
-D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.csproj.GenerateResource.Cache
-D:\DotNetCoreApplication\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.Migrations.AddAdjustmentBfToPayments.resources
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\bin\ApplicationInsights.config
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\bin\roslyn\csc.exe
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\bin\roslyn\csc.exe.config
@@ -361,10 +361,9 @@ D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\bin\Microsoft.AI.DependencyCollector.xml
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\bin\Microsoft.AI.ServerTelemetryChannel.xml
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\bin\Microsoft.AI.WindowsServer.xml
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\bin\Microsoft.AI.Web.xml
-D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.Migrations.InitialCreate.resources
-D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.Migrations.AddAdjustmentBfToPayments.resources
-D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.csproj.GenerateResource.Cache
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.csproj.CoreCompileInputs.cache
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.dll
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.pdb
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.csprojResolveAssemblyReference.cache
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.Migrations.InitialCreate.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.csproj.GenerateResource.Cache

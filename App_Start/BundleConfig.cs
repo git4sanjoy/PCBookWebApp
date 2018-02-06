@@ -63,6 +63,8 @@ namespace PCBookWebApp
             bundles.Add(new ScriptBundle("~/bundles/angularSaleControllers")
                 .IncludeDirectory("~/AngApp/SalesModule/Controllers", "*.js", true));
 
+            bundles.Add(new ScriptBundle("~/bundles/angularProcessControllers")
+                .IncludeDirectory("~/AngApp/ProcessModule/Controllers", "*.js", true));
 
             bundles.Add(new ScriptBundle("~/bundles/angularDirectives")
                     .IncludeDirectory("~/AngApp/Directives", "*.js", true));

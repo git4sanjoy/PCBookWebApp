@@ -48,11 +48,40 @@ app.controller('SalesReportController', ['$scope', '$location', '$http', '$timeo
             popupWinindow.document.close();
         };
 
+        $scope.data = {
+            group2: 'CustomersBalance'
+        };
+        $scope.radioData = [
+            { label: 'Customers Balance', value: 'CustomersBalance'},
+            { label: 'Date Between Sales and Collections', value: 'DateBetweenSalesAndCollections' },
+            { label: 'Customer Register', value: 'CustomerRegister' },
+            { label: '4', value: '4' , isDisabled: true}
+        ];
+
+        $http({
+            url: "/api/Customer/GetDropDownList",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.customerList = data;
+            //console.log(data);
+        });
+        
+        $scope.searchTerm;
+        $scope.clearSearchTerm = function () {
+            $scope.searchTerm = '';
+        };
+
+        angular.element('#searchTerm').on('keydown', function (ev) {
+            ev.stopPropagation();
+        });
+
+
 
         //Toster Settings
         var last = {
-            bottom: false,
-            top: true,
+            bottom: true,
+            top: false,
             left: false,
             right: true
         };
@@ -82,9 +111,9 @@ app.controller('SalesReportController', ['$scope', '$location', '$http', '$timeo
             //$("#overlay").show();
             $mdToast.show(
                 $mdToast.simple()
-                    .textContent('Simple Toast!')
+                    .textContent('Report Created!')
                     .position(pinTo)
-                    .hideDelay(90000)
+                    .hideDelay(3000)
             );
         };
         $scope.showActionToast = function () {

@@ -16,22 +16,21 @@ namespace PCBookWebApp.Migrations
 
         protected override void Seed(PCBookWebApp.DAL.PCBookWebAppContext context)
         {
-            //  This method will be called after migrating to the latest version.
             context.Projects.AddOrUpdate(
-              p => p.ProjectName,
-              new Project
-              {
-                  ProjectName = "Pakiza Collection",
-                  Address = "House #97, Road 11/A, Dhanmondi, Dhaka",
-                  Email = "info@pakizagroup.com",
-                  Phone = "01755645752",
-                  Website = "www.pakizagroup.com",
-                  DateCreated = DateTime.Now,
-                  DateUpdated = DateTime.Now,
-                  CreatedBy = "admin@pakizagroup.com"
-              }
-            );
-            
+                  p => p.ProjectName,
+                  new Project
+                  {
+                      ProjectName = "Pakiza Collection",
+                      Address = "House #97, Road 11/A, Dhanmondi, Dhaka",
+                      Email = "info@pakizagroup.com",
+                      Phone = "01755645752",
+                      Website = "www.pakizagroup.com",
+                      DateCreated = DateTime.Now,
+                      DateUpdated = DateTime.Now,
+                      CreatedBy = "admin@pakizagroup.com"
+                  }
+                );
+
             context.TransctionTypes.AddOrUpdate(
               p => p.TransctionTypeName,
               new TransctionType
@@ -131,7 +130,6 @@ namespace PCBookWebApp.Migrations
                   CreatedBy = "admin@pakizagroup.com"
               }
             );
-
         }
     }
 }

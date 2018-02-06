@@ -42,20 +42,19 @@ namespace PCBookWebApp.Controllers
                 .FirstOrDefault();
 
             var noOfShowRooms = db.ShowRooms.Count();
-
             var noOfVoucherTypes = db.VoucherTypes.Count();
             var noOfGroups = db.Groups.Count();
-            var noOfLedgers = db.Ledgers.Where(a => a.ShowRoomId == showRoomId).Count();
-            //var lastBookEntry = db.Vouchers.Where(a => a.ShowRoomId == showRoomId).OrderByDescending(a => a.VoucherDate).FirstOrDefault();
 
+            var noOfLedgers = db.Ledgers.Where(a => a.ShowRoomId == showRoomId).Count();
             var noOfCustomers = db.Customers.Where(a => a.ShowRoomId == showRoomId).Count();
             var noOfProducts = db.Products.Where(a => a.ShowRoomId == showRoomId).Count();
-            //var lastSaleEntry = db.MemoMasters.Where(a => a.ShowRoomId == showRoomId).OrderByDescending(shipper => shipper.MemoDate).FirstOrDefault();
-
+            var lastSaleEntry = db.MemoMasters.Where(a => a.ShowRoomId == showRoomId).OrderByDescending(a => a.MemoDate).FirstOrDefault();
+            var lastBookEntry = db.Vouchers.Where(a => a.ShowRoomId == showRoomId).OrderByDescending(a => a.VoucherDate).FirstOrDefault();
 
 
             return Json(new
             {
+                //lastSaleEntryDate = (DateTime) lastSaleEntry.MemoDate,
                 lastSaleEntryDate = DateTime.Now,
                 noOfCustomers = noOfCustomers,
                 noOfProducts = noOfProducts,

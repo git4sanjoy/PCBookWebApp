@@ -41,6 +41,8 @@ app.controller('SalesSearchController', ['$scope', '$location', '$http', '$timeo
         $scope.GetCustomerDetailById = function () {
             var customerId = 0;
             var customerName = "";
+            $scope.memos = {};
+            $scope.categoryWiseGroupingSaleList = {};
             if ($scope.memoMaster.customerAutoComplite) {
                 customerId = $scope.memoMaster.customerAutoComplite.CustomerId;
                 customerName = $scope.memoMaster.customerAutoComplite.CustomerName;
@@ -68,7 +70,10 @@ app.controller('SalesSearchController', ['$scope', '$location', '$http', '$timeo
                 });
             }
             else {
-                alert("Select Customer Name");
+                //alert("Select Customer Name");
+                $scope.memos = {};
+                $scope.categoryWiseGroupingSaleList = {};
+                $scope.Address = "";
             }
         };
         $scope.collections = [];
@@ -96,6 +101,8 @@ app.controller('SalesSearchController', ['$scope', '$location', '$http', '$timeo
 
         $scope.submitSearchForm = function () {
             $scope.submitted = true;
+            $scope.memos = {};
+            $scope.categoryWiseGroupingSaleList = {};
             if ($scope.searchForm.$valid) {
 
                 var memoNo = 0;

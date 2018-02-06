@@ -32,6 +32,12 @@ app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout
         if (accesstoken) {
             authHeaders.Authorization = 'Bearer ' + accesstoken;
         }
+        $scope.sort = function (keyname) {
+            $scope.sortKey = keyname;   //set the sortKey to the param passed
+            $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+        }
+
+
 
         $http({
             url: "/api/Projects/AppDetails",
@@ -53,14 +59,10 @@ app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout
             $scope.userDetails = data;
             $scope.userRole = data.role[0];
 
-            if ($scope.userRole == "Accounts Manager") {
+            if ($scope.userRole == "Accounts Manager" || $scope.userRole == "Accounts") {
 
-            } else if ($scope.userRole == "Accounts") {
-
-            } else if ($scope.userRole == "Show Room Manager") {
-
-            } else if ($scope.userRole == "Show Room Sales") {
-
+            }  else if ($scope.userRole == "Show Room Manager" || $scope.userRole == "Show Room Sales") {
+                
             } else if ($scope.userRole == "Admin") {
 
             } else if ($scope.userRole == "GM") {
@@ -68,9 +70,38 @@ app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout
             }
 
         });
+        // For 3 DatePicker
+        $scope.open = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            $scope.opened = true;
+        };
 
+        $scope.fromDatePickerIsOpen = false;
+        $scope.FromDatePickerOpen = function () {
+            this.fromDatePickerIsOpen = true;
+            $scope.toDatePickerIsOpenPickerIsOpen = false;
+        };
+        $scope.toDatePickerIsOpen = false;
+        $scope.ToDatePickerOpen = function () {
+            this.toDatePickerIsOpen = true;
+            $scope.fromDatePickerIsOpen = false;
+        };
+        $scope.saleDate = new Date();
+        //$scope.searchPayment.ToDate = new Date();
+        // End DatePicker
+        // *******************************************
+        $http({
+            url: "/api/Customer/GetCustomerBalance",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.customerClosingBalances = data;
+            //console.log(data);
+        });
+        
         var inputYears = [];
-        var startYear = 2008;
+        var startYear = 2005;
         var currentTime = new Date()
         // returns the month (from 0 to 11)
         month_value = currentTime.getMonth();
@@ -82,6 +113,7 @@ app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout
             inputYears.push(i);
         }
 
+        $scope.yearDdlMonthlySales = endYear;
         $scope.yearList = inputYears;
         $scope.yearListSelectedData = endYear;
         $scope.dashbordYearListSelectedData = endYear;
@@ -105,8 +137,10 @@ app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout
         month_value = current_date.getMonth();
         day_value = current_date.getDate();
         year_value = current_date.getFullYear();
-
+        $scope.today = new Date();
         $scope.monthDdl = { id: month, name: monthsList[month_value] };
+        $scope.monthDdlMonthlySales = { id: month, name: monthsList[month_value] };
+
         $scope.dashbordMonth = monthsList[month_value];
         //Display List
         $scope.months = [
@@ -124,8 +158,187 @@ app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout
             { id: 12, name: 'December' }
         ];
 
+        //// Date wise Sales in GoogleMap
+        $http({
+            url: "/api/MemoMasters/GetDateSalesInMap/" + $filter('date')(current_date, "yyyy-MM-dd") + "/" + 0,
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.dateSalesinMapList = data;
+            //console.log(data);
+        });
+        $scope.dateSaleInGoogleMap = function () {
+            var fd = $filter('date')($scope.saleDate, "yyyy-MM-dd");
+            $http({
+                url: "/api/MemoMasters/GetDateSalesInMap/"+fd+"/"+0,
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.dateSalesinMapList = data;
+                //console.log(data);
+            });
+        };
+        
 
+        //// Sales Managers Chart View 
+        $http({
+            url: "/api/MemoMasters/GetSalesManWiseMonthlySale/" + endYear + '/' + month + '/' + 0,
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.salesManWiseMonthlySale = data;
+            //console.log(data);
+            var daysList = [];
+            var expectedProductionList = [];
+            var actualProductionList = [];
 
+            for (var i = 0; i < data.length; i++) {
+                var labelName = data[i].SalesManName;
+                var targetProduction = data[i].TotalSaleTaka;
+                daysList.push(labelName);
+                expectedProductionList.push(targetProduction);
+                var actualProduction = data[i].TotalCollectionTaka;
+                actualProductionList.push(actualProduction);
+            }
+
+            $scope.labelsBar = daysList;
+            $scope.seriesBar = ['SALE', 'COLLECTION'];
+            $scope.dataBar = [
+                expectedProductionList,
+                actualProductionList
+            ];
+        });
+
+        $scope.changedYearDdlMonthlySales = function () {
+            //console.log($scope.yearDdlMonthlySales);
+            //console.log($scope.monthDdlMonthlySales.id);
+            $http({
+                url: "/api/MemoMasters/GetSalesManWiseMonthlySale/" + $scope.yearDdlMonthlySales + '/' + $scope.monthDdlMonthlySales.id + '/' + 0,
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.salesManWiseMonthlySale = data;
+                //Collection Bar Chart
+
+                var daysList = [];
+                var expectedProductionList = [];
+                var actualProductionList = [];
+
+                for (var i = 0; i < data.length; i++) {
+                    var labelName = data[i].SalesManName;
+                    var targetProduction = data[i].TotalSaleTaka;
+                    daysList.push(labelName);
+                    expectedProductionList.push(targetProduction);
+                    var actualProduction = data.ChartObj[i].TotalCollectionTaka;
+                    actualProductionList.push(actualProduction);
+                }
+
+                $scope.labelsBar = daysList;
+                $scope.seriesBar = ['USD', 'BDT'];
+                $scope.dataBar = [
+                    expectedProductionList,
+                    actualProductionList
+                ];
+            });
+
+        };
+        $scope.changedMonthDdlMonthlySales = function () {
+            $http({
+                url: "/api/MemoMasters/GetSalesManWiseMonthlySale/" + $scope.yearDdlMonthlySales + '/' + $scope.monthDdlMonthlySales.id + '/' + 0,
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.salesManWiseMonthlySale = data;
+                //Collection Bar Chart
+
+                var daysList = [];
+                var expectedProductionList = [];
+                var actualProductionList = [];
+
+                for (var i = 0; i < data.length; i++) {
+                    var labelName = data[i].SalesManName;
+                    var targetProduction = data[i].TotalSaleTaka;
+                    daysList.push(labelName);
+                    expectedProductionList.push(targetProduction);
+                    var actualProduction = data[i].TotalCollectionTaka;
+                    actualProductionList.push(actualProduction);
+                }
+
+                $scope.labelsBar = daysList;
+                $scope.seriesBar = ['SALE', 'COLLECTION'];
+                $scope.dataBar = [
+                    expectedProductionList,
+                    actualProductionList
+                ];
+            });
+        };
+        $http({
+            url: "/api/MemoMasters/GetSalesManWiseYearlySale/" + endYear + '/' + 0,
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.salesManWiseYearlySale = data;
+            //console.log(data);
+            var daysListYear = [];
+            var sales = [];
+            var collections = [];
+
+            for (var i = 0; i < data.length; i++) {
+                var labelName = data[i].SalesManName;
+                var sale = data[i].TotalSaleTaka;
+                daysListYear.push(labelName);
+                sales.push(sale);
+                var collection = data[i].TotalCollectionTaka;
+                collections.push(collection);
+            }
+
+            $scope.labelsBarYear = daysListYear;
+            $scope.seriesBarYear = ['SALE', 'COLLECTION'];
+            $scope.dataBarYear = [
+                sales,
+                collections
+            ];
+        });
+        $scope.salesManList = [];
+        $http({
+            method: 'GET',
+            url: '/api/SalesMen/GetDropDownList',
+            contentType: "application/json; charset=utf-8",
+            headers: authHeaders,
+            dataType: 'json'
+        }).success(function (data) {
+            $scope.salesManList = data;
+        });
+        $scope.changedYearDdlYearlySales = function () {
+            //console.log($scope.yearDdlYearlySales);
+            $http({
+                url: "/api/MemoMasters/GetSalesManWiseYearlySale/" + $scope.yearDdlYearlySales + '/' + 0,
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.salesManWiseYearlySale = data;
+                //console.log(data);
+                var daysListYear = [];
+                var sales = [];
+                var collections = [];
+
+                for (var i = 0; i < data.length; i++) {
+                    var labelName = data[i].SalesManName;
+                    var sale = data[i].TotalSaleTaka;
+                    daysListYear.push(labelName);
+                    sales.push(sale);
+                    var collection = data[i].TotalCollectionTaka;
+                    collections.push(collection);
+                }
+
+                $scope.labelsBarYear = daysListYear;
+                $scope.seriesBarYear = ['SALE', 'COLLECTION'];
+                $scope.dataBarYear = [
+                    sales,
+                    collections
+                ];
+            });
+        };
 
 
         $scope.printToCart = function (printSectionId) {

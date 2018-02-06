@@ -236,6 +236,21 @@
     <Compile Include="Controllers\BookModule\api\LedgersController.cs" />
     <Compile Include="Controllers\BankModule\Api\CheckReceivesController.cs" />
     <Compile Include="Controllers\BookModule\api\PrimariesController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\ConversionDetailsController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\ConversionsController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\MatricsController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\ProcesseLocationsController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\ProcessesController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\ProcessListsController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\ProductTypesController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\PurchasedProductsController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\PurchasesController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\StoreDeliveryController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\SuppliersController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\UnitRolesController.cs" />
+    <Compile Include="Controllers\ProcessModule\MatricController.cs" />
+    <Compile Include="Controllers\ProcessModule\ProcessController.cs" />
+    <Compile Include="Controllers\ProcessModule\PurchaseController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Controllers\BookModule\api\ProvisionsController.cs" />
     <Compile Include="Controllers\InvoiceController.cs" />
@@ -290,13 +305,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201801251129377_InitialCreate.cs" />
-    <Compile Include="Migrations\201801251129377_InitialCreate.Designer.cs">
-      <DependentUpon>201801251129377_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201801281449082_AddAdjustmentBfToPayments.cs" />
-    <Compile Include="Migrations\201801281449082_AddAdjustmentBfToPayments.Designer.cs">
-      <DependentUpon>201801281449082_AddAdjustmentBfToPayments.cs</DependentUpon>
+    <Compile Include="Migrations\201802060715599_InitialCreate.cs" />
+    <Compile Include="Migrations\201802060715599_InitialCreate.Designer.cs">
+      <DependentUpon>201802060715599_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -321,6 +332,21 @@
     <Compile Include="Models\BookModule\Ledger.cs" />
     <Compile Include="Models\BankModule\CheckReceive.cs" />
     <Compile Include="Models\BookModule\Primary.cs" />
+    <Compile Include="Models\ProcessModule\Conversion.cs" />
+    <Compile Include="Models\ProcessModule\ConversionDetail.cs" />
+    <Compile Include="Models\ProcessModule\Matric.cs" />
+    <Compile Include="Models\ProcessModule\Process.cs" />
+    <Compile Include="Models\ProcessModule\ProcesseLocation.cs" />
+    <Compile Include="Models\ProcessModule\ProcessList.cs" />
+    <Compile Include="Models\ProcessModule\ProductType.cs" />
+    <Compile Include="Models\ProcessModule\Purchase.cs" />
+    <Compile Include="Models\ProcessModule\PurchasedProduct.cs" />
+    <Compile Include="Models\ProcessModule\Supplier.cs" />
+    <Compile Include="Models\ProcessModule\UnitRole.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\VmConversion.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\VmConversionDetails.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\VmProcessList.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\vMPurchasedProduct.cs" />
     <Compile Include="Models\Project.cs" />
     <Compile Include="Models\BookModule\Provision.cs" />
     <Compile Include="Models\Role.cs" />
@@ -334,11 +360,13 @@
     <Compile Include="Models\SalesModule\SalesMan.cs" />
     <Compile Include="Models\SalesModule\SubCategory.cs" />
     <Compile Include="Models\SalesModule\Upazila.cs" />
+    <Compile Include="Models\SalesModule\ViewModel\CustomerBalanceView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\CustomerView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\MemoDetailView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\MemoView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\PaymentView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\ProductView.cs" />
+    <Compile Include="Models\SalesModule\ViewModel\SalesView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\UpazilaView.cs" />
     <Compile Include="Models\ShowRoom.cs" />
     <Compile Include="Models\ShowRoomUser.cs" />
@@ -410,9 +438,34 @@
     <Content Include="AngApp\Factories\filterServices.js" />
     <Content Include="AngApp\Factories\loginService.js" />
     <Content Include="AngApp\Factories\userService.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\ConversionController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\ConversionDetailController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\MatricsController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\ProcessController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\ProcesseLocationController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\ProcessListController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\ProductTypesController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\PurchaseController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\PurchasedProductsController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\StoreDeliveryController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\SuppliersController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\UnitRoleController.js" />
+    <Content Include="AngApp\ProcessModule\Views\Conversion.html" />
+    <Content Include="AngApp\ProcessModule\Views\ConversionDetail.html" />
+    <Content Include="AngApp\ProcessModule\Views\Matric.html" />
+    <Content Include="AngApp\ProcessModule\Views\Process.html" />
+    <Content Include="AngApp\ProcessModule\Views\ProcesseLocations.html" />
+    <Content Include="AngApp\ProcessModule\Views\ProcessList.html" />
+    <Content Include="AngApp\ProcessModule\Views\ProductTypes.html" />
+    <Content Include="AngApp\ProcessModule\Views\Purchase.html" />
+    <Content Include="AngApp\ProcessModule\Views\PurchasedProducts.html" />
+    <Content Include="AngApp\ProcessModule\Views\StoreDelivery.html" />
+    <Content Include="AngApp\ProcessModule\Views\Suppliers.html" />
+    <Content Include="AngApp\ProcessModule\Views\UnitRole.html" />
     <Content Include="AngApp\SalesModule\Controllers\CartController.js" />
     <Content Include="AngApp\SalesModule\Controllers\CustomerController.js" />
     <Content Include="AngApp\SalesModule\Controllers\DistrictController.js" />
+    <Content Include="AngApp\SalesModule\Controllers\GoogleMapController.js" />
     <Content Include="AngApp\SalesModule\Controllers\MainCategoryController.js" />
     <Content Include="AngApp\SalesModule\Controllers\PaymentsController.js" />
     <Content Include="AngApp\SalesModule\Controllers\ProductController.js" />
@@ -671,6 +724,8 @@
     <Content Include="Scripts\sparkline\jquery.sparkline.js" />
     <Content Include="Scripts\sparkline\jquery.sparkline.min.js" />
     <Content Include="WebForms\Import\Index.aspx" />
+    <Content Include="AngApp\ProcessModule\Controllers\vssver2.scc" />
+    <Content Include="AngApp\ProcessModule\Views\vssver2.scc" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\fastclick\fastclick.js" />
@@ -717,6 +772,12 @@
     <Content Include="Views\Customers\Index.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
     <Content Include="Views\SalesReports\Index.cshtml" />
+    <Content Include="Views\Matric\Index.cshtml" />
+    <Content Include="Views\Matric\vssver2.scc" />
+    <Content Include="Views\Process\Index.cshtml" />
+    <Content Include="Views\Process\vssver2.scc" />
+    <Content Include="Views\Purchase\Index.cshtml" />
+    <Content Include="Views\Purchase\vssver2.scc" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -748,11 +809,8 @@
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>Ledger.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201801251129377_InitialCreate.resx">
-      <DependentUpon>201801251129377_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201801281449082_AddAdjustmentBfToPayments.resx">
-      <DependentUpon>201801281449082_AddAdjustmentBfToPayments.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201802060715599_InitialCreate.resx">
+      <DependentUpon>201802060715599_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

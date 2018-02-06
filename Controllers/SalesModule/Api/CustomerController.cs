@@ -27,6 +27,96 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         private PCBookWebAppContext db = new PCBookWebAppContext();
 
 
+
+        [Route("api/Customer/GetCustomerBalance")]
+        [HttpGet]
+        [ResponseType(typeof(CustomerBalanceView))]
+        public IHttpActionResult GetCustomerBalance()
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+
+            string userName = User.Identity.GetUserName();
+            DateTime ceatedAt = DateTime.Now;
+            List<CustomerBalanceView> list = new List<CustomerBalanceView>();
+            CustomerBalanceView customer = new CustomerBalanceView();
+
+            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+            string queryString = @"SELECT        
+                                    dbo.MemoMasters.CustomerId, SUM(DISTINCT dbo.MemoMasters.MemoDiscount) AS MemoDiscount, SUM(DISTINCT dbo.MemoMasters.GatOther) AS GatOther, 
+                                    SUM(DISTINCT dbo.MemoDetails.Quantity * (dbo.MemoDetails.Rate - dbo.MemoDetails.Discount)) AS TotalCost, SUM(DISTINCT dbo.Payments.SCAmount) AS SCAmount, SUM(DISTINCT dbo.Payments.SDiscount) 
+                                    AS SDiscount, MAX(dbo.MemoMasters.MemoDate) AS MemoDate, MAX(dbo.Payments.PaymentDate) AS PaymentDate, dbo.Upazilas.UpazilaName, dbo.Customers.UpazilaId, dbo.Upazilas.DistrictId, 
+                                    dbo.Districts.DistrictName, dbo.SalesMen.SalesManName, dbo.Customers.SalesManId, dbo.MemoMasters.ShowRoomId, dbo.Customers.CustomerName, dbo.Customers.ShopName
+                                    FROM            
+                                    dbo.MemoMasters INNER JOIN
+                                    dbo.Customers ON dbo.MemoMasters.CustomerId = dbo.Customers.CustomerId INNER JOIN
+                                    dbo.MemoDetails ON dbo.MemoMasters.MemoMasterId = dbo.MemoDetails.MemoMasterId INNER JOIN
+                                    dbo.SalesMen ON dbo.Customers.SalesManId = dbo.SalesMen.SalesManId INNER JOIN
+                                    dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                    dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId LEFT OUTER JOIN
+                                    dbo.Payments ON dbo.Customers.CustomerId = dbo.Payments.CustomerId
+                                    GROUP BY dbo.MemoMasters.CustomerId, dbo.Upazilas.UpazilaName, dbo.Customers.UpazilaId, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName, dbo.SalesMen.SalesManName, dbo.Customers.SalesManId, 
+                                    dbo.MemoMasters.ShowRoomId, dbo.Customers.CustomerName, dbo.Customers.ShopName 
+                                    HAVING               
+                                    (dbo.MemoMasters.ShowRoomId = @showRoomId)";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                connection.Open();
+                command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                SqlDataReader reader = command.ExecuteReader();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        customer = new CustomerBalanceView();
+                        double paymentAmount = 0;
+                        double sDiscount = 0;
+                        customer.CustomerName = (string)reader["CustomerName"];
+                        customer.ShopName = (string)reader["ShopName"];
+                        customer.UpazilaName = (string)reader["UpazilaName"];
+                        customer.DistrictName = (string)reader["DistrictName"];
+                        customer.SalesManName = (string)reader["SalesManName"];
+                        customer.SaleCost=(double)reader["TotalCost"];
+                        customer.MemoDiscount = (double)reader["MemoDiscount"];
+                        customer.GatOther = (double)reader["GatOther"];
+                        customer.DistrictName= (string)reader["DistrictName"];
+                        if (reader["SCAmount"] != System.DBNull.Value)
+                        {
+                            paymentAmount = (double)reader["SCAmount"];
+                        }
+                        if (reader["SDiscount"] != System.DBNull.Value)
+                        {
+                            sDiscount = (double)reader["SDiscount"];
+                        }
+                        if (reader["MemoDate"] != System.DBNull.Value)
+                        {
+                            customer.MemoDate = (DateTime)reader["MemoDate"];
+                        }
+                        if (reader["PaymentDate"] != System.DBNull.Value)
+                        {
+                            customer.PaymentDate = (DateTime)reader["PaymentDate"];
+                        }
+                        customer.PaymentAmount = paymentAmount;
+                        customer.Adjustment = sDiscount;
+                        customer.Balance = (double)reader["TotalCost"] + (double)reader["GatOther"] - (double)reader["MemoDiscount"]- paymentAmount- sDiscount;
+                        list.Add(customer);
+                    }
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            //ViewBag.AccountUserList = BankAccounts;
+            return Ok(list);
+        }
+
+
         // GET: api/Customer/GetCustomerList/
         [Route("api/Customer/GetCustomerList")]
         [HttpGet]

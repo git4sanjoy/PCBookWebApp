@@ -1,0 +1,54 @@
+﻿<h1>Google Map</h1>  
+<div id="map"></div>
+<style>
+    #map {
+        height: 500px;
+        width: 500px;
+        /*    box-shadow: 3px 3px 10px gray;*/
+    }
+
+    #repeat {
+        display: inline;
+    }
+
+    #country_container {
+        margin: 8px 2px 2px 0px;
+        text-align: center;
+        width: 90px;
+        padding: 5px;
+        color: white;
+        background-color: gray;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        #country_container:hover {
+            box-shadow: 0px 0px 10px blue;
+            background-color: gray;
+            border: 1px solid gray;
+            cursor: pointer;
+        }
+
+    #names {
+        cursor: pointer;
+    }
+</style>
+<script type="text/javascript">
+
+
+    window.google = window.google || {};
+    google.maps = google.maps || {};
+    //(function () {
+
+
+    //})();
+    function initMap() {
+        //map = new google.maps.Map(document.getElementById('map'), {
+        //    zoom: 7,
+        //    center: { lat: 23.684994, lng: 90.35633099999995 }
+        //});
+    }
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9-411AYtIuknkcqsKJabhUDc5-L-9XEY&callback=initMap&language=bn&region=BD" ">
+</script>

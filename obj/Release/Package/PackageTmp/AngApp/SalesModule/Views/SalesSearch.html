@@ -10,8 +10,126 @@
     <form name="searchForm" novalidate role="form" class="" id="searchForm" ng-submit="submitSearchForm()">
 
         <md-card-content style="padding-bottom:0">
+            <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <div class="form-group">
+                        <label for="invoiceDate">From Date</label>
+                        <div class="input-group" ng-class="{ 'has-error' : searchForm.FromDate.$invalid && (searchForm.FromDate.$dirty || submitted)}">
 
+                            <input class="form-control" type="text" id="FromDate" name="FromDate" tabindex="1" autocomplete="off"
+                                   move-focus-by-enter-key
+                                   ng-focus="FromDatePickerOpen()"
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="fromDatePickerIsOpen"
+                                   ng-click="FromDatePickerOpen()"
+                                   ng-model="memoMaster.FromDate" />
+                        </div>
 
+                    </div>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>To Date</label>
+                    <div class="input-group" ng-class="{ 'has-error' : searchForm.ToDate.$invalid && (searchForm.ToDate.$dirty || submitted)}">
+                        <input class="form-control" type="text" id="ToDate" name="ToDate" tabindex="2" autocomplete="off"
+                               move-focus-by-enter-key
+                               ng-focus="ToDatePickerOpen()"
+                               datepicker-localdate
+                               datepicker-popup="dd/MM/yyyy"
+                               is-open="toDatePickerIsOpen"
+                               ng-click="ToDatePickerOpen()"
+                               ng-model="memoMaster.ToDate" />
+                    </div>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Customer Name</label>
+                    <input id="customerAutoComplite" type="text" class="form-control" name="customerAutoComplite" autocomplete="off" tabindex="3"
+                           ng-model="memoMaster.customerAutoComplite"
+                           move-focus-by-enter-key
+                           ng-keydown='$event.keyCode == 13 && GetCustomerDetailById()'
+                           ng-keyup="updatePartyTypeaheadList(memoMaster.customerAutoComplite)"
+                           typeahead-on-select="changeSelectCustomerName($item)"
+                           typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:8">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Invoice No</label>
+                    <input id="memoNo" type="text" class="form-control" name="memoNo" autocomplete="off" tabindex="4"
+                           move-focus-by-enter-key
+                           ng-model="memoMaster.memoNo">
+
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <md-button class="md-raised md-primary" tabindex="5" type="submit"
+                               aria-label="Favorite"
+                               move-focus-by-enter-key
+                               ng-disabled="searchForm.$invalid">
+                        <i class="fa fa-search"></i> Search
+                    </md-button>
+                </md-input-container>
+
+            </div>
+            <div class="row" ng-show="Address">
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box bg-aqua">
+                        <span class="info-box-icon"><img ng-src="{{Image ? 'Upload/Customers/'+Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Address</span>
+                            <span class="info-box-number"></span>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 100%"></div>
+                            </div>
+                            <span class="progress-description">
+                                {{Address}}
+                            </span>
+                        </div><!-- /.info-box-content -->
+                    </div><!-- /.info-box -->
+                </div><!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box bg-red">
+                        <span class="info-box-icon"><i class="fa fa-thumbs-o-up"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Credit Limit</span>
+                            <span class="info-box-number">{{CreditLimit| currency:"৳":0}}</span>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 100%"></div>
+                            </div>
+                            <span class="progress-description">
+                                
+                            </span>
+                        </div><!-- /.info-box-content -->
+                    </div><!-- /.info-box -->
+                </div><!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box bg-yellow">
+                        <span class="info-box-icon"><i class="fa fa-calendar"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Credit</span>
+                            <span class="info-box-number">{{TotalCredit| currency:"৳":0}}</span>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 100%"></div>
+                            </div>
+                            <span class="progress-description">
+                                
+                            </span>
+                        </div><!-- /.info-box-content -->
+                    </div><!-- /.info-box -->
+                </div><!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box bg-green">
+                        <span class="info-box-icon"><i class="fa fa-comments-o"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Limit Balance</span>
+                            <span class="info-box-number">{{ CreditLimit == 0 ? 0 :  (CreditLimit-TotalCredit) | currency:"৳":0}}</span>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 100%"></div>
+                            </div>
+                            <span class="progress-description">
+                                
+                            </span>
+                        </div><!-- /.info-box-content -->
+                    </div><!-- /.info-box -->
+                </div><!-- /.col -->
+            </div>
             <div class="row" ng-show="memos.length>0">
                 
                 <div class="col-md-3 col-sm-6 col-xs-12">
@@ -55,76 +173,17 @@
                         </div><!-- /.info-box-content -->
                     </div><!-- /.info-box -->
                 </div><!-- /.col -->
+
                 <div class="col-sm-12">
                     <div class="progress-group" ng-repeat="(key, value) in categoryWiseGroupingSaleList | groupBy: 'MainCategoryName'">
                         <span class="progress-text">{{ key }}</span>
                         <span class="progress-number"><b>{{ GetGroupSumOfILineQu(value) |number:"0" }}</b>/{{ GetGroupSumOfILineTotal(value) |currency }}</span>
                         <div class="progress sm">
-                            <div class="progress-bar progress-bar-red" style="width: 100%;"></div>
+                            <div class="progress-bar" style="width: 100%;"></div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div layout-gt-sm="row">
-                <md-input-container class="md-block" flex-gt-sm>
-                    <div class="form-group">
-                        <label for="invoiceDate">From Date</label>
-                        <div class="input-group" ng-class="{ 'has-error' : searchForm.FromDate.$invalid && (searchForm.FromDate.$dirty || submitted)}">
-                            
-                            <input class="form-control" type="text" id="FromDate" name="FromDate" tabindex="1" autocomplete="off"
-                                   move-focus-by-enter-key
-                                   ng-focus="FromDatePickerOpen()"
-                                   datepicker-localdate
-                                   datepicker-popup="dd/MM/yyyy"
-                                   is-open="fromDatePickerIsOpen"
-                                   ng-click="FromDatePickerOpen()"
-                                   ng-model="memoMaster.FromDate" />
-                        </div>
-                       
-                    </div>
-                </md-input-container>
-                <md-input-container class="md-block" flex-gt-sm>
-                    <label>To Date</label>
-                    <div class="input-group" ng-class="{ 'has-error' : searchForm.ToDate.$invalid && (searchForm.ToDate.$dirty || submitted)}">                       
-                        <input class="form-control" type="text" id="ToDate" name="ToDate" tabindex="2" autocomplete="off"
-                               move-focus-by-enter-key
-                               ng-focus="ToDatePickerOpen()"
-                               datepicker-localdate
-                               datepicker-popup="dd/MM/yyyy"
-                               is-open="toDatePickerIsOpen"
-                               ng-click="ToDatePickerOpen()"
-                               ng-model="memoMaster.ToDate" />
-                    </div>                   
-                </md-input-container>
-                <md-input-container class="md-block" flex-gt-sm>
-                    <label>Customer Name</label>
-                    <input id="customerAutoComplite" type="text" class="form-control" name="customerAutoComplite" autocomplete="off" tabindex="3"
-                           ng-model="memoMaster.customerAutoComplite"
-                           move-focus-by-enter-key
-                           ng-keydown='$event.keyCode == 13 && GetCustomerDetailById()'
-                           ng-keyup="updatePartyTypeaheadList(memoMaster.customerAutoComplite)"
-                           typeahead-on-select="changeSelectCustomerName($item)"
-                           typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:8">
-                </md-input-container>
-                <md-input-container class="md-block" flex-gt-sm>
-                    <label>Invoice No</label>
-                    <input id="memoNo" type="text" class="form-control" name="memoNo" autocomplete="off" tabindex="4"
-                           move-focus-by-enter-key
-                           ng-model="memoMaster.memoNo">
-
-                </md-input-container>
-                <md-input-container class="md-block" flex-gt-sm>
-                    <md-button class="md-raised md-primary" tabindex="5" type="submit"
-                               aria-label="Favorite"
-                               move-focus-by-enter-key
-                               ng-disabled="searchForm.$invalid">
-                        <i class="fa fa-search"></i> Search Invoice
-                    </md-button>
-                </md-input-container>
-
-            </div>
-
 
         </md-card-content>
 
@@ -133,68 +192,7 @@
 
 
     <md-card-content>
-        <div class="row" ng-show="Address">
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box bg-aqua">
-                    <span class="info-box-icon"><img ng-src="{{Image ? 'Upload/Customers/'+Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Address</span>
-                        <span class="info-box-number"></span>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 100%"></div>
-                        </div>
-                        <span class="progress-description">
-                            {{Address}}
-                        </span>
-                    </div><!-- /.info-box-content -->
-                </div><!-- /.info-box -->
-            </div><!-- /.col -->
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box bg-green">
-                    <span class="info-box-icon"><i class="fa fa-thumbs-o-up"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Limit</span>
-                        <span class="info-box-number">{{CreditLimit| currency:"৳":0}}</span>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 100%"></div>
-                        </div>
-                        <span class="progress-description">
-                            100% Credit you can achieve
-                        </span>
-                    </div><!-- /.info-box-content -->
-                </div><!-- /.info-box -->
-            </div><!-- /.col -->
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box bg-yellow">
-                    <span class="info-box-icon"><i class="fa fa-calendar"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Credit</span>
-                        <span class="info-box-number">{{TotalCredit| currency:"৳":0}}</span>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 70%"></div>
-                        </div>
-                        <span class="progress-description">
-                            70% Increase in 30 Days
-                        </span>
-                    </div><!-- /.info-box-content -->
-                </div><!-- /.info-box -->
-            </div><!-- /.col -->
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box bg-red">
-                    <span class="info-box-icon"><i class="fa fa-comments-o"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Balance</span>
-                        <span class="info-box-number">{{(CreditLimit-TotalCredit) | currency:"৳":0}}</span>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 70%"></div>
-                        </div>
-                        <span class="progress-description">
-                            70% Increase in 30 Days
-                        </span>
-                    </div><!-- /.info-box-content -->
-                </div><!-- /.info-box -->
-            </div><!-- /.col -->
-        </div>
+
 
         <accordion close-others="oneAtATime" ng-repeat="m in memos">
             <accordion-group>

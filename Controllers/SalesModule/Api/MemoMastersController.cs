@@ -383,8 +383,6 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
 
         }
 
-
-
         [Route("api/MemoMasters/GetMemoByDateBetween/{FromDate}/{ToDate}/{CustomerId}")]
         [HttpGet]
         [ResponseType(typeof(MemoMaster))]
@@ -408,11 +406,15 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                 queryString = @"SELECT        
                                     dbo.MemoMasters.MemoDate, dbo.MemoMasters.CustomerId, dbo.MemoMasters.ShowRoomId, dbo.MemoMasters.MemoNo, dbo.MemoMasters.MemoDiscount, dbo.MemoMasters.GatOther, 
                                     dbo.MemoMasters.ExpencessRemarks, dbo.MemoMasters.MemoMasterId, dbo.Customers.CustomerName, dbo.Customers.CustomerNameBangla, dbo.Customers.Address, dbo.Customers.AddressBangla, 
-                                    dbo.ShowRooms.ShowRoomName, dbo.ShowRooms.ShowRoomNameBangla
+                                    dbo.ShowRooms.ShowRoomName, dbo.ShowRooms.ShowRoomNameBangla, dbo.Customers.UpazilaId, dbo.Upazilas.UpazilaName, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName, 
+                                    dbo.Customers.SalesManId, dbo.SalesMen.SalesManName
                                     FROM            
                                     dbo.MemoMasters INNER JOIN
                                     dbo.Customers ON dbo.MemoMasters.CustomerId = dbo.Customers.CustomerId INNER JOIN
-                                    dbo.ShowRooms ON dbo.MemoMasters.ShowRoomId = dbo.ShowRooms.ShowRoomId AND dbo.Customers.ShowRoomId = dbo.ShowRooms.ShowRoomId       
+                                    dbo.ShowRooms ON dbo.Customers.ShowRoomId = dbo.ShowRooms.ShowRoomId INNER JOIN
+                                    dbo.SalesMen ON dbo.Customers.SalesManId = dbo.SalesMen.SalesManId INNER JOIN
+                                    dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                    dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId      
                                     WHERE 
                                     (dbo.MemoMasters.ShowRoomId = @showRoomId) AND (dbo.MemoMasters.MemoDate >= @fromDate) AND (dbo.MemoMasters.MemoDate <= @toDate) AND (dbo.MemoMasters.CustomerId = @customerId)";
             }
@@ -420,11 +422,15 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                 queryString = @"SELECT        
                                     dbo.MemoMasters.MemoDate, dbo.MemoMasters.CustomerId, dbo.MemoMasters.ShowRoomId, dbo.MemoMasters.MemoNo, dbo.MemoMasters.MemoDiscount, dbo.MemoMasters.GatOther, 
                                     dbo.MemoMasters.ExpencessRemarks, dbo.MemoMasters.MemoMasterId, dbo.Customers.CustomerName, dbo.Customers.CustomerNameBangla, dbo.Customers.Address, dbo.Customers.AddressBangla, 
-                                    dbo.ShowRooms.ShowRoomName, dbo.ShowRooms.ShowRoomNameBangla
+                                    dbo.ShowRooms.ShowRoomName, dbo.ShowRooms.ShowRoomNameBangla, dbo.Customers.UpazilaId, dbo.Upazilas.UpazilaName, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName, 
+                                    dbo.Customers.SalesManId, dbo.SalesMen.SalesManName
                                     FROM            
                                     dbo.MemoMasters INNER JOIN
                                     dbo.Customers ON dbo.MemoMasters.CustomerId = dbo.Customers.CustomerId INNER JOIN
-                                    dbo.ShowRooms ON dbo.MemoMasters.ShowRoomId = dbo.ShowRooms.ShowRoomId AND dbo.Customers.ShowRoomId = dbo.ShowRooms.ShowRoomId       
+                                    dbo.ShowRooms ON dbo.Customers.ShowRoomId = dbo.ShowRooms.ShowRoomId INNER JOIN
+                                    dbo.SalesMen ON dbo.Customers.SalesManId = dbo.SalesMen.SalesManId INNER JOIN
+                                    dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                    dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId      
                                     WHERE 
                                     (dbo.MemoMasters.ShowRoomId = @showRoomId) AND (dbo.MemoMasters.MemoDate >= @fromDate) AND (dbo.MemoMasters.MemoDate <= @toDate)";
             }
@@ -455,19 +461,27 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                         memoObj.AddressBangla = (string)reader["AddressBangla"];
                         memoObj.ShowRoomName = (string)reader["ShowRoomName"];
                         memoObj.ShowRoomNameBangla = (string)reader["ShowRoomNameBangla"];
+                        memoObj.SalesManName = (string)reader["SalesManName"];
+                        memoObj.UpazilaName = (string)reader["UpazilaName"];
+                        memoObj.DistrictName = (string)reader["DistrictName"];
+                        double memoDiscount = 0;
+                        double gatOther = 0;
+
                         if (reader["MemoDiscount"] != DBNull.Value)
                         {
                             memoObj.MemoDiscount = (double)reader["MemoDiscount"];
+                            memoDiscount = (double)reader["MemoDiscount"];
                         }
                         if (reader["GatOther"] != DBNull.Value)
                         {
                             memoObj.GatOther = (double)reader["GatOther"];
+                            gatOther = (double)reader["GatOther"];
                         }
                         if (reader["ExpencessRemarks"] != DBNull.Value)
                         {
                             memoObj.ExpencessRemarks = (string)reader["ExpencessRemarks"];
                         }
-
+                        double memoItemWiseSum = 0;
                         double memoPaidAmount = 0;
                         string queryString2 = @"SELECT        
                                                 PaymentId, MemoMasterId, CustomerId, ShowRoomId, PaymentDate, SSAmount, TSAmount, SCAmount, TCAmount, SDiscount, TDiscount, PaymentType, HonourDate, CheckNo, BankAccountNo, Remarks
@@ -536,6 +550,8 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                                     {
                                         memoDetailObj.Image = (string)reader["Image"];
                                     }
+                                    memoItemWiseSum = memoItemWiseSum + Math.Round((double)readerDetails["Quantity"] * ((double)readerDetails["Rate"]- (double)readerDetails["Discount"]), 2, MidpointRounding.AwayFromZero);
+
                                     memoDetailList.Add(memoDetailObj);
                                 }
                             }
@@ -544,6 +560,9 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                                 readerDetails.Close();
                             }
                         }
+
+                        memoObj.ActualMemoAmount = memoItemWiseSum;
+                        memoObj.NetMemoAmount = memoItemWiseSum + gatOther - memoDiscount;
                         memoObj.MemoDetailViews = memoDetailList;
                         list.Add(memoObj);
                     }
@@ -734,7 +753,470 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
 
 
 
+        [Route("api/MemoMasters/GetSalesManWiseMonthlySale/{Year}/{Month}/{SalesManId}")]
+        [HttpGet]
+        [ResponseType(typeof(SalesView))]
+        public IHttpActionResult GetSalesManWiseMonthlySale(int Year, int Month, int? SalesManId)
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
 
+            List<SalesView> list = new List<SalesView>();
+            SalesView memoObj = new SalesView();
+
+
+            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+            string queryString = "";
+            if (SalesManId > 0)
+            {
+                queryString = @"SELECT        
+                                    dbo.MemoMasters.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, 
+                                    SUM(dbo.MemoDetails.Quantity * (dbo.MemoDetails.Rate - dbo.MemoDetails.Discount)) AS TotalMemoCost, SUM(DISTINCT dbo.MemoMasters.MemoDiscount) AS MemoDiscount, 
+                                    SUM(DISTINCT dbo.MemoMasters.GatOther) AS GatOther, YEAR(dbo.MemoMasters.MemoDate) AS Year, MONTH(dbo.MemoMasters.MemoDate) AS MonthInt, DATENAME(month, dbo.MemoMasters.MemoDate) 
+                                    AS MonthStr
+                                    FROM            
+                                    dbo.MemoMasters INNER JOIN
+                                    dbo.Customers ON dbo.MemoMasters.CustomerId = dbo.Customers.CustomerId INNER JOIN
+                                    dbo.ShowRooms ON dbo.Customers.ShowRoomId = dbo.ShowRooms.ShowRoomId INNER JOIN
+                                    dbo.SalesMen ON dbo.Customers.SalesManId = dbo.SalesMen.SalesManId INNER JOIN
+                                    dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                    dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId INNER JOIN
+                                    dbo.MemoDetails ON dbo.MemoMasters.MemoMasterId = dbo.MemoDetails.MemoMasterId
+                                    GROUP BY dbo.MemoMasters.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, YEAR(dbo.MemoMasters.MemoDate), MONTH(dbo.MemoMasters.MemoDate), 
+                                    DATENAME(month, dbo.MemoMasters.MemoDate)
+                                    HAVING        
+                                    (dbo.MemoMasters.ShowRoomId = @showRoomId) AND (dbo.Customers.SalesManId = @salesManId) AND (YEAR(dbo.MemoMasters.MemoDate) = @year) AND (MONTH(dbo.MemoMasters.MemoDate) = @month)";
+            }
+            else
+            {
+                queryString = @"SELECT        
+                                dbo.MemoMasters.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, 
+                                SUM(dbo.MemoDetails.Quantity * (dbo.MemoDetails.Rate - dbo.MemoDetails.Discount)) AS TotalMemoCost, SUM(DISTINCT dbo.MemoMasters.MemoDiscount) AS MemoDiscount, 
+                                SUM(DISTINCT dbo.MemoMasters.GatOther) AS GatOther, YEAR(dbo.MemoMasters.MemoDate) AS Year, MONTH(dbo.MemoMasters.MemoDate) AS MonthInt, DATENAME(month, dbo.MemoMasters.MemoDate) 
+                                AS MonthStr
+                                FROM            
+                                dbo.MemoMasters INNER JOIN
+                                dbo.Customers ON dbo.MemoMasters.CustomerId = dbo.Customers.CustomerId INNER JOIN
+                                dbo.ShowRooms ON dbo.Customers.ShowRoomId = dbo.ShowRooms.ShowRoomId INNER JOIN
+                                dbo.SalesMen ON dbo.Customers.SalesManId = dbo.SalesMen.SalesManId INNER JOIN
+                                dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId INNER JOIN
+                                dbo.MemoDetails ON dbo.MemoMasters.MemoMasterId = dbo.MemoDetails.MemoMasterId
+                                GROUP BY dbo.MemoMasters.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, YEAR(dbo.MemoMasters.MemoDate), MONTH(dbo.MemoMasters.MemoDate), 
+                                DATENAME(month, dbo.MemoMasters.MemoDate)
+                                HAVING        
+                                (dbo.MemoMasters.ShowRoomId = @showRoomId)  AND (YEAR(dbo.MemoMasters.MemoDate) = @year) AND (MONTH(dbo.MemoMasters.MemoDate) = @month)";
+            }
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                connection.Open();
+                command.Parameters.Add(new SqlParameter("@month", Month));
+                command.Parameters.Add(new SqlParameter("@year", Year));
+                command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                if (SalesManId > 0)
+                {
+                    command.Parameters.Add(new SqlParameter("@salesManId", SalesManId));
+                }
+                SqlDataReader reader = command.ExecuteReader();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        memoObj = new SalesView();
+                        int salesManId = (int) reader["SalesManId"];
+                        memoObj.ShowRoomName = (string) reader["ShowRoomName"];
+                        memoObj.SalesManName = (string) reader["SalesManName"];
+                        memoObj.Month=  (string) reader["MonthStr"];
+                        memoObj.Year =  (int) reader["Year"];
+                        double totalSaleTaka = (double) reader["TotalMemoCost"];
+
+                        double memoDiscount = 0;
+                        double gatOther = 0;
+
+                        if (reader["MemoDiscount"] != DBNull.Value)
+                        {
+                            memoDiscount = (double)reader["MemoDiscount"];
+                        }
+                        if (reader["GatOther"] != DBNull.Value)
+                        {
+                            gatOther = (double)reader["GatOther"];
+                        }
+                        memoObj.TotalSaleTaka = totalSaleTaka + gatOther - memoDiscount;
+                        double collection = 0;
+                        double discount = 0;
+                        string queryString2 = @"SELECT        
+                                                    YEAR(dbo.Payments.PaymentDate) AS Year, MONTH(dbo.Payments.PaymentDate) AS MontInt, DATENAME(month, dbo.Payments.PaymentDate) AS MonthStr, dbo.Customers.SalesManId, 
+                                                    dbo.SalesMen.SalesManName, dbo.Payments.PaymentType, SUM(dbo.Payments.SCAmount) AS SCAmount, SUM(dbo.Payments.SDiscount) AS SDiscount
+                                                    FROM            
+                                                    dbo.SalesMen INNER JOIN
+                                                    dbo.Customers ON dbo.SalesMen.SalesManId = dbo.Customers.SalesManId INNER JOIN
+                                                    dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                                    dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId INNER JOIN
+                                                    dbo.Payments ON dbo.Customers.CustomerId = dbo.Payments.CustomerId
+                                                    GROUP BY YEAR(dbo.Payments.PaymentDate), MONTH(dbo.Payments.PaymentDate), DATENAME(month, dbo.Payments.PaymentDate), dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, 
+                                                    dbo.Payments.PaymentType
+                                                    HAVING        
+                                                    (dbo.Payments.PaymentType = 'Cash') AND (dbo.Customers.SalesManId = @salesManId) AND (YEAR(dbo.Payments.PaymentDate) = @year) AND (MONTH(dbo.Payments.PaymentDate) = @month)";
+                        using (SqlConnection connectionPayment = new SqlConnection(connectionString))
+                        {
+                            SqlCommand commandPayment = new SqlCommand(queryString2, connectionPayment);
+                            connectionPayment.Open();
+                            commandPayment.Parameters.Add(new SqlParameter("@month", Month));
+                            commandPayment.Parameters.Add(new SqlParameter("@year", Year));
+                            commandPayment.Parameters.Add(new SqlParameter("@salesManId", salesManId));
+                            SqlDataReader readerPayment = commandPayment.ExecuteReader();
+                            try
+                            {
+                                while (readerPayment.Read())
+                                {
+                                    if (readerPayment["SCAmount"] != DBNull.Value)
+                                    {
+                                        collection = (double)readerPayment["SCAmount"];
+                                    }
+                                    if (readerPayment["SDiscount"] != DBNull.Value)
+                                    {
+                                        discount = (double)readerPayment["SDiscount"];
+                                    }
+                                }
+                            }
+                            finally
+                            {
+                                readerPayment.Close();
+                            }
+                        }
+                        memoObj.TotalCollectionTaka = collection;
+                        list.Add(memoObj);
+                    }
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            return Ok(list);
+
+        }
+
+
+        [Route("api/MemoMasters/GetSalesManWiseYearlySale/{Year}/{SalesManId}")]
+        [HttpGet]
+        [ResponseType(typeof(SalesView))]
+        public IHttpActionResult GetSalesManWiseYearlySale(int Year, int? SalesManId)
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+
+            List<SalesView> list = new List<SalesView>();
+            SalesView memoObj = new SalesView();
+
+
+            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+            string queryString = "";
+            if (SalesManId > 0)
+            {
+                queryString = @"SELECT        
+                                    dbo.MemoMasters.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, 
+                                    SUM(dbo.MemoDetails.Quantity * (dbo.MemoDetails.Rate - dbo.MemoDetails.Discount)) AS TotalMemoCost, SUM(DISTINCT dbo.MemoMasters.MemoDiscount) AS MemoDiscount, 
+                                    SUM(DISTINCT dbo.MemoMasters.GatOther) AS GatOther, YEAR(dbo.MemoMasters.MemoDate) AS Year
+                                    FROM            
+                                    dbo.MemoMasters INNER JOIN
+                                    dbo.Customers ON dbo.MemoMasters.CustomerId = dbo.Customers.CustomerId INNER JOIN
+                                    dbo.ShowRooms ON dbo.Customers.ShowRoomId = dbo.ShowRooms.ShowRoomId INNER JOIN
+                                    dbo.SalesMen ON dbo.Customers.SalesManId = dbo.SalesMen.SalesManId INNER JOIN
+                                    dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                    dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId INNER JOIN
+                                    dbo.MemoDetails ON dbo.MemoMasters.MemoMasterId = dbo.MemoDetails.MemoMasterId
+                                    GROUP BY dbo.MemoMasters.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, YEAR(dbo.MemoMasters.MemoDate)
+                                    HAVING        
+                                    (dbo.MemoMasters.ShowRoomId = @showRoomId) AND (dbo.Customers.SalesManId = @salesManId) AND (YEAR(dbo.MemoMasters.MemoDate) = @year)";
+            }
+            else
+            {
+                queryString = @"SELECT        
+                                    dbo.MemoMasters.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, 
+                                    SUM(dbo.MemoDetails.Quantity * (dbo.MemoDetails.Rate - dbo.MemoDetails.Discount)) AS TotalMemoCost, SUM(DISTINCT dbo.MemoMasters.MemoDiscount) AS MemoDiscount, 
+                                    SUM(DISTINCT dbo.MemoMasters.GatOther) AS GatOther, YEAR(dbo.MemoMasters.MemoDate) AS Year
+                                    FROM            
+                                    dbo.MemoMasters INNER JOIN
+                                    dbo.Customers ON dbo.MemoMasters.CustomerId = dbo.Customers.CustomerId INNER JOIN
+                                    dbo.ShowRooms ON dbo.Customers.ShowRoomId = dbo.ShowRooms.ShowRoomId INNER JOIN
+                                    dbo.SalesMen ON dbo.Customers.SalesManId = dbo.SalesMen.SalesManId INNER JOIN
+                                    dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                    dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId INNER JOIN
+                                    dbo.MemoDetails ON dbo.MemoMasters.MemoMasterId = dbo.MemoDetails.MemoMasterId
+                                    GROUP BY dbo.MemoMasters.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, YEAR(dbo.MemoMasters.MemoDate)
+                                    HAVING        
+                                    (dbo.MemoMasters.ShowRoomId = @showRoomId) AND (YEAR(dbo.MemoMasters.MemoDate) = @year)";
+            }
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                connection.Open();
+                //command.Parameters.Add(new SqlParameter("@month", Month));
+                command.Parameters.Add(new SqlParameter("@year", Year));
+                command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                if (SalesManId > 0)
+                {
+                    command.Parameters.Add(new SqlParameter("@salesManId", SalesManId));
+                }
+                SqlDataReader reader = command.ExecuteReader();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        memoObj = new SalesView();
+                        int salesManId = (int)reader["SalesManId"];
+                        memoObj.ShowRoomName = (string)reader["ShowRoomName"];
+                        memoObj.SalesManName = (string)reader["SalesManName"];
+                        //memoObj.Month = (string)reader["MonthStr"];
+                        memoObj.Year = (int)reader["Year"];
+                        double totalSaleTaka = (double)reader["TotalMemoCost"];
+
+                        double memoDiscount = 0;
+                        double gatOther = 0;
+
+                        if (reader["MemoDiscount"] != DBNull.Value)
+                        {
+                            memoDiscount = (double)reader["MemoDiscount"];
+                        }
+                        if (reader["GatOther"] != DBNull.Value)
+                        {
+                            gatOther = (double)reader["GatOther"];
+                        }
+                        memoObj.TotalSaleTaka = totalSaleTaka + gatOther - memoDiscount;
+                        double collection = 0;
+                        double discount = 0;
+                        string queryString2 = @"SELECT        
+                                                    YEAR(dbo.Payments.PaymentDate) AS Year, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, dbo.Payments.PaymentType, SUM(dbo.Payments.SCAmount) AS SCAmount, 
+                                                    SUM(dbo.Payments.SDiscount) AS SDiscount
+                                                    FROM            
+                                                    dbo.SalesMen INNER JOIN
+                                                    dbo.Customers ON dbo.SalesMen.SalesManId = dbo.Customers.SalesManId INNER JOIN
+                                                    dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                                    dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId INNER JOIN
+                                                    dbo.Payments ON dbo.Customers.CustomerId = dbo.Payments.CustomerId
+                                                    GROUP BY YEAR(dbo.Payments.PaymentDate), dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, dbo.Payments.PaymentType
+                                                    HAVING        
+                                                    (dbo.Payments.PaymentType = 'Cash') AND (dbo.Customers.SalesManId = @salesManId) AND (YEAR(dbo.Payments.PaymentDate) = @year)";
+                        using (SqlConnection connectionPayment = new SqlConnection(connectionString))
+                        {
+                            SqlCommand commandPayment = new SqlCommand(queryString2, connectionPayment);
+                            connectionPayment.Open();
+                            //commandPayment.Parameters.Add(new SqlParameter("@month", Month));
+                            commandPayment.Parameters.Add(new SqlParameter("@year", Year));
+                            commandPayment.Parameters.Add(new SqlParameter("@salesManId", salesManId));
+                            SqlDataReader readerPayment = commandPayment.ExecuteReader();
+                            try
+                            {
+                                while (readerPayment.Read())
+                                {
+                                    if (readerPayment["SCAmount"] != DBNull.Value)
+                                    {
+                                        collection = (double)readerPayment["SCAmount"];
+                                    }
+                                    if (readerPayment["SDiscount"] != DBNull.Value)
+                                    {
+                                        discount = (double)readerPayment["SDiscount"];
+                                    }
+                                }
+                            }
+                            finally
+                            {
+                                readerPayment.Close();
+                            }
+                        }
+                        memoObj.TotalCollectionTaka = collection;
+                        list.Add(memoObj);
+                    }
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            return Ok(list);
+
+        }
+
+        [Route("api/MemoMasters/GetDateSalesInMap/{Date}/{SalesManId}")]
+        [HttpGet]
+        [ResponseType(typeof(SalesView))]
+        public IHttpActionResult GetDateSalesInMap(string Date, int? SalesManId)
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+            DateTime fdate = DateTime.Parse(Date);
+            List<SalesView> list = new List<SalesView>();
+            SalesView memoObj = new SalesView();
+
+
+            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+            string queryString = "";
+            if (SalesManId > 0)
+            {
+                queryString = @"SELECT        
+                                dbo.MemoMasters.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName, SUM(dbo.MemoDetails.Quantity * (dbo.MemoDetails.Rate - dbo.MemoDetails.Discount)) 
+                                AS TotalMemoCost, SUM(DISTINCT dbo.MemoMasters.MemoDiscount) AS MemoDiscount, SUM(DISTINCT dbo.MemoMasters.GatOther) AS GatOther, dbo.MemoMasters.MemoDate
+                                FROM            
+                                dbo.MemoMasters INNER JOIN
+                                dbo.Customers ON dbo.MemoMasters.CustomerId = dbo.Customers.CustomerId INNER JOIN
+                                dbo.ShowRooms ON dbo.Customers.ShowRoomId = dbo.ShowRooms.ShowRoomId INNER JOIN
+                                dbo.SalesMen ON dbo.Customers.SalesManId = dbo.SalesMen.SalesManId INNER JOIN
+                                dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId INNER JOIN
+                                dbo.MemoDetails ON dbo.MemoMasters.MemoMasterId = dbo.MemoDetails.MemoMasterId
+                                GROUP BY dbo.MemoMasters.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.MemoMasters.MemoDate, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName
+                                HAVING        
+                                (dbo.MemoMasters.ShowRoomId = @showRoomId) AND (dbo.MemoMasters.MemoDate = CONVERT(DATETIME, @date, 102)) AND (dbo.Customers.SalesManId = @salesManId)";
+            }
+            else
+            {
+                queryString = @"SELECT        
+                                dbo.MemoMasters.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName, SUM(dbo.MemoDetails.Quantity * (dbo.MemoDetails.Rate - dbo.MemoDetails.Discount)) 
+                                AS TotalMemoCost, SUM(DISTINCT dbo.MemoMasters.MemoDiscount) AS MemoDiscount, SUM(DISTINCT dbo.MemoMasters.GatOther) AS GatOther, dbo.MemoMasters.MemoDate
+                                FROM            
+                                dbo.MemoMasters INNER JOIN
+                                dbo.Customers ON dbo.MemoMasters.CustomerId = dbo.Customers.CustomerId INNER JOIN
+                                dbo.ShowRooms ON dbo.Customers.ShowRoomId = dbo.ShowRooms.ShowRoomId INNER JOIN
+                                dbo.SalesMen ON dbo.Customers.SalesManId = dbo.SalesMen.SalesManId INNER JOIN
+                                dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId INNER JOIN
+                                dbo.MemoDetails ON dbo.MemoMasters.MemoMasterId = dbo.MemoDetails.MemoMasterId
+                                GROUP BY dbo.MemoMasters.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.MemoMasters.MemoDate, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName
+                                HAVING        
+                                (dbo.MemoMasters.ShowRoomId = @showRoomId) AND (dbo.MemoMasters.MemoDate = CONVERT(DATETIME, @date, 102))";
+            }
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                connection.Open();
+                //command.Parameters.Add(new SqlParameter("@month", Month));
+                command.Parameters.Add(new SqlParameter("@date", Date));
+                command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                if (SalesManId > 0)
+                {
+                    command.Parameters.Add(new SqlParameter("@salesManId", SalesManId));
+                }
+                SqlDataReader reader = command.ExecuteReader();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        memoObj = new SalesView();
+                        int distictId = (int)reader["DistrictId"];
+                        int salesManId = 0;
+
+                        if (SalesManId > 0)
+                        {
+                            salesManId = (int)reader["SalesManId"];
+                            memoObj.SalesManName = (string)reader["SalesManName"];
+                        }
+                        memoObj.ShowRoomName = (string)reader["ShowRoomName"];
+                        
+                        memoObj.DistrictName = (string)reader["DistrictName"];
+                        double totalSaleTaka = (double)reader["TotalMemoCost"];
+
+                        double memoDiscount = 0;
+                        double gatOther = 0;
+
+                        if (reader["MemoDiscount"] != DBNull.Value)
+                        {
+                            memoDiscount = (double)reader["MemoDiscount"];
+                        }
+                        if (reader["GatOther"] != DBNull.Value)
+                        {
+                            gatOther = (double)reader["GatOther"];
+                        }
+                        memoObj.TotalSaleTaka = totalSaleTaka + gatOther - memoDiscount;
+                        double collection = 0;
+                        double discount = 0;
+                        string queryString2 = "";
+                        if (SalesManId > 0)
+                        {
+                            queryString2 = @"SELECT        
+                                            dbo.Payments.PaymentDate, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, dbo.Payments.PaymentType, SUM(dbo.Payments.SCAmount) AS SCAmount, SUM(dbo.Payments.SDiscount) 
+                                            AS SDiscount, dbo.Customers.UpazilaId, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName, dbo.Customers.ShowRoomId
+                                            FROM            
+                                            dbo.SalesMen INNER JOIN
+                                            dbo.Customers ON dbo.SalesMen.SalesManId = dbo.Customers.SalesManId INNER JOIN
+                                            dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                            dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId INNER JOIN
+                                            dbo.Payments ON dbo.Customers.CustomerId = dbo.Payments.CustomerId
+                                            GROUP BY dbo.Payments.PaymentDate, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, dbo.Payments.PaymentType, dbo.Customers.UpazilaId, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName, dbo.Customers.ShowRoomId
+                                            HAVING        
+                                            (dbo.Customers.ShowRoomId = @showRoomId) AND (dbo.Customers.SalesManId = @salesManId) AND (dbo.Payments.PaymentType = 'Cash') AND (dbo.Upazilas.DistrictId = @distictId) AND (dbo.Payments.PaymentDate = CONVERT(DATETIME, @date, 102))";
+                        }
+                        else {
+                            queryString2 = @"SELECT        
+                                            dbo.Payments.PaymentDate, dbo.Payments.PaymentType, SUM(dbo.Payments.SCAmount) AS SCAmount, SUM(dbo.Payments.SDiscount) AS SDiscount, dbo.Customers.UpazilaId, dbo.Upazilas.DistrictId, 
+                                            dbo.Districts.DistrictName, dbo.Customers.ShowRoomId
+                                            FROM            
+                                            dbo.SalesMen INNER JOIN
+                                            dbo.Customers ON dbo.SalesMen.SalesManId = dbo.Customers.SalesManId INNER JOIN
+                                            dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
+                                            dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId INNER JOIN
+                                            dbo.Payments ON dbo.Customers.CustomerId = dbo.Payments.CustomerId
+                                            GROUP BY dbo.Payments.PaymentDate, dbo.Payments.PaymentType, dbo.Customers.UpazilaId, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName, dbo.Customers.ShowRoomId
+                                            HAVING        
+                                            (dbo.Customers.ShowRoomId = @showRoomId) AND (dbo.Payments.PaymentType = 'Cash') AND (dbo.Upazilas.DistrictId = @distictId) AND (dbo.Payments.PaymentDate = CONVERT(DATETIME, @date, 102))";
+                        }
+
+                        using (SqlConnection connectionPayment = new SqlConnection(connectionString))
+                        {
+                            SqlCommand commandPayment = new SqlCommand(queryString2, connectionPayment);
+                            connectionPayment.Open();
+                            commandPayment.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                            commandPayment.Parameters.Add(new SqlParameter("@date", Date));
+                            commandPayment.Parameters.Add(new SqlParameter("@distictId", distictId));
+                            if (SalesManId > 0)
+                            {
+                                command.Parameters.Add(new SqlParameter("@salesManId", SalesManId));
+                            }
+                            SqlDataReader readerPayment = commandPayment.ExecuteReader();
+                            try
+                            {
+                                while (readerPayment.Read())
+                                {
+                                    if (readerPayment["SCAmount"] != DBNull.Value)
+                                    {
+                                        collection = (double)readerPayment["SCAmount"];
+                                    }
+                                    if (readerPayment["SDiscount"] != DBNull.Value)
+                                    {
+                                        discount = (double)readerPayment["SDiscount"];
+                                    }
+                                }
+                            }
+                            finally
+                            {
+                                readerPayment.Close();
+                            }
+                        }
+                        memoObj.TotalCollectionTaka = collection;
+                        list.Add(memoObj);
+                    }
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            return Ok(list);
+
+        }
 
 
         // GET: api/MemoMasters

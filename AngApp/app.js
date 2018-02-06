@@ -43,7 +43,15 @@ app.filter('sumByKey', function () {
         return sum;
     };
 });
-
+app.filter('hideIfEmpty', function ($filter) {
+    return function (dateString, format) {
+        if (dateString === '01/01/0001') {
+            return "";
+        } else {
+            return $filter('date')(dateString, format.toString());
+        }
+    };
+});
 app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
 
     function ($locationProvider, $routeProvider, $ariaProvider) {
@@ -67,9 +75,56 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
             templateUrl: '/AngApp/Views/Dashboard.html',
             controller: 'dashboardController'
         }) 
+            .when('/ProductTypes', { // For Process Management Routes
+                templateUrl: '/AngApp/ProcessModule/Views/ProductTypes.html',
+                controller: 'ProductTypesController'
+            })
+            .when('/PurchasedProducts', {
+                templateUrl: '/AngApp/ProcessModule/Views/PurchasedProducts.html',
+                controller: 'PurchasedProductsController'
+            })
+            .when('/Suppliers', {
+                templateUrl: '/AngApp/ProcessModule/Views/Suppliers.html',
+                controller: 'SuppliersController'
+            })
+            .when('/Matric', {
+                templateUrl: '/AngApp/ProcessModule/Views/Matric.html',
+                controller: 'MatricsController'
+            })
+            .when('/ProcessList', {
+                templateUrl: '/AngApp/ProcessModule/Views/ProcessList.html',
+                controller: 'ProcessListController'
+            })
+            .when('/UnitRole', {
+                templateUrl: '/AngApp/ProcessModule/Views/UnitRole.html',
+                controller: 'UnitRoleController'
+            })
+            .when('/ProcesseLocations', {
+                templateUrl: '/AngApp/ProcessModule/Views/ProcesseLocations.html',
+                controller: 'ProcesseLocationsController'
+            })
+            .when('/Conversion', {
+                templateUrl: '/AngApp/ProcessModule/Views/Conversion.html',
+                controller: 'ConversionController'
+            })
+            .when('/ConversionDetail', {
+                templateUrl: '/AngApp/ProcessModule/Views/ConversionDetail.html',
+                controller: 'ConversionDetailController'
+            })
+            .when('/StoreDelivery', {
+                templateUrl: '/AngApp/ProcessModule/Views/StoreDelivery.html',
+                controller: 'StoreDeliveryController'
+            })
+            .when('/Purchase', {
+                templateUrl: '/AngApp/ProcessModule/Views/Purchase.html',
+                controller: 'PurchaseController'
+            })
+            .when('/Process', {
+                templateUrl: '/AngApp/ProcessModule/Views/Process.html',
+                controller: 'ProcessController'
+            })
 
-
-            .when('/Invoice', { // For Sales Management
+            .when('/Invoice', { // For Sales Management Routes
                 templateUrl: '/AngApp/SalesModule/Views/Cart.html',
                 controller: 'CartController'
             })
@@ -115,7 +170,7 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
             })
 
 
-        .when('/Bookkeeping', {// For Accounts  Module Management
+        .when('/Bookkeeping', {// For Accounts  Module Management Routes
             templateUrl: '/AngApp/BookModule/Views/Bookkeeping.html',
             controller: 'BookkeepingController'
         })

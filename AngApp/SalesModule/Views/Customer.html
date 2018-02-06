@@ -206,7 +206,7 @@
     <div class="box-header with-border">
         
         <div class="form-inline">
-            <h3 class="box-title"><i class="fa fa-users"></i> Customers <small class="label label-success">{{filteredList.length}}</small></h3>
+            <h3 class="box-title"><i class="fa fa-users"></i> Customers <small class="label label-success">{{filteredList.length}}</small> Credit Limit: <small class="label label-danger">{{filteredList |sumByKey:'CreditLimit' |currency:"৳":"0"}}</small></h3>
             <input ng-model="searchText" class="searchTextBox" type="text" value="" placeholder="Filter" style="margin:0em 1em;">
         </div>
         <div class="box-tools pull-right">
@@ -218,7 +218,7 @@
     <div class="box-body">
         <div class="table-responsive">
             
-            <table class="table">
+            <table class="table table-bordered table-striped">
                 <tr style="font-weight: bold" class="danger">
                     <td style="" ng-click="sort('statusName')"><span class="glyphicon sort-icon" ng-show="sortKey=='statusName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
                     <td style="" ng-click="sort('ShopName')"><span class="glyphicon sort-icon" ng-show="sortKey=='ShopName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ShopName</td>
@@ -226,8 +226,8 @@
                     <td style="" ng-click="sort('CreditLimit')"><span class="glyphicon sort-icon" ng-show="sortKey=='CreditLimit'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Limit</td>
                     <td style="" ng-click="sort('Address')"><span class="glyphicon sort-icon" ng-show="sortKey=='Address'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Address</td>
                     <td style="" ng-click="sort('groupName')"><span class="glyphicon sort-icon" ng-show="sortKey=='groupName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Upazilla</td>
-                    <td style="" ng-click="sort('Phone')"><span class="glyphicon sort-icon" ng-show="sortKey=='Phone'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Phone</td>
-                    <td style="" ng-click="sort('Email')"><span class="glyphicon sort-icon" ng-show="sortKey=='Email'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Email</td>
+                    <td style="" ng-click="sort('Phone')"><span class="glyphicon sort-icon" ng-show="sortKey=='Phone'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Cell</td>
+                    <td style="" ng-click="sort('Email')"><span class="glyphicon sort-icon" ng-show="sortKey=='Email'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Mail</td>
                     <td style="" ng-click="sort('CustomerNameBangla')"><span class="glyphicon sort-icon" ng-show="sortKey=='CustomerNameBangla'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ক্রেতার নাম</td>
                     <td style="" ng-click="sort('AddressBangla')"><span class="glyphicon sort-icon" ng-show="sortKey=='AddressBangla'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ঠিকানা বাংলা</td>
                     <td style=""></td>
@@ -236,10 +236,10 @@
                     <td>{{ user.statusName }}</td>
                     <td>{{ user.ShopName }}</td>
                     <td>{{ user.name || 'empty' }}</td>
-                    <td>{{ user.CreditLimit }}</td>
+                    <td style="text-align:right">{{ user.CreditLimit }}</td>
                     <td>{{ user.Address }}</td>
                     <td>{{ user.groupName }}</td>
-                    <td>{{ user.Phone }}</td>
+                    <td  style="text-align:right">{{ user.Phone }}</td>
                     <td>{{ user.Email }}</td>
                     <td class="bangla-font">{{ user.CustomerNameBangla }}</td>
                     <td class="bangla-font">{{ user.AddressBangla }}</td>
@@ -250,6 +250,12 @@
                             <button class="btn btn-danger btn-sm" ng-click="remove(user)"><i class="fa fa-trash"></i></button>
                         </div>
                     </td>
+                </tr>
+                <tr class="text-bold danger">
+                    <td colspan="3" style="text-align:right">Total:</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'CreditLimit' |currency:"":"0"}}</td>
+                    <td colspan="7"></td>
+
                 </tr>
             </table>
 

@@ -1,0 +1,139 @@
+﻿
+    <div class="box box-danger">
+        <div class="box-header with-border">
+            <h3 class="box-title"><i class="fa fa-cube"></i> Conversion Add Form</h3>
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+        <!--Server side error messageing------>
+        <div class="col-sm-12" ng-hide="serverMessage" style="margin-top:1em;">
+            <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                <ul>
+                    <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                </ul>
+            </div>
+        </div>
+        <!--End Server side error messageing-->
+        <!--Client side error messageing------>
+        <div class="col-sm-12" ng-hide="clientMessage" style="margin-top:1em;">
+            <div class="alert alert-{{messageType}} alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h4><i class="icon fa fa-check"></i> {{messageType}}!</h4>
+                {{message}}
+            </div>
+        </div>
+        <!--End Client side error messageing-->
+        <div class="well" id="valiId">
+            <table class="table table-bordered">
+               
+                <tbody>
+                    <tr>
+                        <td>Conversion : <span class="error">*</span></td>
+                        <td>
+                            <input type="text" id="conversionName" class="form-control" placeholder="Conversion Name" />
+
+                        </td>
+                        <td style="display:none">Last Name</td>
+                        <td style="display:none"><input type="text" id="lastname" class="" placeholder="Last Name" /></td>
+                    </tr>                   
+
+                    <tr class="success">
+                        <td colspan="4">
+                            <button type="button" id="saveConversion" name="saveConversion" class="btn btn-success" tabindex="4" ng-click="submintForm()">
+                                <i class="fa fa-pencil"></i>Save Conversion
+                            </button>
+                            <!--<input type="submit" class="btn btn btn-success" id="save" value="Save Conversion" />-->
+                            <input type="button" class="btn btn-default" id="clear" value="Clear"/>
+
+                            <input type="hidden" id="hdId" name="user" value="hdId777" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div><br />
+        <!--<div class="well">
+            <table class="table table-bordered" id="tableData">
+                <thead>
+                    <tr>
+                        <td>Id</td>
+                        <td>Conversion Name</td>
+                        <td>Purchase Name</td>
+
+                        <td>Edit</td>
+                        <td>Delete</td>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr ng-repeat="item in ConversionObj">
+                        <td>{{item.ConversionId}}</td>
+                        <td>{{item.ConversionName}}</td>
+                        <td>{{item.PurchaseProduct.PurchasedProductName}}</td>
+                        <td><a id={{item.ConversionId}} href="#">Edit</a></td>
+                        <td><a id={{item.ConversionId}} href="#">Delete</a></td>
+
+                    </tr>
+                    <tr ng-show="item.warning">
+                        <td colspan="3" style="text-align: center">Warning !!!</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>-->
+
+        <div class="box box-danger">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-users"></i> Conversion List</h3>
+                <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+
+            <div class="box-body">
+                <table class="table table-bordered table-hover table-condensed">
+                    <tr style="font-weight: bold" class="danger">
+                        <td style="width:20%"> Name</td>                       
+                        <td colspan="2" style="width:20%">Action</td>
+                    </tr>
+                    <tr ng-repeat="item in ConversionObj">
+                        <td>
+                            <!-- editable buyername (text with validation) -->
+                            <span editable-text="item.ConversionName" e-name="ConversionName" e-form="rowform" onbeforesave="checkName($data, item.id)" e-required>
+                                {{ item.ConversionName || 'empty' }}
+                            </span>
+                        </td>
+                       
+
+                        <td style="white-space: nowrap">
+                            <!-- form -->
+                            <form editable-form name="rowform" onbeforesave="updateData($data, item.ConversionId)"
+                                  ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == item">
+                                <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-warning">
+                                    <i class="fa fa-pencil"></i> Update
+                                </button>
+                                <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                                    <i class="fa fa-close"></i>
+                                </button>
+                            </form>
+                            <div class="buttons" ng-show="!rowform.$visible">
+                                <button class="btn btn-primary btn-sm" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>
+                                <button class="btn btn-danger btn-sm" ng-click="remove($index, item.ConversionId)"><i class="glyphicon glyphicon-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+
+
+            <div class="box-footer no-border">
+
+            </div>
+
+        </div>
+
+    </div>

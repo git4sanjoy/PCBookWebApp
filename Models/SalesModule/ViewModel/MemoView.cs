@@ -11,6 +11,9 @@ namespace PCBookWebApp.Models.SalesModule.ViewModel
         public int MemoMasterId { get; set; }
         public int CustomerId { get; set; }
         public int ShowRoomId { get; set; }
+        public int UpazilaId { get; set; }
+        public int DistrictId { get; set; }
+        public int SalesManId { get; set; }
 
         public string CustomerName { get; set; }
         public string CustomerNameBangla { get; set; }
@@ -20,12 +23,16 @@ namespace PCBookWebApp.Models.SalesModule.ViewModel
         public string ExpencessRemarks { get; set; }
         public string Address { get; set; }
         public string AddressBangla { get; set; }
+        public string SalesManName { get; set; }
+        public string UpazilaName { get; set; }
+        public string DistrictName { get; set; }
 
         public double MemoDiscount { get; set; }
         public double GatOther { get; set; }
         public double ActualMemoAmount { get; set; }
         public double NetMemoAmount { get; set; }
         public double MemoPaidAmount { get; set; }
+
 
         public List<MemoDetailView> MemoDetailViews { get; set; }
     }

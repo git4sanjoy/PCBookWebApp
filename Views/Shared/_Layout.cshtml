@@ -18,6 +18,11 @@
             themeColor = "skin-green";
             themeCss = "skin-green.min.css";
         }
+        if (User.IsInRole("Process Manager") || User.IsInRole("Process Officer"))
+        {
+            themeColor = "skin-purple";
+            themeCss = "skin-purple.min.css";
+        }
     }
 }
 <!DOCTYPE html>
@@ -315,6 +320,52 @@
                                 <li><a href="/SalesSearch"><i class="fa fa-search text-blue"></i> <span>Search</span></a></li>
                                 <li><a href="/SalesReports"><i class="fa fa-print text-green"></i> <span>Reports</span></a></li>
                             }
+                            else if (User.IsInRole("Process Manager"))
+                            {
+                                <li class="header">Menu</li>
+                                <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
+                                <li><a href="/Purchase"><i class="fa fa-database text-green"></i> <span>Store Receive</span></a></li>
+                                <li><a href="/StoreDelivery"><i class="fa fa-truck text-blue"></i> <span>Store Delivery</span></a></li>
+                                <li><a href="/Process"><i class="fa fa-recycle text-red"></i> <span>Process</span></a></li>
+
+                                <li class="treeview ">
+                                    <a href="#"><i class="fa fa-cog"></i> PROCESS MANAGER <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <li><a href="/UnitRole"><i class="fa fa-plus text-purple"></i> <span>Unit Role</span></a></li>
+                                        <li><a href="/ProductTypes"><i class="fa fa-plus text-purple"></i> <span>Product Types</span></a></li>
+                                        <li><a href="/Matric"><i class="fa fa-plus text-purple"></i> <span>Matric Name</span></a></li>
+                                        <li><a href="/ProcessList"><i class="fa fa-plus text-purple"></i> <span>Process List</span></a></li>
+                                    </ul>
+                                </li>
+                                <li class="treeview ">
+                                    <a href="#"><i class="fa fa-cog"></i> PROCESS OFFICER <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <li><a href="/PurchasedProducts"><i class="fa fa-plus text-purple"></i> <span>Products</span></a></li>
+                                        <li><a href="/Suppliers"><i class="fa fa-plus text-purple"></i> <span>Suppliers</span></a></li>
+                                        <li><a href="/ProcesseLocations"><i class="fa fa-plus text-purple"></i> <span>Processe Location</span></a></li>
+                                        <li><a href="/Conversion"><i class="fa fa-plus text-purple"></i> <span>Conversion</span></a></li>
+                                        <li><a href="/ConversionDetail"><i class="fa fa-plus text-purple"></i> <span>Conversion Detail</span></a></li>
+                                    </ul>
+                                </li>
+                            }
+                            else if (User.IsInRole("Process Officer"))
+                            {
+                                <li class="header">Menu</li>
+                                <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
+                                <li><a href="/Purchase"><i class="fa fa-database text-green"></i> <span>Store Receive</span></a></li>
+                                <li><a href="/StoreDelivery"><i class="fa fa-truck text-blue"></i> <span>Store Delivery</span></a></li>
+                                <li><a href="/Process"><i class="fa fa-recycle text-red"></i> <span>Process</span></a></li>
+                                <li class="treeview ">
+                                    <a href="#"><i class="fa fa-calculator"></i> PROCESS OFFICER <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <li><a href="/PurchasedProducts"><i class="fa fa-plus text-purple"></i> <span>Products</span></a></li>
+                                        <li><a href="/Suppliers"><i class="fa fa-plus text-purple"></i> <span>Suppliers</span></a></li>
+                                        <li><a href="/ProcesseLocations"><i class="fa fa-plus text-purple"></i> <span>Processe Location</span></a></li>
+                                        <li><a href="/Conversion"><i class="fa fa-plus text-purple"></i> <span>Conversion</span></a></li>
+                                        <li><a href="/ConversionDetail"><i class="fa fa-plus text-purple"></i> <span>Conversion Detail</span></a></li>
+                                    </ul>
+                                </li>
+                            }
                         }
                     </ul><!-- /.sidebar-menu -->
                 </section>
@@ -518,7 +569,7 @@
     @Scripts.Render("~/bundles/angularBookControllers")
     @Scripts.Render("~/bundles/angularBankControllers")
     @Scripts.Render("~/bundles/angularSaleControllers")
-
+    @Scripts.Render("~/bundles/angularProcessControllers")
     @Scripts.Render("~/bundles/angularDirectives")
     @Scripts.Render("~/bundles/angularFactories")
     @RenderSection("scripts", required: false)

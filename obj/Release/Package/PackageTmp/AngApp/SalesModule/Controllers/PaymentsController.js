@@ -143,7 +143,6 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
                 alert("Select Collection Date");
                 angular.element('#invoiceDate').focus();
                 return false;
-
             }
             if ($scope.payment.customerAutoComplite) {
                 customerId = $scope.payment.customerAutoComplite.CustomerId;
@@ -225,7 +224,7 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
                 ShowRoomId: 0,
                 PaymentDate: fd,
                 SCAmount: amount,
-                SDiscount: 0,
+                SDiscount: $scope.payment.SDiscount,
                 PaymentType: $scope.data.paymentType,
                 HonourDate: hd,
                 BankAccountNo: $scope.payment.bankAccNo,

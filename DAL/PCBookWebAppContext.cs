@@ -77,5 +77,29 @@ namespace PCBookWebApp.DAL
         public System.Data.Entity.DbSet<PCBookWebApp.Models.SalesModule.MemoMaster> MemoMasters { get; set; }
 
         public System.Data.Entity.DbSet<PCBookWebApp.Models.SalesModule.MemoDetail> MemoDetails { get; set; }
+
+        //Process Module
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.ProductType> ProductTypes { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.Supplier> Suppliers { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.PurchasedProduct> PurchasedProducts { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.ProcessList> ProcessLists { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.UnitRole> UnitRoles { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.Matric> Matrics { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.ConversionDetail> ConversionDetails { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.ProcesseLocation> ProcesseLocations { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.Conversion> Conversions { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.Purchase> Purchases { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.Process> Processes { get; set; }
     }
 }

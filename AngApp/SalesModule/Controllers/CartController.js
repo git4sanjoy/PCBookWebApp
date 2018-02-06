@@ -314,7 +314,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
                 var innerContents = document.getElementById('printable-memo-bangla').innerHTML;
                 var popupWinindow = window.open('', '_blank', 'width=900,height=700,scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no');
                 popupWinindow.document.open();
-                popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="http://localhost:12005/Content/Site.css" /></head><body onload="window.print()">' + innerContents + '</html>');
+                popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="http://books.pakizagroup.com/Content/Site.css" /></head><body onload="window.print()">' + innerContents + '</html>');
                 popupWinindow.document.close();
 
                 //Rset Form

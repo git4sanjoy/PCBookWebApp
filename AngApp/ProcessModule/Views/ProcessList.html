@@ -1,0 +1,160 @@
+﻿
+<!--<h1>
+    Process List
+</h1>
+<select name="ProcessListId" class="form-control" 
+        ng-focus="true"
+        move-focus-by-enter-key
+        ng-model="ProcessList.UnitRoleId"
+        ng-options="l.UnitRoleName for l in unitRoles track by l.UnitRoleId"
+        ng-required="true">
+    <option value="">--Select Unit Role Name--</option>
+</select>-->
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cube"></i> Process List Add Form</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <!--Server side error messageing------>
+    <div class="col-sm-12" ng-hide="serverMessage" style="margin-top:1em;">
+        <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+            <ul>
+                <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+            </ul>
+        </div>
+    </div>
+    <!--End Server side error messageing-->
+    <!--Client side error messageing------>
+    <div class="col-sm-12" ng-hide="clientMessage" style="margin-top:1em;">
+        <div class="alert alert-{{messageType}} alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-check"></i> {{messageType}}!</h4>
+            {{message}}
+        </div>
+    </div>
+    <!--End Client side error messageing-->
+    <form name="ProcessListForm" novalidate role="form" class="form-horizontal" id="ProcessListForm" 
+          ng-submit="submitProcessListForm()">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Process List Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : ProcessListForm.ProcessListName.$invalid && (ProcessListForm.ProcessListName.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-building"></i></span>
+                        <input id="ProcessListName" type="text" class="form-control" name="ProcessListName" 
+                               autocomplete="off" tabindex="1" autofocus
+                               move-focus-by-enter-key
+                               ng-model="ProcessListName"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="ProcessListForm.ProcessListName.$error.required && (ProcessListForm.ProcessListName.$dirty || submitted)" class="help-block">Show Room name is required.</p>
+                </div>
+           
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <label>Unit Role</label>
+                    <div class="input-group" ng-class="{ 'has-error' : ProcessListForm.ProcessListId.$invalid && (ProcessListForm.ProcessListId.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-bookmark"></i></span>
+                        <select name="ProcessListId" class="form-control"
+                                ng-focus="true"
+                                move-focus-by-enter-key
+                                ng-model="ProcessLists.UnitRoleId"
+                                ng-options="l.UnitRoleName for l in unitRoles track by l.UnitRoleId"
+                                ng-required="true">
+                            <option value="">Select Unit Role</option>
+                        </select>
+                    </div>
+                    <p ng-show="ProcessListForm.UnitRoleId.$error.required && (ProcessListForm.UnitRoleId.$dirty || submitted)" class="help-block">Select Unit</p>
+
+                </div>
+
+
+            </div>
+        </div><!-- /.box-body -->
+        <div class="box-footer no-border">
+            <button type="submit" class="btn btn-success" tabindex="4"
+                    move-focus-by-enter-key
+                    ng-hide="addButton"
+                    ng-disabled="ProcessListForm.$invalid">
+                <i class="fa fa-pencil"></i> Save
+            </button>
+            <button type="button" class="btn btn-default"
+                    ng-hide="cancelButton"
+                    ng-click="cancel()">
+                <span class="glyphicon glyphicon-remove"></span> Clear
+            </button>
+        </div><!-- /.box-footer -->
+    </form>
+</div>
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cubes"></i> Process List</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+   
+
+    <div class="box-body">
+        <table class="table table-bordered table-hover table-condensed">
+            <tr style="font-weight: bold" class="danger">
+                <td style="width:60%">Process Name</td>
+                <td style="width:20%">Unit Role</td>
+                <td style="width:20%">Action</td>
+            </tr>
+
+            <tr ng-repeat="ProcessList in ProcessLists">
+                <td>
+                    <!-- editable buyername (text with validation) -->
+                    <span editable-text="ProcessList.ProcessListName" e-name="ProcessListName" e-form="rowform" onbeforesave="checkName($data, ProcessList.id)" e-required>
+                        {{ ProcessList.ProcessListName || 'empty' }}
+                    </span>
+                </td>
+                <td>
+                  <!-- editable buyername (text with validation) -->
+                   <!--<span editable-text="ProcessList.UnitRoleId" e-name="ProcessListName" e-form="rowform" onbeforesave="checkName($data, ProcessList.id)" e-required>
+                        {{ ProcessList.UnitRoleName || 'empty' }}
+                    </span>-->
+                    <span>
+                       
+                        <select name="repeatSelect" class="form-control" id="repeatSelect" ng-model="ProcessList.UnitRoleId">
+                            <option ng-repeat="option in unitRoles" ng-selected="{{option.UnitRoleId == ProcessList.UnitRoleId}}" value="{{option.UnitRoleId}}">
+                                {{option.UnitRoleName}}
+                            </option>
+                        </select>
+                       
+                    </span>
+                </td>
+
+                <td style="white-space: nowrap">
+                    <!-- form -->
+                    <form editable-form name="rowform" onbeforesave="Update($data, ProcessList.ProcessListId, ProcessList.UnitRoleId)" 
+                          ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == ProcessList">
+                        <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-warning">
+                            <i class="fa fa-pencil"></i> Update
+                        </button>
+                        <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </form>
+                    <div class="buttons" ng-show="!rowform.$visible">
+                        <button class="btn btn-primary btn-sm" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" ng-click="remove($index, ProcessList.ProcessListId)"><i class="glyphicon glyphicon-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>
+   
