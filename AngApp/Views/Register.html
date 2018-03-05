@@ -29,21 +29,7 @@
         </div>
 
         <form name="registerForm" novalidate role="form" id="registerForm" ng-submit="registerUser()">
-            <div class="form-group has-feedback">
-                <label>Show Room</label>
-                <div class="input-group" ng-class="{ 'has-error' : userUnitsForm.unitListDdl.$invalid && (userUnitsForm.unitListDdl.$dirty || submitted)}">
-                    <span class="input-group-addon"><i class="fa fa-cube"></i></span>
-                    <select name="unitListDdl" class="form-control" tabindex="2" autofocus
-                            ng-focus="true"
-                            move-focus-by-enter-key
-                            ng-model="userRegistrationUnitListDdl"
-                            ng-options="r.text for r in groups track by r.id"
-                            ng-required="true">
-                        <option value="">--Select Show Room Name--</option>
-                    </select>
-                </div>
-                <p ng-show="userUnitsForm.unitListDdl.$error.required && (userUnitsForm.unitListDdl.$dirty || submitted)" class="help-block">Select Unit</p>
-            </div>
+            
             <div class="form-group has-feedback">
                 <md-input-container class="md-block" flex-gt-sm>
                     <label>Full Name</label>

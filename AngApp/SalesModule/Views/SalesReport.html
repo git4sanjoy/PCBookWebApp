@@ -55,30 +55,10 @@
                             <p ng-show="searchPaymentForm.toDate.$error.required && (searchPaymentForm.toDate.$dirty || submitted)" class="help-block">To Date is required.</p>
                         </div>
                     </md-input-container>
-                    <md-input-container class="md-block" flex-gt-sm>
-                        <md-button ng-click="showSimpleToast()">
-                            Show Toast 
-                        </md-button>
-                    </md-input-container>
+
                 </div>
                 <div layout-gt-sm="row">
-                    <md-input-container>
-                        <label>Customer List</label>
-                        <md-select ng-model="selectedCustomers"
-                                   md-on-close="clearSearchTerm()"
-                                   data-md-container-class="selectdemoSelectHeader"
-                                   multiple>
-                            <md-select-header class="demo-select-header">
-                                <input id="searchTerm" ng-model="searchTerm"
-                                       type="search"
-                                       placeholder="Search for a customer."
-                                       class="demo-header-searchbox md-text">
-                            </md-select-header>
-                            <md-optgroup label="Customers">
-                                <md-option ng-value="customer" ng-repeat="customer in customerList | filter:searchTerm">{{customer.CustomerName}}</md-option>
-                            </md-optgroup>
-                        </md-select>
-                    </md-input-container>
+
 
 
                 </div>

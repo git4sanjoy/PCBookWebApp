@@ -1,0 +1,148 @@
+﻿<modal title="Production" visible="showModal" class="">
+
+    <div class="modal-body">
+
+        <div class="row" style="margin-top:-1.5em;">
+            <!--Server side error messageing------>
+            <div class="col-sm-12">
+                <div class="" ng-hide="serverMessage">
+                    <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                        <ul>
+                            <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--End Server side error messageing-->
+            <!--Client side error messageing------>
+            <div class="col-sm-12">
+                <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+                    {{message}}
+                </div>
+            </div>
+            <!--End Client side error messageing-->
+            <div class="col-sm-12">
+                <h4>{{selectedDesign.Name}}</h4>
+                <h5>{{selectedDesign.Description}}</h5>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3">
+                <label>Date</label>
+                <div class="input-group" ng-class="{ 'has-error' : reportForm.FromDate.$invalid && (reportForm.FromDate.$dirty || submitted)}">
+                    <span class="input-group-addon"><i class="fa fa-calendar" ng-click="FromDatePickerOpen()"></i></span>
+                    <input class="form-control" type="text" id="FromDate" name="FromDate" tabindex="1" autocomplete="off"
+                           move-focus-by-enter-key
+                           ng-focus="FromDatePickerOpen()"
+                           datepicker-localdate
+                           datepicker-popup="dd/MM/yyyy"
+                           is-open="fromDatePickerIsOpen"
+                           ng-click="FromDatePickerOpen()"
+                           ng-required="true"
+                           ng-model="newDeal.DealProductionDate" />
+                </div>
+                <p ng-show="reportForm.FromDate.$error.required && (reportForm.FromDate.$dirty || submitted)" class="help-block">Date is required.</p>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <label>Remarks/ Factory Name</label>
+                <div class="input-group" ng-class="{ 'has-error' : reportForm.FromDate.$invalid && (reportForm.FromDate.$dirty || submitted)}">
+                    <span class="input-group-addon"><i class="fa fa-industry"></i></span>
+                    <input id="FactoryName" type="text" name="FactoryName" class="form-control" autocomplete="off" placeholder="Factory Name"
+                           onfocus="javascript: if(this.value == 'None'){ this.value = ''; }"
+                           onblur="javascript: if(this.value==''){this.value='None';}"
+                           tabindex="2"
+                           move-focus-by-enter-key
+                           ng-model="newDeal.FactoryName"
+                           ng-required="true" />
+                </div>
+                <p ng-show="reportForm.FromDate.$error.required && (reportForm.FromDate.$dirty || submitted)" class="help-block">Date is required.</p>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3">
+                <label>Quantity</label>
+                <div class="input-group" ng-class="{ 'has-error' : reportForm.FromDate.$invalid && (reportForm.FromDate.$dirty || submitted)}">
+                    <span class="input-group-addon"><i class="fa fa-cubes"></i></span>
+                    <input class="form-control" type="number" id="Quantity" tabindex="3" placeholder="0" name="Quantity"
+                           onfocus="javascript: if(this.value == '0'){ this.value = ''; }"
+                           onblur="javascript: if(this.value==''){this.value='0';}"
+                           move-focus-by-enter-key
+                           ng-model="newDeal.Quantity" />
+                </div>
+                <p ng-show="reportForm.FromDate.$error.required && (reportForm.FromDate.$dirty || submitted)" class="help-block">Date is required.</p>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-2">
+                <md-button style="margin-top:1.8em;" tabindex="5" class="md-raised md-primary btn-block"
+                           aria-label="Save"
+                           ng-click="saveProduction()">
+                    <i class="fa fa-save"></i>
+                </md-button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL</th>
+                            <th width="15%">Date</th>
+                            <th width="50%">Facrory Name</th>
+                            <th width="20%">Quantity</th>
+                            <th width="10%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="aProduction in selectedDesign.DealProductions">
+                            <td>{{$index+1}}</td>
+                            <td>{{aProduction.DealProductionDate | date : "dd-MM-yyyy"}}</td>
+                            <td>{{aProduction.FactoryName}}</td>
+                            <td align="right">{{aProduction.Quantity}}</td>
+                            <td><button class="btn btn-danger btn-block" ng-click="deleteProduction(aProduction)"><i class="fa fa-trash"></i></button></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="text-bold">
+                            <td colspan="3" align="right">Total</td>
+                            <td align="right">{{selectedDesign.DealProductions | sumByKey:'Quantity' |number:"0"}}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+
+</modal>
+<div class="row">
+    <div class="col-sm-6 col-md-3" ng-repeat="aDesign in designList">
+        <div class="thumbnail">
+            <div class="caption">
+                <h3 style="margin-top:0;padding-top:0;">{{aDesign.Name}}</h3>
+                <p>{{aDesign.Description}}</p>
+                <span class="md-subhead"><span class="text-bold text-blue">Production: {{aDesign.TotalProduction}} </span><span class="text-green">Repeat: {{aDesign.DealProductions.length>1 ? aDesign.DealProductions.length-1 : 0}}</span></span>
+            </div>
+            <carousel interval="myInterval">
+                <slide data-ng-repeat="mySlide in aDesign.Deal_Images" active="slide.active">
+                    <img data-ng-src="{{mySlide.ImageUrl}}" style="margin:auto;">
+                    <div class="carousel-caption">
+                        <h4>{{aDesign.Name}}</h4>
+                        <p>{{aDesign.Description}}</p>
+                    </div>
+                </slide>
+            </carousel>
+            <div class="caption">                
+                <md-card-actions layout="row" layout-align="start center">
+                    <md-button flex="50" aria-label="Gallery" ng-click="showGallery(aDesign)"><i class="fa fa-download"></i></md-button>
+                    <md-button flex="50" aria-label="Production" ng-click="showProduction(aDesign)"><i class="fa fa-server"></i></md-button>
+                </md-card-actions>
+            </div>
+        </div>
+    </div>
+</div>
+
+

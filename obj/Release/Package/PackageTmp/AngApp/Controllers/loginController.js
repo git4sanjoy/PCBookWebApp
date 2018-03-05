@@ -96,7 +96,7 @@ app.controller('loginController', ['$scope', '$location', '$http', '$timeout', '
                 //    console.log($scope.message);
                 //});
                 //// End Add Show Room User
-
+                $scope.myFile = '';
                 $scope.userRegistrationName = "";
                 $scope.userRegistrationEmail = "";
                 $scope.userRegistrationPassword = "";

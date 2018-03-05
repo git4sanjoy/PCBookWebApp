@@ -14,8 +14,9 @@ namespace PCBookWebApp.Models.SalesModule
         public int CustomerId { get; set; }
         public int SalesManId { get; set; }
         public int UpazilaId { get; set; }
-        [Required]
-        public int ShowRoomId { get; set; }
+        //[Required]
+        public int? ShowRoomId { get; set; }
+        public int? UnitId { get; set; }
         [Required]
         [StringLength(145)]
         public string CustomerName { get; set; }
@@ -42,5 +43,6 @@ namespace PCBookWebApp.Models.SalesModule
         public virtual Upazila Upazila { get; set; }
         public virtual SalesMan SalesMan { get; set; }
         public virtual ShowRoom ShowRoom { get; set; }
+        public virtual Unit Unit { get; set; }
     }
 }

@@ -47,6 +47,12 @@ app.controller('SearchController', ["$scope", "$http", "$filter", "$timeout", "$
     $scope.ToDatePickerOpen = function () {
         this.toDatePickerIsOpen = true;
     };
+
+    $scope.sort = function (keyname) {
+        $scope.sortKey = keyname;   //set the sortKey to the param passed
+        $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+    };
+
     // End DatePicker
     $scope.vouchrTypeList = [];
     //$http({
@@ -194,6 +200,20 @@ app.controller('SearchController', ["$scope", "$http", "$filter", "$timeout", "$
         });
         
     };
+
+    $scope.searchClear = function () {
+        $scope.voucherNo = '';
+        $scope.vouchrType = {};
+        $scope.voucherDate = '';
+        $scope.aVoucher = '';
+        $scope.bookData = '';
+        $scope.voucherTable = true;
+        $scope.bookDataTable = true;
+    };
+    $scope.clearSearchText = function () {
+        $scope.searchText = '';
+    };
+
     ///Dailog Method
     $scope.status = '  ';
     $scope.customFullscreen = false;

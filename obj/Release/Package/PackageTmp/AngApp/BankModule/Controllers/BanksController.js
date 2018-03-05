@@ -46,14 +46,6 @@ app.controller('BanksController', ['$scope', '$location', '$http', '$timeout', '
                     method: "POST",
                     headers: authHeaders
                 }).success(function (data) {
-                    //$http({
-                    //    url: "/api/Banks/GetBanksList",
-                    //    method: "GET",
-                    //    headers: authHeaders
-                    //}).success(function (data) {
-                    //    $scope.users = data;
-                    //    //console.log(data);
-                    //});
                     $scope.message = "Successfully Bank Created.";
                     $scope.messageType = "success";
                     $scope.clientMessage = false;
@@ -129,7 +121,7 @@ app.controller('BanksController', ['$scope', '$location', '$http', '$timeout', '
                 Phone: '',
                 Website: ''
             };
-            $scope.users.push($scope.inserted);
+            $scope.users.unshift($scope.inserted);
         };
 
     }]);

@@ -13,7 +13,8 @@ namespace PCBookWebApp.Models.ProcessModule
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int ConversionDetailsId { get; set; }
         public Nullable<int> ConversionId { get; set; }
-        
+        public double Quantity { get; set; }
+
         public Nullable<int> PurchaseProductId { get; set; }
 
         public virtual Conversion Conversion { get; set; }

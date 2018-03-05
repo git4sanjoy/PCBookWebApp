@@ -223,7 +223,28 @@ namespace PCBookWebApp.Controllers.BookModule.api
             return Ok(list);
         }
 
+        [Route("api/Ledgers/LedgersXEditList")]
+        [HttpGet]
+        [ResponseType(typeof(Ledger))]
+        public IHttpActionResult GetLedgersXEditList()
+        {
+            string userName = User.Identity.GetUserName();
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
 
+            var list = db.Ledgers
+                            .Where(a => a.ShowRoomId == showRoomId)
+                            .Select(e => new { id = e.LedgerId, text = e.LedgerName })
+                            .OrderBy(e => e.text);
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return Ok(list);
+        }
 
         // GET: api/Ledgers
         public IQueryable<Ledger> GetLedgers()

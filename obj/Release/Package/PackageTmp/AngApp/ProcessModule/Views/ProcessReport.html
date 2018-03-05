@@ -1,0 +1,144 @@
+﻿<div class="box box-primary">
+    <div class="box-header with-border">
+
+        <div class="form-group" style="margin-bottom: 0px;">
+            <h3 class="box-title"><i class="fa fa-print"></i> Process Report</h3>
+            <div class="radio-inline" ng-repeat="print in printTypeArray" style="margin-left:1em;">
+                <label>
+                    <input name="printOptionRadios" type="radio"
+                           ng-change="updatePrintType()"
+                           ng-value="print"
+                           ng-model="$parent.printOptionRadios" />
+                    {{print.Text}}
+                </label>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+        <div class="box-body">
+            <md-card md-theme="{{ showDarkTheme ? 'dark-orange' : 'default' }}" md-theme-watch>
+
+                <md-card-content>
+
+                    <div layout="row" layout-xs="column">
+
+                        <div flex>
+                            <md-radio-group ng-change="updateOptionGroupStatus()" ng-model="data.group2" class="md-primary">
+                                <md-radio-button ng-repeat="d in radioData"
+                                                 ng-value="d.value"
+                                                 ng-disabled=" d.isDisabled "
+                                                 ng-class="{'md-align-top-left': $index==1}">
+                                    {{ d.label }}
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+                        <div flex>
+                            <div layout-gt-sm="row">
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>From Date</label>
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" id="FromDate" name="FromDate" tabindex="1" autocomplete="off"
+                                               move-focus-by-enter-key
+                                               ng-focus="FromDatePickerOpen()"
+                                               datepicker-localdate
+                                               datepicker-popup="dd/MM/yyyy"
+                                               is-open="fromDatePickerIsOpen"
+                                               ng-click="FromDatePickerOpen()"
+                                               ng-required="true"
+                                               ng-model="reportOption.FromDate" />
+                                    </div>
+                                </md-input-container>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>To Date</label>
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" id="ToDate" name="ToDate" tabindex="2" autocomplete="off"
+                                               move-focus-by-enter-key
+                                               ng-focus="ToDatePickerOpen()"
+                                               datepicker-localdate
+                                               datepicker-popup="dd/MM/yyyy"
+                                               is-open="toDatePickerIsOpen"
+                                               ng-click="ToDatePickerOpen()"
+                                               ng-required="true"
+                                               ng-model="reportOption.ToDate" />
+                                    </div>
+                                </md-input-container>
+
+                            </div>
+                            
+                            <div layout-gt-sm="row" ng-show="factoryDiv">
+                                <!-- Factory Div -->
+                                <md-container>
+                                    <label>Factory Name</label><br />
+                                    <div ng-dropdown-multiselect=""
+                                         options="factoryList"
+                                         selected-model="factoryListMultiSelect"
+                                         extra-settings="factoryListMultiSelectSettings"
+                                         checkboxes="true"
+                                         translation-texts="factoryListMultiSelectCustomText">
+                                    </div>
+                                </md-container>
+
+                            </div>
+                            <div layout-gt-sm="row" ng-show="supplierDiv">
+                                <!-- Supplier Div -->     
+                                <md-container>
+                                    <label>Supplier Name</label><br />
+                                    <div ng-dropdown-multiselect=""
+                                         options="supplierList"
+                                         selected-model="supplierListMultiSelect"
+                                         extra-settings="supplierListMultiSelectSettings"
+                                         checkboxes="true"
+                                         translation-texts="supplierListMultiSelectCustomTexts">
+                                    </div>
+                                </md-container>
+                            </div>
+                            <div layout-gt-sm="row" ng-show="productDiv">
+                                <!-- Product Div -->
+                                <md-container>
+                                    <label>Product Name</label><br />
+                                    <div ng-dropdown-multiselect=""
+                                         options="productList"
+                                         selected-model="productListMultiSelect"
+                                         extra-settings="productListMultiSelectSettings"
+                                         checkboxes="true"
+                                         translation-texts="productListMultiSelectCustomText">
+                                    </div>
+                                </md-container>
+                                
+                            </div>
+                            <div layout-gt-sm="row" ng-show="false">
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Suppliers</label>
+                                    <div class="input-group">
+
+                                    </div>
+                                </md-input-container>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Products</label>
+                                    <div class="input-group">
+
+                                    </div>
+                                </md-input-container>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <md-card-actions layout="row" layout-align="start center">
+                        <md-button class="md-raised md-primary" aria-label="Show Report" ng-click="showReport()">Show Report</md-button>
+                    </md-card-actions>
+
+                </md-card-content>
+            </md-card>
+        </div><!-- /.box-body -->
+
+</div>
+
+
+
+
+

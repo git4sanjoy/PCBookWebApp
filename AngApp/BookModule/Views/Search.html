@@ -3,7 +3,7 @@
         <div class="box box-success">
             <div class="box-header with-border">
                 <form class="form-inline">
-                    <span class="box-title"><i class="fa fa-search"></i> Voucher Search : </span>
+                    <span class="box-title"><i class="fa fa-search"></i> Voucher Search : {{bookData.length}}</span>
                     
                 </form>
 
@@ -38,12 +38,19 @@
                     <div layout="row">
                         <md-input-container>
                             <!--<label>Book Date</label>-->
-                            <md-datepicker ng-model="voucherDate" md-placeholder="Book Date" md-open-on-focus></md-datepicker>
+                            <md-datepicker 
+                                           ng-model="voucherDate" 
+                                           md-placeholder="Book Date" 
+                                           md-open-on-focus>
+                            </md-datepicker>
 
                         </md-input-container>
                         <md-input-container>
                             <label>Voucher Type</label>
-                            <md-select id="vouchrType" placeholder="Select Voucher Type" ng-model="vouchrType" md-on-open="loadVoucherTypeList()" style="min-width: 250px;">
+                            <md-select id="vouchrType" 
+                                       placeholder="Select Voucher Type" 
+                                       ng-model="vouchrType" 
+                                       md-on-open="loadVoucherTypeList()" style="min-width: 250px;">
                                 <md-option><em>None</em></md-option>
                                 <md-option ng-value="v" ng-repeat="v in vouchrTypeList">{{v.VoucherTypeName}}</md-option>
                             </md-select>
@@ -53,26 +60,10 @@
                             <input id="voucherNo" ng-model="voucherNo">
                         </md-input-container>
                         <md-input-container>
-                            <md-button md-no-ink="" class="md-raised md-primary" ng-click="searchVoucher()">Search</md-button>
+                            <md-button md-no-ink="" class="md-raised md-primary" ng-click="searchVoucher()"><i class="fa fa-search"></i> Search</md-button>
                         </md-input-container>
-                        <!--<md-input-container>
-                            <md-button class="md-primary md-raised" ng-click="showAlert($event)">
-                                Alert Dialog
-                            </md-button>
-                            <md-button class="md-primary md-raised" ng-click="showConfirm($event)">
-                                Confirm Dialog
-                            </md-button>
-                        </md-input-container>
-                        
                         <md-input-container>
-                            <md-radio-group ng-model="data.group1">
-                                <md-radio-button value="Apple" class="md-primary">Apple</md-radio-button>
-                                <md-radio-button value="Banana"> Banana </md-radio-button>
-                                <md-radio-button value="Mango">Mango</md-radio-button>
-                            </md-radio-group>
-                        </md-input-container>-->
-                        <md-input-container>
-                            
+                            <md-button md-no-ink="" class="md-raised" ng-click="searchClear()"><i class="fa fa-refresh"></i> Clear</md-button>
                         </md-input-container>
                     </div>
 
@@ -128,17 +119,70 @@
                 </div>
                 <div class="col-sm-12" ng-hide="bookDataTable">
                     <table class="table table-bordered table-responsive table-striped" style="" id="voucherTable">
-                        <tr class="primary">
-                            <th width="5%">Dr/Cr</th>
-                            <th width="35%" style="text-align:center">Ledger Name</th>
-                            <th width="20%" style="text-align:center">Voucher Trpe</th>
-                            <th width="10%" style="text-align:center">Voucher No</th>
-                            <th width="15%" style="text-align:center">Dr Amount</th>
-                            <th width="15%" style="text-align:center">Cr Amount</th>
-                            <th width="5%">IsBank</th>
+                        <tr class="" style="background:white;border:none">
+                            <td colspan="6" style="background:white;border:none">
+                                <md-input-container class="md-block" style="margin-bottom:0;padding-bottom:0;">
+                                    <label>Search</label>
+                                    <input type="text" value="" placeholder="Filter Search" ng-model="searchText">
+                                </md-input-container>
+                            </td>
+                            <td style="background:white;border:none">
+                                <md-button md-no-ink="" class="md-raised" ng-click="clearSearchText()"><i class="fa fa-refresh"></i></md-button>
+                            </td>
                         </tr>
-                        <tr class="task-item" ng-repeat="a in bookData">
-
+                        <tr class="success">
+                            <th width="5%" ng-click="sort('TransctionTypeName')">
+                                <span class="glyphicon sort-icon"
+                                      ng-show="sortKey=='TransctionTypeName'"
+                                      ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
+                                </span>
+                                Dr/Cr
+                            </th>
+                            <th width="45%" style="text-align:center" ng-click="sort('LedgerName')">
+                                <span class="glyphicon sort-icon"
+                                      ng-show="sortKey=='LedgerName'"
+                                      ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
+                                </span>
+                                Ledger Name
+                            </th>
+                            <th width="10%" style="text-align:center" ng-click="sort('VoucherTypeName')">
+                                <span class="glyphicon sort-icon"
+                                      ng-show="sortKey=='VoucherTypeName'"
+                                      ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
+                                </span>
+                                Voucher
+                            </th>
+                            <th width="15%" style="text-align:center" ng-click="sort('VoucherNo')">
+                                <span class="glyphicon sort-icon"
+                                      ng-show="sortKey=='VoucherNo'"
+                                      ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
+                                </span>
+                                Voucher No
+                            </th>
+                            <th width="10%" style="text-align:center" ng-click="sort('DrAmount')">
+                                <span class="glyphicon sort-icon"
+                                      ng-show="sortKey=='DrAmount'"
+                                      ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
+                                </span>
+                                Dr. Amount
+                            </th>
+                            <th width="10%" style="text-align:center" ng-click="sort('CrAmount')">
+                                <span class="glyphicon sort-icon"
+                                      ng-show="sortKey=='CrAmount'"
+                                      ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
+                                </span>
+                                Cr. Amount
+                            </th>
+                            <th width="5%"></th>
+                        </tr>
+                        
+                        <tr class="success" style="font-weight:bold">
+                            <td colspan="4" style="text-align:right"> Total: </td>
+                            <td style="text-align:right">{{bookData |sumByKey:'DrAmount' |currency:"":"0"}}</td>
+                            <td style="text-align:right">{{bookData |sumByKey:'CrAmount' |currency:"":"0"}}</td>
+                            <td class="text-red">Records: {{filteredList.length}}</td>
+                        </tr>
+                        <tr class="task-item" ng-repeat="a in (filteredList = (bookData | filter: searchText)) | orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">                            
                             <td>{{a.TransctionTypeName}}</td>
                             <td>{{a.LedgerName}}</td>
                             <td>{{a.VoucherTypeName}}</td>
@@ -146,14 +190,13 @@
                             <td style="text-align:right">{{a.DrAmount}}</td>
                             <td style="text-align:right">{{a.CrAmount}}</td>
                             <td><input type=checkbox ng-model="a.IsBank" ng-checked="a.IsBank" ng-disabled="true" /></td>
-
                         </tr>
 
-                        <tr class="info" style="font-weight:bold">
+                        <tr class="success" style="font-weight:bold">
                             <td colspan="4" style="text-align:right"> Total:</td>
-                            <td style="text-align:right">{{totalDr() | currency:""}}</td>
-                            <td style="text-align:right">{{totalCr() | currency:""}}</td>
-                            <td></td>
+                            <td style="text-align:right">{{filteredList |sumByKey:'DrAmount' |currency:"":"0"}}</td>
+                            <td style="text-align:right">{{filteredList |sumByKey:'CrAmount' |currency:"":"0"}}</td>
+                            <td class="text-red">Records: {{filteredList.length}}</td>
                         </tr>
                     </table>
                 </div>

@@ -13,6 +13,9 @@ using PCBookWebApp.Models.ProcessModule;
 using System.Configuration;
 using System.Data.SqlClient;
 using PCBookWebApp.Models.ProcessModule.ViewModels;
+using System.Threading.Tasks;
+using System.Data.Entity.Migrations;
+using Microsoft.AspNet.Identity;
 
 namespace PCBookWebApp.Controllers.ProcessModule.api
 {
@@ -41,40 +44,52 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
 
         // PUT: api/ProcessLists/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutProcessList(int id, ProcessList processList)
+       
+       public async Task<IHttpActionResult> PutProcessList(int id, ProcessList processList)
         {
-            processList.DateCreated = DateTime.Now;
-            processList.DateUpdated = DateTime.Now;
+            var msg = 0;
+            var check = db.ProcessLists.FirstOrDefault(m => m.ProcessListName == processList.ProcessListName);
             //GetProcessList();
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
             if (id != processList.ProcessListId)
             {
                 return BadRequest();
             }
 
-            db.Entry(processList).State = EntityState.Modified;
+            // db.Entry(processList).State = EntityState.Modified;
 
-            try
+            if (check == null)
             {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProcessListExists(id))
+                try
                 {
-                    return NotFound();
+                    var obj = db.ProcessLists.FirstOrDefault(m => m.ProcessListId == processList.ProcessListId);
+                    processList.CreatedBy = obj.CreatedBy;
+                    processList.DateCreated = obj.DateCreated;
+                    processList.DateUpdated = DateTime.Now;
+                    processList.ShowRoomId = obj.ShowRoomId;
+                    processList.Active = true;
+                    db.ProcessLists.AddOrUpdate(processList);
+                    await db.SaveChangesAsync();
+                    msg = 1;
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!ProcessListExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(msg);
+            //return StatusCode(HttpStatusCode.NoContent);
         }
 
         [Route("api/ProcessLists/GetProcessList")]
@@ -94,7 +109,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
 
             string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
             string queryString = @"select p.ProcessListId,p.ProcessListName,p.UnitRoleId,r.UnitRoleName from ProcessLists p
-                                         left join UnitRoles r on r.UnitRoleId = p.UnitRoleId";
+                                          join UnitRoles r on r.UnitRoleId = p.UnitRoleId";
 
             using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -127,24 +142,23 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
 
         // POST: api/ProcessLists
         [ResponseType(typeof(ProcessList))]
-        public IHttpActionResult PostProcessList(ProcessList processList)
+        //public IHttpActionResult PostProcessList(ProcessList processList)
+       public async Task<IHttpActionResult> PostProcessList(ProcessList processList)
         {
             //GetProcessList();
-            processList.DateCreated = DateTime.Now;
-            try
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            string userName = User.Identity.GetUserName();
+            bool isTrue = db.ProcessLists.Any(s => s.ProcessListName == processList.ProcessListName.Trim());
+            if (isTrue == false)
             {
-                if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-           
+                processList.ShowRoomId = showRoomId;
+                processList.CreatedBy = userName;
+                processList.DateCreated = DateTime.Now;
+                processList.DateCreated = processList.DateCreated;
+                processList.Active = true;
                 db.ProcessLists.Add(processList);
-                db.SaveChanges();
-              
-            }
-            catch(Exception ex)
-            {
-                ex.ToString();
+                await db.SaveChangesAsync();
             }
             return CreatedAtRoute("DefaultApi", new { id = processList.ProcessListId }, processList);
         }

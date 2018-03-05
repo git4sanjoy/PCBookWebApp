@@ -27,6 +27,16 @@ app.filter('groupBy', function () {
     );
 })
 
+app.filter('hideIfEmpty', function ($filter) {
+    return function (dateString, format) {
+        if (dateString === '01/01/0001') {
+            return "";
+        } else {
+            return $filter('date')(dateString, format.toString());
+        }
+    };
+})
+
 app.filter('minLength', function () {
     return function(input,len){
         input = input.toString();

@@ -24,7 +24,7 @@ namespace PCBookWebApp.Models.ProcessModule
         public int? ProcesseLocationId { get; set; }
         public double DeliveryQuantity { get; set; }
         public int? ProcessListId { get; set; }
-        [Required(ErrorMessage = "Supplier Name is required.")]
+        //[Required(ErrorMessage = "Supplier Name is required.")]
         public int? SupplierId { get; set; }
         [Required(ErrorMessage = "Product Name is required.")]
         public int PurchasedProductId { get; set; }

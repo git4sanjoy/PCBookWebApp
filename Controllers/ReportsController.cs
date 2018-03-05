@@ -46,11 +46,22 @@ namespace PCBookWebApp.Controllers
                 if (LedgerIds != null)
                 {
                     var inIds = String.Join(",", LedgerIds.Select(x => x.ToString()).ToArray());
-                    sql = "SELECT dbo.Voucher_View.* FROM dbo.Voucher_View WHERE (VoucherDate >= CONVERT(DATETIME, @fromDate, 102) AND VoucherDate <= CONVERT(DATETIME, @toDate, 102)) AND (LedgerId IN (" + inIds + ")) AND (ShowRoomId=@showRoomId)";
+                    sql = "SELECT dbo.Vouchers.VoucherId, dbo.Vouchers.VoucherTypeId, dbo.Vouchers.ShowRoomId, dbo.Vouchers.IsBank, dbo.Vouchers.IsHonored, dbo.Vouchers.HonoredDate, dbo.Vouchers.Authorized, dbo.Vouchers.AuthorizedBy, dbo.VoucherDetails.TransctionTypeId, dbo.VoucherDetails.LedgerId, dbo.VoucherTypes.VoucherTypeName, dbo.Vouchers.VoucherDate, dbo.Vouchers.VoucherNo, dbo.TransctionTypes.TransctionTypeName, dbo.Ledgers.LedgerName, dbo.VoucherDetails.DrAmount, dbo.VoucherDetails.CrAmount, dbo.Vouchers.Naration FROM  dbo.Vouchers INNER JOIN dbo.VoucherDetails ON dbo.Vouchers.VoucherId = dbo.VoucherDetails.VoucherId INNER JOIN dbo.Ledgers ON dbo.VoucherDetails.LedgerId = dbo.Ledgers.LedgerId INNER JOIN dbo.TransctionTypes ON dbo.VoucherDetails.TransctionTypeId = dbo.TransctionTypes.TransctionTypeId INNER JOIN dbo.VoucherTypes ON dbo.Vouchers.VoucherTypeId = dbo.VoucherTypes.VoucherTypeId WHERE (VoucherDate >= CONVERT(DATETIME, @fromDate, 102) AND VoucherDate <= CONVERT(DATETIME, @toDate, 102)) AND (dbo.VoucherDetails.LedgerId IN (" + inIds + ")) AND (dbo.Vouchers.ShowRoomId=@showRoomId)";
                 }
                 else
                 {
-                    sql = @"SELECT dbo.Voucher_View.* FROM dbo.Voucher_View WHERE (VoucherDate >= CONVERT(DATETIME, @fromDate, 102) AND VoucherDate <= CONVERT(DATETIME, @toDate, 102)) AND (ShowRoomId=@showRoomId)";
+                    sql = @"SELECT        
+                                dbo.Vouchers.VoucherId, dbo.Vouchers.VoucherTypeId, dbo.Vouchers.ShowRoomId, dbo.Vouchers.IsBank, dbo.Vouchers.IsHonored, dbo.Vouchers.HonoredDate, dbo.Vouchers.Authorized, dbo.Vouchers.AuthorizedBy, 
+                                dbo.VoucherDetails.TransctionTypeId, dbo.VoucherDetails.LedgerId, dbo.VoucherTypes.VoucherTypeName, dbo.Vouchers.VoucherDate, dbo.Vouchers.VoucherNo, dbo.TransctionTypes.TransctionTypeName, 
+                                dbo.Ledgers.LedgerName, dbo.VoucherDetails.DrAmount, dbo.VoucherDetails.CrAmount, dbo.Vouchers.Naration, dbo.Ledgers.TrialBalanceId, dbo.Ledgers.GroupId, dbo.Groups.GroupName
+                                FROM            
+                                dbo.Vouchers INNER JOIN
+                                dbo.VoucherDetails ON dbo.Vouchers.VoucherId = dbo.VoucherDetails.VoucherId INNER JOIN
+                                dbo.Ledgers ON dbo.VoucherDetails.LedgerId = dbo.Ledgers.LedgerId INNER JOIN
+                                dbo.TransctionTypes ON dbo.VoucherDetails.TransctionTypeId = dbo.TransctionTypes.TransctionTypeId INNER JOIN
+                                dbo.VoucherTypes ON dbo.Vouchers.VoucherTypeId = dbo.VoucherTypes.VoucherTypeId INNER JOIN
+                                dbo.Groups ON dbo.Ledgers.GroupId = dbo.Groups.GroupId
+                                WHERE (dbo.Vouchers.VoucherDate >= CONVERT(DATETIME, @fromDate, 102) AND dbo.Vouchers.VoucherDate <= CONVERT(DATETIME, @toDate, 102)) AND (dbo.Vouchers.ShowRoomId=@showRoomId)";
                 }
 
                 SqlCommand command = new SqlCommand(sql, connection);
@@ -102,6 +113,7 @@ namespace PCBookWebApp.Controllers
             //var c = (from b in db.Inventories select b).ToList();
             //rpt.SetDataSource(c);
         }
+
         public ActionResult ShowLedgerRptInNewWin(string FromDate, string ToDate, int[] LedgerIds, string SelectedReportOption, string ShowType)
         {
             string userId = User.Identity.GetUserId();
@@ -127,11 +139,22 @@ namespace PCBookWebApp.Controllers
                 if (LedgerIds != null)
                 {
                     var inIds = String.Join(",", LedgerIds.Select(x => x.ToString()).ToArray());
-                    sql = "SELECT dbo.Voucher_View.* FROM dbo.Voucher_View WHERE (VoucherDate >= CONVERT(DATETIME, @fromDate, 102) AND VoucherDate <= CONVERT(DATETIME, @toDate, 102)) AND (LedgerId IN (" + inIds + ")) AND (ShowRoomId=@showRoomId)";
+                    sql = "SELECT dbo.Vouchers.VoucherId, dbo.Vouchers.VoucherTypeId, dbo.Vouchers.ShowRoomId, dbo.Vouchers.IsBank, dbo.Vouchers.IsHonored, dbo.Vouchers.HonoredDate, dbo.Vouchers.Authorized, dbo.Vouchers.AuthorizedBy, dbo.VoucherDetails.TransctionTypeId, dbo.VoucherDetails.LedgerId, dbo.VoucherTypes.VoucherTypeName, dbo.Vouchers.VoucherDate, dbo.Vouchers.VoucherNo, dbo.TransctionTypes.TransctionTypeName, dbo.Ledgers.LedgerName, dbo.VoucherDetails.DrAmount, dbo.VoucherDetails.CrAmount, dbo.Vouchers.Naration FROM  dbo.Vouchers INNER JOIN dbo.VoucherDetails ON dbo.Vouchers.VoucherId = dbo.VoucherDetails.VoucherId INNER JOIN dbo.Ledgers ON dbo.VoucherDetails.LedgerId = dbo.Ledgers.LedgerId INNER JOIN dbo.TransctionTypes ON dbo.VoucherDetails.TransctionTypeId = dbo.TransctionTypes.TransctionTypeId INNER JOIN dbo.VoucherTypes ON dbo.Vouchers.VoucherTypeId = dbo.VoucherTypes.VoucherTypeId WHERE (VoucherDate >= CONVERT(DATETIME, @fromDate, 102) AND VoucherDate <= CONVERT(DATETIME, @toDate, 102)) AND (dbo.VoucherDetails.LedgerId IN (" + inIds + ")) AND (dbo.Vouchers.ShowRoomId=@showRoomId)";
                 }
                 else
                 {
-                    sql = @"SELECT dbo.Voucher_View.* FROM dbo.Voucher_View WHERE (VoucherDate >= CONVERT(DATETIME, @fromDate, 102) AND VoucherDate <= CONVERT(DATETIME, @toDate, 102)) AND (ShowRoomId=@showRoomId)";
+                    sql = @"SELECT        
+                            dbo.Vouchers.VoucherId, dbo.Vouchers.VoucherTypeId, dbo.Vouchers.ShowRoomId, dbo.Vouchers.IsBank, dbo.Vouchers.IsHonored, dbo.Vouchers.HonoredDate, dbo.Vouchers.Authorized, dbo.Vouchers.AuthorizedBy, 
+                            dbo.VoucherDetails.TransctionTypeId, dbo.VoucherDetails.LedgerId, dbo.VoucherTypes.VoucherTypeName, dbo.Vouchers.VoucherDate, dbo.Vouchers.VoucherNo, dbo.TransctionTypes.TransctionTypeName, 
+                            dbo.Ledgers.LedgerName, dbo.VoucherDetails.DrAmount, dbo.VoucherDetails.CrAmount, dbo.Vouchers.Naration, dbo.Ledgers.TrialBalanceId, dbo.Ledgers.GroupId, dbo.Groups.GroupName
+                            FROM            
+                            dbo.Vouchers INNER JOIN
+                            dbo.VoucherDetails ON dbo.Vouchers.VoucherId = dbo.VoucherDetails.VoucherId INNER JOIN
+                            dbo.Ledgers ON dbo.VoucherDetails.LedgerId = dbo.Ledgers.LedgerId INNER JOIN
+                            dbo.TransctionTypes ON dbo.VoucherDetails.TransctionTypeId = dbo.TransctionTypes.TransctionTypeId INNER JOIN
+                            dbo.VoucherTypes ON dbo.Vouchers.VoucherTypeId = dbo.VoucherTypes.VoucherTypeId INNER JOIN
+                            dbo.Groups ON dbo.Ledgers.GroupId = dbo.Groups.GroupId
+                            WHERE (dbo.Vouchers.VoucherDate >= CONVERT(DATETIME, @fromDate, 102) AND dbo.Vouchers.VoucherDate <= CONVERT(DATETIME, @toDate, 102)) AND (dbo.Vouchers.ShowRoomId=@showRoomId)";
                 }
                 SqlCommand command = new SqlCommand(sql, connection);
                 command.Parameters.Add(new SqlParameter("@fromDate", fdate));

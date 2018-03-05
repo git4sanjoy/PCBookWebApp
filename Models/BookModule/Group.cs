@@ -36,6 +36,8 @@ namespace PCBookWebApp.Models.BookModule
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public Nullable<System.DateTime> DateUpdated { get; set; }
         public virtual Primary Primary { get; set; }
+
+        public List<Group> Childrens { get; internal set; }
         //public virtual ShowRoom ShowRoom { get; set; }
     }
 }

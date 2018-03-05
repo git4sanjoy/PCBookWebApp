@@ -21,6 +21,32 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
 
+
+
+        [Route("api/Suppliers/SuppliersMultiSelectList")]
+        [HttpGet]
+        public IHttpActionResult GetSuppliersMultiSelectList()
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+
+            var list = db.Suppliers
+                            .Where(d => d.ShowRoomId == showRoomId)
+                            .OrderBy(d => d.SupplierName)
+                            .Select(e => new {
+                                id = e.SupplierId,
+                                label = e.SupplierName
+                            });
+
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return Ok(list);
+        }
         // GET: api/Suppliers
         public IQueryable<Supplier> GetSuppliers()
         {
@@ -31,7 +57,13 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         [HttpGet]        
         public IHttpActionResult GetSupplierList()
         {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
             var list = (from item in db.Suppliers
+                        where item.ShowRoomId == showRoomId
                         select new
                         {
                             item.SupplierId,
@@ -40,6 +72,8 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                             item.Email,
                             item.Phone,
                             item.Active,
+                            item.ShowRoomId,
+                            item.ShowRoom.ShowRoomName,
                             item.CreatedBy,
                             item.DateCreated,
                             item.DateUpdated
@@ -72,10 +106,10 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             var msg = 0;
             var check = db.Suppliers.FirstOrDefault(m => m.SupplierName == supplier.SupplierName);
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
             if (id != supplier.SupplierId)
             {
@@ -86,8 +120,10 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             {
                 try
                 {
-                    var createdDate = db.Suppliers.Where(x => x.SupplierId == id).Select(x => x.DateCreated).FirstOrDefault();
-                    supplier.DateCreated = createdDate;
+                    var obj = db.Suppliers.FirstOrDefault(m => m.SupplierId == supplier.SupplierId);
+                    supplier.CreatedBy = obj.CreatedBy;
+                    supplier.ShowRoomId = obj.ShowRoomId;
+                    supplier.DateCreated = obj.DateCreated;
                     supplier.DateUpdated = DateTime.Now;
                     supplier.Active = true;
                     db.Suppliers.AddOrUpdate(supplier);
@@ -116,16 +152,20 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         {
             var msg = 0;
             var check = db.Suppliers.FirstOrDefault(m => m.SupplierName == supplier.SupplierName);
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
             string userName = User.Identity.GetUserName();
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
+
             if (check == null)
             {
                 try
                 {
+                    supplier.ShowRoomId = showRoomId;
                     supplier.CreatedBy = userName;
                     supplier.DateCreated = DateTime.Now;
                     supplier.DateCreated = supplier.DateCreated;

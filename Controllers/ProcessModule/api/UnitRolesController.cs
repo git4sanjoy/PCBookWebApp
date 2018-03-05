@@ -10,13 +10,68 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using PCBookWebApp.DAL;
 using PCBookWebApp.Models.ProcessModule;
+using System.Data.Entity.Migrations;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
+using System.Configuration;
+using System.Data.SqlClient;
 
 namespace PCBookWebApp.Controllers.ProcessModule.api
 {
     public class UnitRolesController : ApiController
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
+
+
+
+        [Route("api/UnitRoles/GetUnitRolesList")]
+        [HttpGet]
+        [ResponseType(typeof(UnitRole))]
+        public IHttpActionResult UnitRolesList()
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+
+            List<UnitRole> list = new List<UnitRole>();
+            UnitRole aObj = new UnitRole();
+
+            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+            string queryString = @"SELECT        
+                                    ShowRoomId, UnitRoleId AS id, UnitRoleName AS UnitRoleName
+                                    FROM            
+                                    dbo.UnitRoles
+                                    WHERE (ShowRoomId = @showRoomId)";
+
+            using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                connection.Open();
+                command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                SqlDataReader reader = command.ExecuteReader();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        int id = (int)reader["id"];
+                            string name = (string)reader["UnitRoleName"];
+                        aObj = new UnitRole();
+                        aObj.UnitRoleId = id;
+                        aObj.UnitRoleName = name;
+                        list.Add(aObj);
+                    }
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            //ViewBag.AccountUserList = BankAccounts;
+            return Ok(list);
+        }
+
 
         // GET: api/UnitRoles
         public IQueryable<UnitRole> GetUnitRoles()
@@ -39,79 +94,75 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
 
         // PUT: api/UnitRoles/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutUnitRole(int id, UnitRole unitRole)
+        public async Task<IHttpActionResult> PutUnitRole(int id, UnitRole unitRole)
         {
-            string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers
-                .Where(a => a.Id == userId)
-                .Select(a => a.ShowRoomId)
-                .FirstOrDefault();
-            unitRole.ShowRoomId = showRoomId;
+            var msg = 0;
+            var check = db.UnitRoles.FirstOrDefault(m => m.UnitRoleName == unitRole.UnitRoleName);
 
-            string userName = User.Identity.GetUserName();
-            DateTime createdAt = DateTime.Now;
-            unitRole.CreatedBy = userName;
-            unitRole.DateCreated = createdAt;
-            unitRole.DateUpdated = createdAt;
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
             if (id != unitRole.UnitRoleId)
             {
                 return BadRequest();
             }
 
-            db.Entry(unitRole).State = EntityState.Modified;
+            //db.Entry(unitRole).State = EntityState.Modified;
 
-            try
+            if (check == null)
             {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UnitRoleExists(id))
+                try
                 {
-                    return NotFound();
+                    var obj = db.UnitRoles.FirstOrDefault(m => m.UnitRoleId == unitRole.UnitRoleId);
+                    unitRole.CreatedBy = obj.CreatedBy;
+                    unitRole.DateCreated = obj.DateCreated;
+                    unitRole.DateUpdated = DateTime.Now;
+                    unitRole.ShowRoomId = obj.ShowRoomId;
+                    unitRole.Active = true;
+                    db.UnitRoles.AddOrUpdate(unitRole);
+                    await db.SaveChangesAsync();
+                    msg = 1;
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!UnitRoleExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(msg);
+            //return StatusCode(HttpStatusCode.NoContent);
         }
 
         // POST: api/UnitRoles
         [ResponseType(typeof(UnitRole))]
-        public IHttpActionResult PostUnitRole(UnitRole unitRole)
+       
+       public async Task<IHttpActionResult> PostUnitRole(UnitRole unitRole)
         {
             string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers
-                .Where(a => a.Id == userId)
-                .Select(a => a.ShowRoomId)
-                .FirstOrDefault();
-            unitRole.ShowRoomId = showRoomId;
-
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
             string userName = User.Identity.GetUserName();
-            DateTime createdAt = DateTime.Now;
-            unitRole.CreatedBy = userName;
-            unitRole.DateCreated = createdAt;
-            unitRole.DateUpdated = createdAt;
-
-            unitRole.DateCreated = DateTime.Now;
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
             bool isTrue = db.UnitRoles.Any(s => s.UnitRoleName == unitRole.UnitRoleName.Trim());
             if (isTrue == false)
-            { 
-            db.UnitRoles.Add(unitRole);
-            db.SaveChanges();
+            {
+                unitRole.ShowRoomId = showRoomId;
+                unitRole.CreatedBy = userName;
+                unitRole.DateCreated = DateTime.Now;
+                unitRole.DateCreated = unitRole.DateCreated;
+                unitRole.Active = true;
+                db.UnitRoles.Add(unitRole);
+                await db.SaveChangesAsync();
             }
             return CreatedAtRoute("DefaultApi", new { id = unitRole.UnitRoleId }, unitRole);
         }

@@ -53,7 +53,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
         }
 
     });
-    $scope.creditParty = true;
+    $scope.creditParty = false;
     $scope.customerList = {};
     $http({
         url: "/api/Customer/GetDropDownList",
@@ -94,9 +94,9 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
         payment: 0,
         otherExpencess: 0,
         customer_info: {
-            name: "",
-            Address: 'None',
-            Phone: 'None',
+            name: '',
+            Address: '',
+            Phone: '',
             Email: ''
         }
     };
@@ -119,16 +119,16 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
             angular.element('#itemQuentity').focus();
             return false;
         }
-        if ($scope.itemCost < $scope.itemMinCost) {
-            alert('Rate Mast Be Grater Than Min Rate: ' + $scope.itemMinCost);
-            angular.element('#itemCost').focus();
-            return false;
-        }
-        if ($scope.itemDiscount > $scope.itemMinDiscount) {
-            alert('Discount Mast Be Less Than Min Discount Rate: ' + $scope.itemMinDiscount);
-            angular.element('#itemDiscount').focus();
-            return false;
-        }
+        //if ($scope.itemCost < $scope.itemMinCost) {
+        //    alert('Rate Mast Be Grater Than Min Rate: ' + $scope.itemMinCost);
+        //    angular.element('#itemCost').focus();
+        //    return false;
+        //}
+        //if ($scope.itemDiscount > $scope.itemMinDiscount) {
+        //    alert('Discount Mast Be Less Than Min Discount Rate: ' + $scope.itemMinDiscount);
+        //    angular.element('#itemDiscount').focus();
+        //    return false;
+        //}
         $scope.invoice.items.push({
             description: $scope.productName,
 	        qty: $scope.itemQuentity,
@@ -138,9 +138,9 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
             MainCategoryName: $scope.itemMainCategoryName
         });
         $scope.productName = "";
-        $scope.itemQuentity = "";
-        $scope.itemCost = "";
-        $scope.itemDiscount = "";
+        $scope.itemQuentity = 0;
+        $scope.itemCost = 0;
+        $scope.itemDiscount = 0;
 
         var addMoreProduct = confirm(productName + " Added to Cart. Are you sure you want to add more?");
         if (addMoreProduct) {
@@ -314,7 +314,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
                 var innerContents = document.getElementById('printable-memo-bangla').innerHTML;
                 var popupWinindow = window.open('', '_blank', 'width=900,height=700,scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no');
                 popupWinindow.document.open();
-                popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="http://localhost:12005/Content/Site.css" /></head><body onload="window.print()">' + innerContents + '</html>');
+                popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="http://books.pakizagroup.com/Content/Site.css" /></head><body onload="window.print()">' + innerContents + '</html>');
                 popupWinindow.document.close();
 
                 //Rset Form
@@ -357,18 +357,30 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
             headers: authHeaders
         }).success(function (data) {
             if (data.length > 0) {
+                //$scope.invoice.customer_info.Address = data[0].Address;
+                //$scope.invoice.customer_info.Phone = data[0].Phone;
+                //$scope.invoice.customer_info.Email = data[0].Email;
+                //$scope.invoice.customer_info.CreditLimit = data[0].CreditLimit;
+                //$scope.invoice.customer_info.TotalCredit = data[0].TotalCredit;
+                //$scope.invoice.customer_info.AddressBangla = data[0].AddressBangla;
+                //$scope.invoice.customer_info.Image = data[0].Image;
+
                 $scope.invoice.customer_info.Address = data[0].Address;
-                $scope.invoice.customer_info.Phone = data[0].Phone;
-                $scope.invoice.customer_info.Email = data[0].Email;
-                $scope.invoice.customer_info.CreditLimit = data[0].CreditLimit;
-                $scope.invoice.customer_info.TotalCredit = data[0].TotalCredit;
-                $scope.invoice.customer_info.AddressBangla = data[0].AddressBangla;
+                $scope.invoice.customer_info.DistrictName = data[0].DistrictName;
                 $scope.invoice.customer_info.Image = data[0].Image;
-                if (customerName == "Cash Party") {
-                    $scope.creditParty = false;
-                } else {
-                    $scope.creditParty = true;
-                }
+                $scope.invoice.customer_info.BfAmount = data[0].BfAmount;
+                $scope.invoice.customer_info.BFDate = data[0].BFDate;
+                $scope.invoice.customer_info.CreditLimit = data[0].CreditLimit;
+                $scope.invoice.customer_info.ActualCredit = data[0].ActualCredit;
+                $scope.invoice.customer_info.TotalSale = data[0].TotalSale;
+                $scope.invoice.customer_info.TotalCollection = data[0].TotalCollection;
+                $scope.invoice.customer_info.TotalDiscount = data[0].TotalDiscount;
+
+                //if (customerName == "Cash Party") {
+                //    $scope.creditParty = false;
+                //} else {
+                //    $scope.creditParty = true;
+                //}
             } else {
                 $scope.invoice.customer_info.name = {};
                 angular.element('#CustomerName').focus();
@@ -384,6 +396,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
 
     $scope.GetProductDetailById = function () {
         if ($scope.productName) {
+
             var productName = $scope.productName.ProductName;
             var productId = $scope.productName.ProductId;
 
@@ -495,7 +508,14 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
         }
         return groupWiseSum;
     };
-
+    $scope.totalSale = function (memoItems) {
+        //console.log(memos);
+        var total = 0;
+        angular.forEach(memoItems, function (item) {
+            total += item.qty * (item.cost - item.discount);
+        })
+        return total;
+    };
     //Toster
     var last = {
         bottom: true,

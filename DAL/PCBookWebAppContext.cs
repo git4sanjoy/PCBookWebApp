@@ -78,6 +78,10 @@ namespace PCBookWebApp.DAL
 
         public System.Data.Entity.DbSet<PCBookWebApp.Models.SalesModule.MemoDetail> MemoDetails { get; set; }
 
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.SalesModule.ZoneManager> ZoneManagers { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.SalesModule.SaleZone> SaleZones { get; set; }
+
         //Process Module
 
         public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.ProductType> ProductTypes { get; set; }
@@ -101,5 +105,23 @@ namespace PCBookWebApp.DAL
         public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.Purchase> Purchases { get; set; }
 
         public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.Process> Processes { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.BookModule.CostCenter> CostCenters { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.FinishedGood> FinishedGoods { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.FinishedGoodImage> FinishedGoodImages { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.FinishedGoodStock> FinishedGoodStocks { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.MDModule.Deal> Deals { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.MDModule.Deal_Image> Deal_Image { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.MDModule.DealProduction> DealProductions { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.SalesModule.Division> Divisions { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.SalesModule.UnitManager> UnitManagers { get; set; }
     }
 }

@@ -7,51 +7,10 @@
                                         'angularMoment',
                                         'LocalStorageModule',
                                         'angularjs-dropdown-multiselect',
-                                        'angular-loading-bar', 'xeditable', 'ngMaterial', 'lr.upload', 'angular.filter', 'chart.js'])
+    'angular-loading-bar', 'xeditable', 'ngMaterial', 'lr.upload', 'angular.filter', 'chart.js', 'angularTreeview'])
 
 //global veriable for store service base path
-app.filter('groupBy', function () {
-    return _.memoize(function (items, field) {
-        return _.groupBy(items, field);
-    });
-});
-app.factory('Excel', function ($window) {
-    var uri = 'data:application/vnd.ms-excel;base64,',
-        template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
-        base64 = function (s) { return $window.btoa(unescape(encodeURIComponent(s))); },
-        format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
-    return {
-        tableToExcel: function (tableId, worksheetName) {
-            var table = $(tableId),
-                ctx = { worksheet: worksheetName, table: table.html() },
-                href = uri + base64(format(template, ctx));
-            return href;
-        }
-    };
-});
-app.filter('sumByKey', function () {
-    return function (data, key) {
-        if (typeof (data) === 'undefined' || typeof (key) === 'undefined') {
-            return 0;
-        }
 
-        var sum = 0;
-        for (var i = data.length - 1; i >= 0; i--) {
-            sum += parseFloat(data[i][key]);
-        }
-
-        return sum;
-    };
-});
-app.filter('hideIfEmpty', function ($filter) {
-    return function (dateString, format) {
-        if (dateString === '01/01/0001') {
-            return "";
-        } else {
-            return $filter('date')(dateString, format.toString());
-        }
-    };
-});
 app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
 
     function ($locationProvider, $routeProvider, $ariaProvider) {
@@ -75,9 +34,68 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
             templateUrl: '/AngApp/Views/Dashboard.html',
             controller: 'dashboardController'
         }) 
+            .when('/ProductTypes', { // For Process Management Routes
+                templateUrl: '/AngApp/ProcessModule/Views/ProductTypes.html',
+                controller: 'ProductTypesController'
+            })
+            .when('/PurchasedProducts', {
+                templateUrl: '/AngApp/ProcessModule/Views/PurchasedProducts.html',
+                controller: 'PurchasedProductsController'
+            })
+            .when('/Suppliers', {
+                templateUrl: '/AngApp/ProcessModule/Views/Suppliers.html',
+                controller: 'SuppliersController'
+            })
+            .when('/Matric', {
+                templateUrl: '/AngApp/ProcessModule/Views/Matric.html',
+                controller: 'MatricsController'
+            })
+            .when('/ProcessList', {
+                templateUrl: '/AngApp/ProcessModule/Views/ProcessList.html',
+                controller: 'ProcessListController'
+            })
+            .when('/UnitRole', {
+                templateUrl: '/AngApp/ProcessModule/Views/UnitRole.html',
+                controller: 'UnitRoleController'
+            })
+            .when('/ProcesseLocations', {
+                templateUrl: '/AngApp/ProcessModule/Views/ProcesseLocations.html',
+                controller: 'ProcesseLocationsController'
+            })
+            .when('/Conversion', {
+                templateUrl: '/AngApp/ProcessModule/Views/Conversion.html',
+                controller: 'ConversionController'
+            })
+            .when('/ConversionDetail', {
+                templateUrl: '/AngApp/ProcessModule/Views/ConversionDetail.html',
+                controller: 'ConversionDetailController'
+            })
+            .when('/StoreDelivery', {
+                templateUrl: '/AngApp/ProcessModule/Views/StoreDelivery.html',
+                controller: 'StoreDeliveryController'
+            })
+            .when('/Purchase', {
+                templateUrl: '/AngApp/ProcessModule/Views/Purchase.html',
+                controller: 'PurchaseController'
+            })
+            .when('/Process', {
+                templateUrl: '/AngApp/ProcessModule/Views/Process.html',
+                controller: 'ProcessController'
+            })
+            .when('/ProcessReport', {
+                templateUrl: '/AngApp/ProcessModule/Views/ProcessReport.html',
+                controller: 'ProcessReportController'
+            })
 
-
-            .when('/Invoice', { // For Sales Management
+            .when('/DesignGallery', {// For Design Management Routes
+                templateUrl: '/AngApp/ProcessModule/Views/DesignGallery.html',
+                controller: 'DesignGalleryController'
+            })
+            .when('/FinishedGood', {
+                templateUrl: '/AngApp/ProcessModule/Views/FinishedGood.html',
+                controller: 'FinishedGoodController'
+            })
+            .when('/Invoice', { // For Sales Management Routes
                 templateUrl: '/AngApp/SalesModule/Views/Cart.html',
                 controller: 'CartController'
             })
@@ -121,9 +139,19 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
                 templateUrl: '/AngApp/SalesModule/Views/SalesReport.html',
                 controller: 'SalesReportController'
             })
-
-
-        .when('/Bookkeeping', {// For Accounts  Module Management
+            .when('/SaleZone', {
+                templateUrl: '/AngApp/SalesModule/Views/SaleZone.html',
+                controller: 'SaleZoneController'
+            })
+            .when('/ZoneManager', {
+                templateUrl: '/AngApp/SalesModule/Views/ZoneManager.html',
+                controller: 'ZoneManagerController'
+            })
+            .when('/Divisions', {
+                templateUrl: '/AngApp/SalesModule/Views/Divisions.html',
+                controller: 'DivisionsController'
+            })
+        .when('/Bookkeeping', {// For Accounts  Module Management Routes
             templateUrl: '/AngApp/BookModule/Views/Bookkeeping.html',
             controller: 'BookkeepingController'
         })
@@ -147,6 +175,10 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
             templateUrl: '/AngApp/BookModule/Views/Ledgers.html',
             controller: 'LedgersController'
         })
+            .when('/CostCenter', {
+                templateUrl: '/AngApp/BookModule/Views/CostCenter.html',
+                controller: 'CostCenterController'
+            })
         .when('/VoucherTypes', {
             templateUrl: '/AngApp/BookModule/Views/VoucherTypes.html',
             controller: 'VoucherTypesController'
@@ -201,15 +233,14 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
             templateUrl: '/AngApp/Views/Units.html',
             controller: 'UnitsController'
         })
-        .when('/UnitUsers', {
-            templateUrl: '/AngApp/Views/UnitUsers.html',
-            controller: 'UnitUsersController'
-        })
         .when('/Accounts', {
             templateUrl: '/AngApp/Views/Accounts.html',
             controller: 'AccountsController'
         })
-
+        .when('/UnitManagers', {
+            templateUrl: '/AngApp/SalesModule/Views/UnitManagers.html',
+            controller: 'UnitManagersController'
+        })
 
         .when('/About', { // Anonymous User
             templateUrl: '/AngApp/Views/About.html',
@@ -288,3 +319,17 @@ app.config(['$httpProvider', function ($httpProvider) {
 //        return m.isValid() ? m.toDate() : new Date(NaN);
 //    };
 //});
+app.factory('AddDealService', ['$http', function ($http) {
+
+    var fac = {};
+
+    fac.AddDeal = function (data) {
+        return $http.post("/api/Deals", data, {
+            withCredentials: true,
+            headers: { 'Content-Type': undefined },
+            transformRequest: angular.identity
+        })
+    }
+
+    return fac;
+}])

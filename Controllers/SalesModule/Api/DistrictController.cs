@@ -12,6 +12,10 @@ using System.Web.Http.Description;
 using PCBookWebApp.DAL;
 using PCBookWebApp.Models;
 using PCBookWebApp.Models.SalesModule;
+using Microsoft.AspNet.Identity;
+using PCBookWebApp.Models.ViewModels;
+using System.Data.SqlClient;
+using System.Configuration;
 
 namespace PCBookWebApp.Controllers.SalesModule.Api
 {
@@ -50,10 +54,82 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
 
 
 
+        [Route("api/District/DistrictListForColumnEdit")]
+        [HttpGet]
+        public IHttpActionResult GetDistrictListForColumnEdit()
+        {
+            //string currentUserId = User.Identity.GetUserId();
+            //string currentUserName = User.Identity.GetUserName();
+            //var showRoomId = db.ShowRoomUsers
+            //    .Where(a => a.Id == currentUserId)
+            //    .Select(a => a.ShowRoomId)
+            //    .FirstOrDefault();
+
+            //var list = db.Districts
+            //    .Select(e => new {
+            //        id = e.DistrictId,
+            //        name = e.DistrictName,
+            //        status = e.SaleZone.SaleZoneId,
+            //        e.DistrictNameBangla
+            //    })
+            //    .OrderBy(e => e.name);
+            //return Ok(list);
+            List<XEditGroupView> list = new List<XEditGroupView>();
+            SqlConnection checkConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString);
+            checkConnection.Open();
+            try
+            {
+                SqlDataReader ledgerReader = null;
+                string sql = @"SELECT        
+                                dbo.Districts.DistrictId AS id, dbo.Districts.DistrictName AS name, dbo.Districts.DistrictNameBangla, dbo.Districts.SaleZoneId AS status, dbo.SaleZones.SaleZoneName
+                                FROM            
+                                dbo.Districts LEFT OUTER JOIN
+                                dbo.SaleZones ON dbo.Districts.SaleZoneId = dbo.SaleZones.SaleZoneId";
+                SqlCommand command = new SqlCommand(sql, checkConnection);
+                ledgerReader = command.ExecuteReader();
+                while (ledgerReader.Read())
+                {
+                    XEditGroupView customerObj = new XEditGroupView();
+                    customerObj.id = (int)ledgerReader["id"];
+                    customerObj.name = (string)ledgerReader["name"];
+                    if (ledgerReader["status"] != DBNull.Value) {
+                        customerObj.status = (int)ledgerReader["status"];
+                    }
+                    
+                    customerObj.DistrictNameBangla = (string)ledgerReader["DistrictNameBangla"];
+                    list.Add(customerObj);
+                }
+                ledgerReader.Close();
+                checkConnection.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return Ok(list);
+        }
 
 
-
-
+        [Route("api/District/ZoneListXEdit")]
+        [HttpGet]
+        [ResponseType(typeof(ZoneManager))]
+        public IHttpActionResult GetZoneManagersListXEdit()
+        {
+            string userName = User.Identity.GetUserName();
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+            var list = db.SaleZones
+                .Select(e => new { value = e.SaleZoneId, text = e.SaleZoneName })
+                .OrderBy(e => e.text);
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return Ok(list);
+        }
 
 
 
@@ -78,6 +154,37 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
             }
 
             return Ok(district);
+        }
+
+        [Route("api/District/DistrictUpdate/{id}/{column}/{value}")]
+        [HttpPost]
+        //[ResponseType(typeof(District))]
+        public IHttpActionResult RateMgrUpdateRate(int id, string column, string value)
+        {
+            string updateColumnName = "";
+            if (column == "status") {
+                updateColumnName = "SaleZoneId";
+            } else if(column == "DistrictNameBangla") {
+                updateColumnName = "DistrictNameBangla";
+            } else {
+                updateColumnName = "DistrictName";
+            }
+            if (value != "0") {
+                string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+                SqlConnection sqlBUpdateCon = new SqlConnection(connectionString);
+                SqlCommand cmdBUpdate = new SqlCommand();
+                cmdBUpdate.CommandType = System.Data.CommandType.Text;
+                cmdBUpdate.CommandText = "UPDATE dbo.Districts SET ["+ updateColumnName + "] = @updateValue WHERE [DistrictId] = @DistrictId";
+                cmdBUpdate.Parameters.AddWithValue("@updateValue", value);
+                cmdBUpdate.Parameters.AddWithValue("@DistrictId", id);
+                cmdBUpdate.Connection = sqlBUpdateCon;
+
+                sqlBUpdateCon.Open();
+                cmdBUpdate.ExecuteNonQuery();
+                sqlBUpdateCon.Close();
+            }
+
+            return Ok();
         }
 
         // PUT: api/District/5

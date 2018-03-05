@@ -24,7 +24,7 @@ namespace PCBookWebApp.WebForms.Import
 
             OleDbConnection cn = new OleDbConnection(connectString);
             cn.Open();
-            string selectString = "SELECT Delivery.Date, Delivery.ChalanNo FROM Delivery GROUP BY Delivery.Date, Delivery.ChalanNo";
+            string selectString = "SELECT Delivery.Date, Delivery.ChalanNo, Delivery.CID FROM Delivery GROUP BY Delivery.Date, Delivery.ChalanNo, Delivery.CID";
             OleDbCommand cmd = new OleDbCommand(selectString, cn);
             OleDbDataReader reader = cmd.ExecuteReader();
             //Access DB Loop Through Thansction Table
@@ -32,14 +32,14 @@ namespace PCBookWebApp.WebForms.Import
             {
                 DateTime mdate = (DateTime) reader["Date"];
                 string challanNo = reader["ChalanNo"].ToString();
-
+                //int cid = (int) reader["CID"];
                 double totalFinalDiscount = 0;
                 double totalGatOther = 0;
-                int cid = 0;
+                int cid =Convert.ToInt32(reader["CID"]);
                 //Open Delivery Table
                 OleDbConnection cn1 = new OleDbConnection(connectString);
                 cn1.Open();
-                string sqlDelivery = "SELECT Delivery.CID, Delivery.Date, Delivery.ChalanNo, Sum(Delivery.FDiscount) AS SumOfFDiscount, Sum(Delivery.GatOther) AS SumOfGatOther FROM Delivery GROUP BY Delivery.CID, Delivery.Date, Delivery.ChalanNo HAVING (((Delivery.Date)=#" + mdate + "#) AND ((Delivery.ChalanNo)='" + challanNo + "'))";
+                string sqlDelivery = "SELECT Delivery.CID, Delivery.Date, Delivery.ChalanNo, Sum(Delivery.FDiscount) AS SumOfFDiscount, Sum(Delivery.GatOther) AS SumOfGatOther FROM Delivery GROUP BY Delivery.CID, Delivery.Date, Delivery.ChalanNo HAVING (((Delivery.Date)=#" + mdate + "#) AND ((Delivery.ChalanNo)='" + challanNo + "') AND ((Delivery.CID)=" + cid + "))";
                 //string sqlDelivery = "SELECT Delivery.Date, Delivery.CID, Delivery.ChalanNo, Delivery.YardPiece, Delivery.Rate, Delivery.DRate, Delivery.FDiscount, Delivery.GatOther FROM Delivery WHERE Delivery.ChalanNo='"+ challanNo + "' AND Delivery.Date=#"+ mdate + "#";
 
                 OleDbCommand cmd1 = new OleDbCommand(sqlDelivery, cn1);
@@ -51,7 +51,7 @@ namespace PCBookWebApp.WebForms.Import
                 {
                     cid = Convert.ToInt32(reader1["CID"]);
                     if (cid == 0) {
-                        cid = 3303;
+                        cid = 16252;
                     }
                     //double qu = Convert.ToDouble(reader1["YardPiece"]);
                     //double rate = Convert.ToDouble(reader1["Rate"]);
@@ -74,13 +74,13 @@ namespace PCBookWebApp.WebForms.Import
                     SqlCommand cmdInsert = new SqlCommand(sql, con);
                     cmdInsert.Parameters.Add("@MemoDate", SqlDbType.DateTime).Value = mdate;
                     cmdInsert.Parameters.Add("@CustomerId", SqlDbType.Int).Value = cid;
-                    cmdInsert.Parameters.Add("@ShowRoomId", SqlDbType.Int).Value = 1;
+                    cmdInsert.Parameters.Add("@ShowRoomId", SqlDbType.Int).Value = 18;
                     cmdInsert.Parameters.Add("@MemoNo", SqlDbType.VarChar, 145).Value = challanNo;
                     
                     cmdInsert.Parameters.Add("@MemoDiscount", SqlDbType.Decimal).Value = totalFinalDiscount;
                     cmdInsert.Parameters.Add("@GatOther", SqlDbType.Decimal).Value = totalGatOther;
 
-                    cmdInsert.Parameters.Add(new SqlParameter("@createdBy", "pfcsr001.mgr@pakizagroup.com"));
+                    cmdInsert.Parameters.Add(new SqlParameter("@createdBy", "tsr.002.sr@pakizagroup.com"));
                     cmdInsert.Parameters.Add("@active", SqlDbType.Bit).Value = false;
                     cmdInsert.Parameters.Add("@createDate", SqlDbType.DateTime).Value = DateTime.Now;
                     cmdInsert.Parameters.Add("@updatedate", SqlDbType.DateTime).Value = DateTime.Now;
@@ -101,6 +101,7 @@ namespace PCBookWebApp.WebForms.Import
 
         protected void Button2_Click(object sender, EventArgs e)
         {
+            lblStatus.Text = "";
             string connectString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=D:\\PFCHBSData.mdb;";
             
             //Open SQL Server
@@ -109,18 +110,26 @@ namespace PCBookWebApp.WebForms.Import
             {
                 myConnection.Open();
                 SqlDataReader memoReader = null;
-                SqlCommand command = new SqlCommand("SELECT MemoMasterId, MemoDate, CustomerId, ShowRoomId, MemoNo, MemoDiscount, GatOther, ExpencessRemarks, Active, CreatedBy, DateCreated, DateUpdated FROM MemoMasters", myConnection);
+                SqlCommand command = new SqlCommand("SELECT * FROM MemoMasters where showroomid=18", myConnection);
                 memoReader = command.ExecuteReader();
 
                 while (memoReader.Read())
                 {
                     DateTime memoDate = (DateTime) memoReader["MemoDate"];
                     string memoNo = (string) memoReader["MemoNo"];
-                    int memoMasterId = (int) memoReader["MemoMasterId"]; 
+                    int memoMasterId = (int) memoReader["MemoMasterId"];
+                    int cid = (int) memoReader["CustomerId"];
+
+                    if (cid == 16252)
+                    {
+                        cid = 0;
+
+                    }
+                    //int cid = (int) memoReader["CustomerId"];
 
                     OleDbConnection cn = new OleDbConnection(connectString);
                     cn.Open();
-                    string selectString = "SELECT Delivery.CID, Delivery.Date, Delivery.ChalanNo, Delivery.FDiscount, Delivery.GatOther, Delivery.YardPiece, Delivery.Rate, Delivery.DRate, Delivery.SSCI FROM Delivery WHERE(((Delivery.Date) =#" + memoDate + "#) AND ((Delivery.ChalanNo)='" + memoNo + "'))";
+                    string selectString = "SELECT Delivery.CID, Delivery.Date, Delivery.ChalanNo, Delivery.FDiscount, Delivery.GatOther, Delivery.YardPiece, Delivery.Rate, Delivery.DRate, Delivery.SSCI FROM Delivery WHERE(((Delivery.Date) =#" + memoDate + "#) AND ((Delivery.ChalanNo)='" + memoNo + "') AND ((Delivery.CID)=" + cid + "))";
                     OleDbCommand cmd = new OleDbCommand(selectString, cn);
                     OleDbDataReader reader = cmd.ExecuteReader();
                     //Access DB Loop Through Thansction Table
@@ -128,11 +137,12 @@ namespace PCBookWebApp.WebForms.Import
                     double totalFinalDiscount = 0;
                     double totalGatOther = 0;
                     double netPaymentCash = 0;
-                    int cid = 0;
+                    
 
                     while (reader.Read())
                     {
                         cid = Convert.ToInt32(reader["CID"]);
+
                         int productId = Convert.ToInt32(reader["SSCI"]);
                         double qu = Convert.ToDouble(reader["YardPiece"]);
                         double rate = Convert.ToDouble(reader["Rate"]);
@@ -160,7 +170,7 @@ namespace PCBookWebApp.WebForms.Import
                             cmdInsert.Parameters.Add("@Discount", SqlDbType.Decimal).Value = discountRate;
 
                             cmdInsert.Parameters.Add("@active", SqlDbType.Bit).Value = false;
-                            cmdInsert.Parameters.Add(new SqlParameter("@createdBy", "pfcsr001.mgr@pakizagroup.com"));
+                            cmdInsert.Parameters.Add(new SqlParameter("@createdBy", "tsr.002.sr@pakizagroup.com"));
                             cmdInsert.Parameters.Add("@createDate", SqlDbType.DateTime).Value = DateTime.Now;
                             cmdInsert.Parameters.Add("@updatedate", SqlDbType.DateTime).Value = DateTime.Now;
                             cmdInsert.CommandType = CommandType.Text;
@@ -175,30 +185,30 @@ namespace PCBookWebApp.WebForms.Import
                     netPaymentCash = totalPrice + totalGatOther - totalFinalDiscount;
                     if (cid == 0)
                     {
-                        cid = 3303;
+                        cid = 16252;
                         // Proceed to save for Cash sale payments 
                         using (SqlConnection conPayment = new SqlConnection(ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString))
                         {
                             conPayment.Open();
-                            string sqlPayment = @"INSERT INTO dbo.Payments (MemoMasterId, CustomerId, ShowRoomId, PaymentDate, SSAmount, TSAmount, SCAmount, TCAmount, SDiscount, TDiscount, PaymentType, Active, CreatedBy, DateCreated, DateUpdated, AdjustmentBf) 
-                                                                        VALUES(@MemoMasterId, @CustomerId, @ShowRoomId, @PaymentDate,@SSAmount,@TSAmount, @SCAmount,@TCAmount,@SDiscount,@TDiscount, @PaymentType, @active, @createdBy, @createDate, @updatedate,@AdjustmentBf)";
+                            string sqlPayment = @"INSERT INTO dbo.Payments (MemoMasterId, CustomerId, ShowRoomId, PaymentDate, SSAmount,  SCAmount,  SDiscount,  PaymentType, Active, CreatedBy, DateCreated, DateUpdated, AdjustmentBf) 
+                                                                        VALUES(@MemoMasterId, @CustomerId, @ShowRoomId, @PaymentDate,@SSAmount, @SCAmount,@SDiscount, @PaymentType, @active, @createdBy, @createDate, @updatedate,@AdjustmentBf)";
                             SqlCommand cmdInsertPayment = new SqlCommand(sqlPayment, conPayment);
 
                             cmdInsertPayment.Parameters.Add("@MemoMasterId", SqlDbType.Int).Value = memoMasterId;
                             cmdInsertPayment.Parameters.Add("@CustomerId", SqlDbType.Int).Value = cid;
-                            cmdInsertPayment.Parameters.Add("@ShowRoomId", SqlDbType.Decimal).Value = 1;
+                            cmdInsertPayment.Parameters.Add("@ShowRoomId", SqlDbType.Decimal).Value = 18;
                             cmdInsertPayment.Parameters.Add("@PaymentDate", SqlDbType.DateTime).Value = memoDate;
 
                             cmdInsertPayment.Parameters.Add("@SSAmount", SqlDbType.Decimal).Value = 0;
-                            cmdInsertPayment.Parameters.Add("@TSAmount", SqlDbType.Decimal).Value = 0;
+                            //cmdInsertPayment.Parameters.Add("@TSAmount", SqlDbType.Decimal).Value = 0;
                             cmdInsertPayment.Parameters.Add("@SCAmount", SqlDbType.Decimal).Value = netPaymentCash;
-                            cmdInsertPayment.Parameters.Add("@TCAmount", SqlDbType.Decimal).Value = 0;
+                            //cmdInsertPayment.Parameters.Add("@TCAmount", SqlDbType.Decimal).Value = 0;
                             cmdInsertPayment.Parameters.Add("@SDiscount", SqlDbType.Decimal).Value = 0;
-                            cmdInsertPayment.Parameters.Add("@TDiscount", SqlDbType.Decimal).Value = 0;
+                            //cmdInsertPayment.Parameters.Add("@TDiscount", SqlDbType.Decimal).Value = 0;
                             
-                            cmdInsertPayment.Parameters.Add("@PaymentType", SqlDbType.VarChar, 145).Value = "Cash";
+                            cmdInsertPayment.Parameters.Add("@PaymentType", SqlDbType.VarChar, 145).Value = "Cash Party";
                             cmdInsertPayment.Parameters.Add("@active", SqlDbType.Bit).Value = false;
-                            cmdInsertPayment.Parameters.Add(new SqlParameter("@createdBy", "pfcsr001.mgr@pakizagroup.com"));
+                            cmdInsertPayment.Parameters.Add(new SqlParameter("@createdBy", "tsr.002.sr@pakizagroup.com"));
                             cmdInsertPayment.Parameters.Add("@createDate", SqlDbType.DateTime).Value = DateTime.Now;
                             cmdInsertPayment.Parameters.Add("@updatedate", SqlDbType.DateTime).Value = DateTime.Now;
                             cmdInsertPayment.Parameters.Add("@AdjustmentBf", SqlDbType.Bit).Value = false;
@@ -219,6 +229,44 @@ namespace PCBookWebApp.WebForms.Import
 
 
             lblStatus.Text = "Data Imported Successfully";
+        }
+
+        protected void UpdateMemoNo_Click(object sender, EventArgs e)
+        {
+            string connectString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=D:\\PFCHBSData.mdb;";
+
+            OleDbConnection cn = new OleDbConnection(connectString);
+            cn.Open();
+            string selectString = "SELECT * FROM Table1";
+            OleDbCommand cmd = new OleDbCommand(selectString, cn);
+            OleDbDataReader reader = cmd.ExecuteReader();
+            //Access DB Loop Through Thansction Table
+            while (reader.Read())
+            {
+                int sl = Convert.ToInt32( reader["sl"]);
+                string challanNo = reader["ch"].ToString();
+                string updateChallanNo = reader["updatech"].ToString();
+
+                //Update Memo Table
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString);
+                SqlCommand cmdUpdate = new SqlCommand();
+                cmdUpdate.CommandType = System.Data.CommandType.Text;
+                cmdUpdate.CommandText = "UPDATE dbo.MemoMasters SET [MemoNo] = @MemoNo WHERE [MemoMasterId] = @MemoMasterId";
+                cmdUpdate.Parameters.AddWithValue("@MemoNo", updateChallanNo);
+                cmdUpdate.Parameters.AddWithValue("@MemoMasterId", sl);
+                cmdUpdate.Connection = con;
+
+                con.Open();
+                cmdUpdate.ExecuteNonQuery();
+                con.Close();
+                //End Balance Update
+
+
+            }// Access Loop Transction Table
+            reader.Close();
+            cn.Close();
+
+            lblStatus.Text = "Memo No Updated Successfully";
         }
     }
 }

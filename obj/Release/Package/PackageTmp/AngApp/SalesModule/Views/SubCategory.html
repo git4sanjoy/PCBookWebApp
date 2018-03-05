@@ -1,6 +1,6 @@
 ﻿<div class="box box-danger">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-cube"></i> Sub Category Add Form</h3>
+        <h3 class="box-title"><i class="fa fa-cube"></i> Sub Category</h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -13,7 +13,7 @@
                     <label>Sub Category Name</label>
                     <div class="input-group" ng-class="{ 'has-error' : subCategoryForm.SubCategoryName.$invalid && (subCategoryForm.SubCategoryName.$dirty || submitted)}">
                         <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                        <input id="SubCategoryName" type="text" class="form-control" name="SubCategoryName" autocomplete="off" tabindex="1" autofocus
+                        <input id="SubCategoryName" type="text" class="form-control" name="SubCategoryName" autocomplete="off" tabindex="1" 
                                move-focus-by-enter-key
                                ng-model="subCategory.SubCategoryName"
                                ng-required="true">
@@ -41,7 +41,7 @@
             </div>
         </div><!-- /.box-body -->
         <div class="box-footer no-border">
-            <button type="submit" class="btn btn-success" tabindex="3"
+            <button type="submit" class="btn btn-danger" tabindex="3"
                     move-focus-by-enter-key
                     ng-hide="addButton"
                     ng-disabled="subCategoryForm.$invalid">
@@ -59,7 +59,7 @@
 
 <div class="box box-danger">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-cubes"></i> Sub Categories <small class="label label-success">{{subCategories.length}}</small></h3>
+        <h3 class="box-title"><i class="fa fa-cubes"></i> Sub Categories <small class="label label-danger">{{subCategories.length}}</small></h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>

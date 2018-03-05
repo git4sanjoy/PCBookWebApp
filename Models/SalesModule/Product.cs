@@ -12,8 +12,8 @@ namespace PCBookWebApp.Models.SalesModule
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int ProductId { get; set; }
-        [Required]
-        public int ShowRoomId { get; set; }
+        //[Required]
+        public int? ShowRoomId { get; set; }
         [Required]
         public int SubCategoryId { get; set; }
 
@@ -30,7 +30,7 @@ namespace PCBookWebApp.Models.SalesModule
 
         public double Rate { get; set; }
         public double Discount { get; set; }
-
+        public int? UnitId { get; set; }
 
         public bool Active { get; set; }
         public string CreatedBy { get; set; }
@@ -44,5 +44,6 @@ namespace PCBookWebApp.Models.SalesModule
 
         public virtual SubCategory SubCategory { get; set; }
         public virtual ShowRoom ShowRoom { get; set; }
+        public virtual Unit Unit { get; set; }
     }
 }

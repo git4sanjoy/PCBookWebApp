@@ -27,6 +27,128 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         private PCBookWebAppContext db = new PCBookWebAppContext();
 
 
+        [Route("api/Customer/CustomerBalanceUsingQuery")]
+        [HttpGet]
+        [ResponseType(typeof(CustomerBalanceView))]
+        public IHttpActionResult GetCustomerBalanceUsingQuery()
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+
+            string userName = User.Identity.GetUserName();
+            DateTime ceatedAt = DateTime.Now;
+            List<CustomerBalanceView> list = new List<CustomerBalanceView>();
+            CustomerBalanceView customer = new CustomerBalanceView();
+
+            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+            string queryString = @"SELECT        
+                                    ShowRoomId, SalesManId, UpazilaId, DistrictId, CustomerId, MemoDiscount, GatOther, MemoTotal, BfAmount, TotalCollection, TotalDiscount, SalesManName, UpazilaName, DistrictName, 
+                                    ShopName, CustomerName, LastPayment, LastMemo
+                                    FROM            
+                                    ViewCustomerClosingBalance WHERE       
+                                    (ShowRoomId = @showRoomId) AND (CustomerName <> 'Cash Party')";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                connection.Open();
+                command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                SqlDataReader reader = command.ExecuteReader();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        customer = new CustomerBalanceView();
+
+                        double totalsale = 0;
+                        double paymentAmount = 0;
+                        double bfAmount = 0;
+                        double adjustmentDiscount = 0;
+                        double memoDiscount = 0;
+                        double otherExpencess = 0;
+
+
+                        double mDiscount = 0;
+                        double eOthers = 0;
+                        double tSale = 0;
+
+
+                        int cid = Convert.ToInt32(reader["CustomerId"]);
+                        customer.CustomerName = (string)reader["CustomerName"];
+                        customer.ShopName = (string)reader["ShopName"];
+                        customer.UpazilaName = (string)reader["UpazilaName"];
+                        customer.DistrictName = (string)reader["DistrictName"];
+                        customer.SalesManName = (string)reader["SalesManName"];
+
+                        if (reader["BfAmount"] != System.DBNull.Value)
+                        {
+                            bfAmount = (double)reader["BfAmount"];
+                        }
+
+                        if (reader["TotalCollection"] != System.DBNull.Value)
+                        {
+                            paymentAmount = (double)reader["TotalCollection"];
+                        }
+                        if (reader["TotalDiscount"] != System.DBNull.Value)
+                        {
+                            adjustmentDiscount = (double)reader["TotalDiscount"];
+                        }
+                        if (reader["LastPayment"] != System.DBNull.Value)
+                        {
+                            customer.PaymentDate = (DateTime)reader["LastPayment"];
+                        }
+                        customer.PaymentAmount = paymentAmount;
+                        customer.Adjustment = adjustmentDiscount;
+                        customer.BfAmount = bfAmount;
+
+
+
+
+                        if (reader["MemoTotal"] != System.DBNull.Value)
+                        {
+                            totalsale = (double)reader["MemoTotal"];
+                        }
+                        if (reader["GatOther"] != System.DBNull.Value)
+                        {
+                            otherExpencess = (double)reader["GatOther"];
+                        }
+                        if (reader["MemoDiscount"] != System.DBNull.Value)
+                        {
+                            memoDiscount = (double)reader["MemoDiscount"];
+                        }
+                        if (reader["LastMemo"] != System.DBNull.Value)
+                        {
+                            customer.MemoDate = (DateTime)reader["LastMemo"];
+                        }
+
+                        //if (Convert.ToInt32(reader["CustomerId"]) == 1009)
+                        //{
+                        //    int check = 1;
+                        //}
+
+                        totalsale = tSale;
+                        memoDiscount = mDiscount;
+                        otherExpencess = eOthers;
+
+                        customer.SaleCost = Math.Round(totalsale - memoDiscount, 0);
+                        customer.MemoDiscount = memoDiscount;
+                        customer.GatOther = otherExpencess;
+
+                        customer.Balance = Math.Round(bfAmount + totalsale + otherExpencess - memoDiscount - adjustmentDiscount - paymentAmount, 0);
+                        list.Add(customer);
+                    }
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            //ViewBag.AccountUserList = BankAccounts;
+            return Ok(list);
+        }
 
         [Route("api/Customer/GetCustomerBalance")]
         [HttpGet]
@@ -45,23 +167,20 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
             CustomerBalanceView customer = new CustomerBalanceView();
 
             string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
-            string queryString = @"SELECT        
-                                    dbo.MemoMasters.CustomerId, SUM(DISTINCT dbo.MemoMasters.MemoDiscount) AS MemoDiscount, SUM(DISTINCT dbo.MemoMasters.GatOther) AS GatOther, 
-                                    SUM(DISTINCT dbo.MemoDetails.Quantity * (dbo.MemoDetails.Rate - dbo.MemoDetails.Discount)) AS TotalCost, SUM(DISTINCT dbo.Payments.SCAmount) AS SCAmount, SUM(DISTINCT dbo.Payments.SDiscount) 
-                                    AS SDiscount, MAX(dbo.MemoMasters.MemoDate) AS MemoDate, MAX(dbo.Payments.PaymentDate) AS PaymentDate, dbo.Upazilas.UpazilaName, dbo.Customers.UpazilaId, dbo.Upazilas.DistrictId, 
-                                    dbo.Districts.DistrictName, dbo.SalesMen.SalesManName, dbo.Customers.SalesManId, dbo.MemoMasters.ShowRoomId, dbo.Customers.CustomerName, dbo.Customers.ShopName
+            string queryString = @"SELECT 
+                                    dbo.Customers.ShowRoomId, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, dbo.Customers.UpazilaId, dbo.Upazilas.UpazilaName, dbo.Upazilas.DistrictId, 
+                                    dbo.Districts.DistrictName, dbo.Customers.CustomerId, dbo.Customers.ShopName, dbo.Customers.CustomerName, MAX(dbo.Payments.PaymentDate) AS LastPayment, 
+                                    SUM((CASE AdjustmentBf WHEN 1 THEN SSAmount ELSE 0 END)) AS BfAmount, SUM(dbo.Payments.SCAmount) AS TotalCollection, SUM(dbo.Payments.SDiscount) AS TotalDiscount
                                     FROM            
-                                    dbo.MemoMasters INNER JOIN
-                                    dbo.Customers ON dbo.MemoMasters.CustomerId = dbo.Customers.CustomerId INNER JOIN
-                                    dbo.MemoDetails ON dbo.MemoMasters.MemoMasterId = dbo.MemoDetails.MemoMasterId INNER JOIN
+                                    dbo.Customers INNER JOIN
                                     dbo.SalesMen ON dbo.Customers.SalesManId = dbo.SalesMen.SalesManId INNER JOIN
                                     dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
                                     dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId LEFT OUTER JOIN
                                     dbo.Payments ON dbo.Customers.CustomerId = dbo.Payments.CustomerId
-                                    GROUP BY dbo.MemoMasters.CustomerId, dbo.Upazilas.UpazilaName, dbo.Customers.UpazilaId, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName, dbo.SalesMen.SalesManName, dbo.Customers.SalesManId, 
-                                    dbo.MemoMasters.ShowRoomId, dbo.Customers.CustomerName, dbo.Customers.ShopName 
-                                    HAVING               
-                                    (dbo.MemoMasters.ShowRoomId = @showRoomId)";
+                                    GROUP BY dbo.Customers.CustomerId, dbo.Customers.CustomerName, dbo.Customers.ShowRoomId, dbo.Customers.SalesManId, dbo.SalesMen.SalesManName, dbo.Customers.UpazilaId, dbo.Upazilas.UpazilaName, 
+                                    dbo.Upazilas.DistrictId, dbo.Districts.DistrictName, dbo.Customers.ShopName
+                                    HAVING        
+                                    (dbo.Customers.ShowRoomId = @showRoomId) AND (dbo.Customers.CustomerName <> 'Cash Party')";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -74,36 +193,132 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                     while (reader.Read())
                     {
                         customer = new CustomerBalanceView();
+                        
+                        double totalsale = 0;
                         double paymentAmount = 0;
-                        double sDiscount = 0;
+                        double bfAmount = 0;
+                        double adjustmentDiscount = 0;
+                        double memoDiscount = 0;
+                        double otherExpencess = 0;
+
+
+                        double mDiscount = 0;
+                        double eOthers = 0;
+                        double tSale = 0;
+
+
+                        int cid = Convert.ToInt32(reader["CustomerId"]);
                         customer.CustomerName = (string)reader["CustomerName"];
                         customer.ShopName = (string)reader["ShopName"];
                         customer.UpazilaName = (string)reader["UpazilaName"];
                         customer.DistrictName = (string)reader["DistrictName"];
                         customer.SalesManName = (string)reader["SalesManName"];
-                        customer.SaleCost=(double)reader["TotalCost"];
-                        customer.MemoDiscount = (double)reader["MemoDiscount"];
-                        customer.GatOther = (double)reader["GatOther"];
-                        customer.DistrictName= (string)reader["DistrictName"];
-                        if (reader["SCAmount"] != System.DBNull.Value)
+                        
+                        if (reader["BfAmount"] != System.DBNull.Value)
                         {
-                            paymentAmount = (double)reader["SCAmount"];
+                            bfAmount = (double)reader["BfAmount"];
                         }
-                        if (reader["SDiscount"] != System.DBNull.Value)
+                                               
+                        if (reader["TotalCollection"] != System.DBNull.Value)
                         {
-                            sDiscount = (double)reader["SDiscount"];
+                            paymentAmount = (double)reader["TotalCollection"];
                         }
-                        if (reader["MemoDate"] != System.DBNull.Value)
+                        if (reader["TotalDiscount"] != System.DBNull.Value)
                         {
-                            customer.MemoDate = (DateTime)reader["MemoDate"];
+                            adjustmentDiscount = (double)reader["TotalDiscount"];
                         }
-                        if (reader["PaymentDate"] != System.DBNull.Value)
+                        if (reader["LastPayment"] != System.DBNull.Value)
                         {
-                            customer.PaymentDate = (DateTime)reader["PaymentDate"];
+                            customer.PaymentDate = (DateTime)reader["LastPayment"];
                         }
                         customer.PaymentAmount = paymentAmount;
-                        customer.Adjustment = sDiscount;
-                        customer.Balance = (double)reader["TotalCost"] + (double)reader["GatOther"] - (double)reader["MemoDiscount"]- paymentAmount- sDiscount;
+                        customer.Adjustment = adjustmentDiscount;
+                        customer.BfAmount = bfAmount;
+
+
+
+
+                        //if (reader["TotalSale"] != System.DBNull.Value)
+                        //{
+                        //    totalsale = (double)reader["TotalSale"];
+                        //}
+                        //if (reader["GatOther"] != System.DBNull.Value)
+                        //{
+                        //    otherExpencess = (double)reader["GatOther"];
+                        //}
+                        //if (reader["MemoDiscount"] != System.DBNull.Value)
+                        //{
+                        //    memoDiscount = (double)reader["MemoDiscount"];
+                        //}
+                        //if (reader["LastPurchase"] != System.DBNull.Value)
+                        //{
+                        //    customer.MemoDate = (DateTime)reader["LastPurchase"];
+                        //}
+                        /////*******************
+                        string queryStringSales = @"SELECT   
+                                                        dbo.MemoMasters.ShowRoomId, dbo.MemoMasters.CustomerId, dbo.MemoMasters.MemoDate, dbo.MemoMasters.MemoNo, SUM(DISTINCT dbo.MemoMasters.GatOther) AS GatOther, 
+                                                        SUM(dbo.MemoDetails.Quantity * (dbo.MemoDetails.Rate - dbo.MemoDetails.Discount)) AS TotalSale, SUM(DISTINCT dbo.MemoMasters.MemoDiscount) AS MemoDiscount, 
+                                                        SUM(dbo.MemoDetails.Quantity * (dbo.MemoDetails.Rate - dbo.MemoDetails.Discount)) - SUM(DISTINCT dbo.MemoMasters.MemoDiscount) AS NetSale
+                                                        FROM            
+                                                        dbo.MemoMasters INNER JOIN
+                                                        dbo.MemoDetails ON dbo.MemoMasters.MemoMasterId = dbo.MemoDetails.MemoMasterId
+                                                        GROUP BY dbo.MemoMasters.CustomerId, dbo.MemoMasters.MemoNo, dbo.MemoMasters.MemoDate, dbo.MemoMasters.ShowRoomId
+                                                        HAVING        
+                                                        (dbo.MemoMasters.CustomerId = @customerId) AND (dbo.MemoMasters.ShowRoomId = @showRoomId)
+                                                        ORDER BY dbo.MemoMasters.MemoDate";
+
+                        using (SqlConnection connectionSale = new SqlConnection(connectionString))
+                        {
+                            SqlCommand commandSale = new SqlCommand(queryStringSales, connectionSale);
+                            connectionSale.Open();
+                            commandSale.Parameters.Add(new SqlParameter("@customerId", cid));
+                            commandSale.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                            SqlDataReader readerSale = commandSale.ExecuteReader();
+                            try
+                            {
+                                mDiscount = 0;
+                                eOthers = 0;
+                                tSale = 0;
+                                while (readerSale.Read())
+                                {
+                                    if (readerSale["TotalSale"] != System.DBNull.Value)
+                                    {
+                                        tSale = tSale + (double)readerSale["TotalSale"];
+                                    }
+                                    if (readerSale["GatOther"] != System.DBNull.Value)
+                                    {
+                                        eOthers = eOthers + (double)readerSale["GatOther"];
+                                    }
+                                    if (readerSale["MemoDiscount"] != System.DBNull.Value)
+                                    {
+                                        mDiscount = mDiscount + (double)readerSale["MemoDiscount"];
+                                    }
+                                    if (readerSale["MemoDate"] != System.DBNull.Value)
+                                    {
+                                        customer.MemoDate = (DateTime)readerSale["MemoDate"];
+                                    }
+                                }
+                            }
+                            finally
+                            {
+                                readerSale.Close();
+                            }
+                        }
+
+                        //if (Convert.ToInt32(reader["CustomerId"]) == 1009)
+                        //{
+                        //    int check = 1;
+                        //}
+
+                         totalsale = tSale;    
+                         memoDiscount = mDiscount;
+                         otherExpencess = eOthers;
+
+                        customer.SaleCost = Math.Round(totalsale - memoDiscount, 0);
+                        customer.MemoDiscount = memoDiscount;
+                        customer.GatOther = otherExpencess;
+                        
+                        customer.Balance = Math.Round(bfAmount + totalsale + otherExpencess - memoDiscount - adjustmentDiscount - paymentAmount, 0);
                         list.Add(customer);
                     }
                 }
@@ -319,6 +534,9 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                         double totalMemoDiscount = 0;
                         double totalCollectionAmount = 0;
                         double totalDiscountAmount = 0;
+                        double bfAmount = 0;
+                        DateTime bfDateShow = DateTime.Now;
+
                         var sells = db.MemoDetails
                                         .Where(a => a.MemoMaster.CustomerId == id && a.MemoMaster.ShowRoomId == showRoomId)
                                         .GroupBy(a => a.MemoMaster.CustomerId)
@@ -331,12 +549,21 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                                             .Select(a => new { Others = a.Sum(b => (b.GatOther)), MemoDiscount = a.Sum(b => (b.MemoDiscount)) })
                                             .FirstOrDefault();
 
+                        var bfAmountObj = db.Payments
+                                            .Where(a => a.CustomerId == id && a.ShowRoomId == showRoomId && a.AdjustmentBf==true)
+                                            .GroupBy(a => a.CustomerId)
+                                            .Select(a => new { BFAmount = a.Sum(b => (b.SSAmount)), BFPaymentDate = a.Max(b => (b.PaymentDate)) })
+                                            .FirstOrDefault();
+
                         var collection = db.Payments
                                             .Where(a => a.CustomerId == id && a.ShowRoomId == showRoomId)
                                             .GroupBy(a => a.CustomerId)
                                             .Select(a => new { SCAmount = a.Sum(b => (b.SCAmount)), SDiscount = a.Sum(b => (b.SDiscount)) })
                                             .FirstOrDefault();
-
+                        if (bfAmountObj != null) {
+                            bfAmount = bfAmountObj.BFAmount;
+                            bfDateShow = (DateTime) bfAmountObj.BFPaymentDate;
+                        }
                         if (sells != null && sells.Amount > 0) {
                             totalSaleAmount = (double) sells.Amount;
                             if (sellsOthers!=null && sellsOthers.Others > 0) {
@@ -353,24 +580,7 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                                 totalDiscountAmount = (double)collection.SDiscount;
                             }
                         }
-                        double actualCustomerBalance = totalSaleAmount + totalOtherCost - totalMemoDiscount -(totalCollectionAmount+ totalDiscountAmount);
-
-                        //string aa = @"SELECT        
-                        //                dbo.MemoMasters.CustomerId, dbo.MemoMasters.ShowRoomId, AVG(dbo.MemoMasters.MemoDiscount) AS MemoDiscount, AVG(dbo.MemoMasters.GatOther) AS GatOther, 
-                        //                SUM(dbo.MemoDetails.Quantity * (dbo.MemoDetails.Rate - dbo.MemoDetails.Discount)) AS TotalProductCost
-                        //                FROM            
-                        //                dbo.MemoMasters INNER JOIN
-                        //                dbo.MemoDetails ON dbo.MemoMasters.MemoMasterId = dbo.MemoDetails.MemoMasterId
-                        //                GROUP BY dbo.MemoMasters.CustomerId, dbo.MemoMasters.ShowRoomId
-                        //                HAVING        
-                        //                (dbo.MemoMasters.CustomerId = 1) AND (dbo.MemoMasters.ShowRoomId = 2)";
-
-                        //var query = from p in db.MemoMasters
-                        //            join pf in db.MemoDetails on p.MemoMasterId equals pf.MemoMasterId
-                        //            where p.CustomerId == id && p.ShowRoomId == showRoomId
-                        //            group p by new { p.CustomerId, p.ShowRoomId };
-
-
+                        double actualCustomerBalance = bfAmount + totalSaleAmount + totalOtherCost - totalMemoDiscount -(totalCollectionAmount+ totalDiscountAmount);
 
                         aObj = new CustomerView();
                         aObj.id = idc;
@@ -383,9 +593,20 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                         aObj.Address = address;
                         aObj.Phone = phone;
                         aObj.Email = email;
-                        aObj.TotalCredit = actualCustomerBalance;
+
+                        aObj.BfAmount = bfAmount; 
+                        aObj.TotalSale = totalSaleAmount + totalOtherCost - totalMemoDiscount;
+                        aObj.TotalCollection = totalCollectionAmount;
+                        aObj.TotalDiscount = totalDiscountAmount;
+                        aObj.ActualCredit = actualCustomerBalance;
+                        if (reader["CreditLimit"] != DBNull.Value)
+                        {
+                            aObj.CreditLimit = (double)reader["CreditLimit"];
+                        }
                         aObj.ShopName = shopName;
                         aObj.Image = image;
+                        aObj.BFDate = (DateTime) bfDateShow;
+                        aObj.DistrictName = (string)reader["DistrictName"];
                         if (reader["AddressBangla"] != DBNull.Value)
                         {
                             aObj.AddressBangla = (string)reader["AddressBangla"];
@@ -394,10 +615,7 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                         {
                             aObj.CustomerNameBangla = (string)reader["CustomerNameBangla"];
                         }
-                        if (reader["CreditLimit"] != DBNull.Value)
-                        {
-                            aObj.CreditLimit = (double)reader["CreditLimit"];
-                        }
+                        
                         list.Add(aObj);
                     }
                 }

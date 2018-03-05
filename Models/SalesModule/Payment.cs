@@ -27,13 +27,13 @@ namespace PCBookWebApp.Models.SalesModule
         public DateTime PaymentDate { get; set; }
 
         public double SSAmount { get; set; }
-        public double TSAmount { get; set; }
+        //public double TSAmount { get; set; }
 
         public double SCAmount { get; set; }
-        public double TCAmount{ get; set; }
+        //public double TCAmount{ get; set; }
 
         public double SDiscount { get; set; }
-        public double TDiscount { get; set; }
+        //public double TDiscount { get; set; }
 
         public string PaymentType { get; set; }
         public Nullable<System.DateTime> HonourDate { get; set; }

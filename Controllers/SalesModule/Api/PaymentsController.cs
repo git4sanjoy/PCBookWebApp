@@ -45,25 +45,24 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
             if (CustomerId > 0)
             {
                 queryString = @"SELECT        
-                                    dbo.Payments.PaymentId, dbo.Payments.MemoMasterId, dbo.Payments.CustomerId, dbo.Payments.ShowRoomId, dbo.Payments.PaymentDate, dbo.Payments.SSAmount, dbo.Payments.TSAmount, 
-                                    dbo.Payments.SCAmount, dbo.Payments.TCAmount, dbo.Payments.SDiscount, dbo.Payments.TDiscount, dbo.Payments.Active, dbo.Payments.CreatedBy, dbo.Customers.CustomerName, 
-                                    dbo.Payments.PaymentType, dbo.Payments.HonourDate, dbo.Payments.CheckNo, dbo.Payments.BankAccountNo, dbo.Payments.Remarks, dbo.Payments.DateCreated, dbo.Payments.DateUpdated
+                                    dbo.Payments.PaymentId, dbo.Payments.MemoMasterId, dbo.Payments.CustomerId, dbo.Payments.ShowRoomId, dbo.Payments.PaymentDate, dbo.Payments.SSAmount, dbo.Payments.SCAmount, 
+                                    dbo.Payments.SDiscount, dbo.Payments.Active, dbo.Payments.CreatedBy, dbo.Customers.CustomerName, dbo.Payments.PaymentType, dbo.Payments.HonourDate, dbo.Payments.CheckNo, 
+                                    dbo.Payments.BankAccountNo, dbo.Payments.Remarks, dbo.Payments.DateCreated, dbo.Payments.DateUpdated
                                     FROM            
-                                    dbo.Payments INNER JOIN
-                                    dbo.Customers ON dbo.Payments.CustomerId = dbo.Customers.CustomerId
+                                    dbo.Payments INNER JOIN dbo.Customers ON dbo.Payments.CustomerId = dbo.Customers.CustomerId
                                     WHERE        
-                                    (dbo.Payments.ShowRoomId = @showRoomId) AND (dbo.Payments.CustomerId = @customerId) AND (dbo.Payments.PaymentDate >= @fromDate) AND (dbo.Payments.PaymentDate <= @toDate)";
+                                    (dbo.Payments.ShowRoomId = @showRoomId) AND (dbo.Payments.CustomerId = @customerId) AND (dbo.Payments.PaymentDate >= @fromDate) AND (dbo.Payments.PaymentDate <= @toDate) AND (dbo.Payments.PaymentType <> 'Cash Party')";
             }
             else {
                 queryString = @"SELECT        
-                                    dbo.Payments.PaymentId, dbo.Payments.MemoMasterId, dbo.Payments.CustomerId, dbo.Payments.ShowRoomId, dbo.Payments.PaymentDate, dbo.Payments.SSAmount, dbo.Payments.TSAmount, 
-                                    dbo.Payments.SCAmount, dbo.Payments.TCAmount, dbo.Payments.SDiscount, dbo.Payments.TDiscount, dbo.Payments.Active, dbo.Payments.CreatedBy, dbo.Customers.CustomerName, 
-                                    dbo.Payments.PaymentType, dbo.Payments.HonourDate, dbo.Payments.CheckNo, dbo.Payments.BankAccountNo, dbo.Payments.Remarks, dbo.Payments.DateCreated, dbo.Payments.DateUpdated
+                                    dbo.Payments.PaymentId, dbo.Payments.MemoMasterId, dbo.Payments.CustomerId, dbo.Payments.ShowRoomId, dbo.Payments.PaymentDate, dbo.Payments.SSAmount, dbo.Payments.SCAmount, 
+                                    dbo.Payments.SDiscount, dbo.Payments.Active, dbo.Payments.CreatedBy, dbo.Customers.CustomerName, dbo.Payments.PaymentType, dbo.Payments.HonourDate, dbo.Payments.CheckNo, 
+                                    dbo.Payments.BankAccountNo, dbo.Payments.Remarks, dbo.Payments.DateCreated, dbo.Payments.DateUpdated
                                     FROM            
                                     dbo.Payments INNER JOIN
                                     dbo.Customers ON dbo.Payments.CustomerId = dbo.Customers.CustomerId
                                     WHERE        
-                                    (dbo.Payments.ShowRoomId = @showRoomId) AND (dbo.Payments.PaymentDate >= @fromDate) AND (dbo.Payments.PaymentDate <= @toDate)";
+                                    (dbo.Payments.ShowRoomId = @showRoomId) AND (dbo.Payments.PaymentDate >= @fromDate) AND (dbo.Payments.PaymentDate <= @toDate ) AND (dbo.Payments.PaymentType <> 'Cash Party')";
             }
 
 
@@ -83,6 +82,7 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                     while (reader.Read())
                     {
                         aObj = new PaymentView();
+                        aObj.PaymentId = (int) reader["PaymentId"];
                         aObj.CustomerName = (string)reader["CustomerName"]; 
                         aObj.PaymentDate = (DateTime)reader["PaymentDate"]; 
                         aObj.SCAmount = (double) reader["SCAmount"];
@@ -139,19 +139,19 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
             if (CustomerId > 0)
             {
                 queryString = @"SELECT        
-                                    SUM(SSAmount) AS SSAmount, SUM(TSAmount) AS TSAmount, SUM(SCAmount) AS SCAmount, SUM(TCAmount) AS TCAmount, SUM(SDiscount) AS SDiscount, SUM(TDiscount) AS TDiscount
+                                    SUM(SSAmount) AS SSAmount, SUM(SCAmount) AS SCAmount,  SUM(SDiscount) AS SDiscount
                                     FROM            
                                     dbo.Payments
                                     WHERE        
-                                    (dbo.Payments.CustomerId = @customerId) AND (dbo.Payments.ShowRoomId = @showRoomId) AND (dbo.Payments.PaymentDate >= @fromDate) AND (dbo.Payments.PaymentDate <= @toDate)";
+                                    (PaymentType = 'Cash') AND (dbo.Payments.CustomerId = @customerId) AND (dbo.Payments.ShowRoomId = @showRoomId) AND (dbo.Payments.PaymentDate >= @fromDate) AND (dbo.Payments.PaymentDate <= @toDate)";
             }
             else {
                 queryString = @"SELECT        
-                                    SUM(SSAmount) AS SSAmount, SUM(TSAmount) AS TSAmount, SUM(SCAmount) AS SCAmount, SUM(TCAmount) AS TCAmount, SUM(SDiscount) AS SDiscount, SUM(TDiscount) AS TDiscount
+                                    SUM(SSAmount) AS SSAmount, SUM(SCAmount) AS SCAmount, SUM(SDiscount) AS SDiscount
                                     FROM            
                                     dbo.Payments
                                     WHERE        
-                                    (dbo.Payments.ShowRoomId = @showRoomId) AND (dbo.Payments.PaymentDate >= @fromDate) AND (dbo.Payments.PaymentDate <= @toDate)";
+                                    (PaymentType = 'Cash') AND (dbo.Payments.ShowRoomId = @showRoomId) AND (dbo.Payments.PaymentDate >= @fromDate) AND (dbo.Payments.PaymentDate <= @toDate)";
             }
 
             

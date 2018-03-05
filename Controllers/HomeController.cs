@@ -1,6 +1,10 @@
-﻿using PCBookWebApp.Models.ViewModels;
+﻿using PCBookWebApp.DAL;
+using PCBookWebApp.Models.BookModule;
+using PCBookWebApp.Models.ProcessModule;
+using PCBookWebApp.Models.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -13,6 +17,8 @@ namespace PCBookWebApp.Controllers
 {
     public class HomeController : Controller
     {
+        private PCBookWebAppContext db = new PCBookWebAppContext();
+
         public ActionResult Index()
         {
             ViewBag.Title = "Home Page";
@@ -98,5 +104,92 @@ namespace PCBookWebApp.Controllers
             return View();
         }
 
+        [HttpPost]
+        public virtual string UploadFiles(object obj)
+        {
+            var length = Request.ContentLength;
+            var bytes = new byte[length];
+            Request.InputStream.Read(bytes, 0, length);
+
+            var fileName = Request.Headers["X-File-Name"];
+            var fileSize = Request.Headers["X-File-Size"];
+            var fileType = Request.Headers["X-File-Type"];
+
+            string path = Server.MapPath("../Upload//FinishedGoodImages//");
+            //var saveToFileLoc = "\\\\adcyngctg\\HRMS\\Images\\" + fileName;
+            var saveToFileLoc = path + fileName;
+
+            // save the file.
+            var fileStream = new FileStream(saveToFileLoc, FileMode.Create, FileAccess.ReadWrite);
+            fileStream.Write(bytes, 0, length);
+            fileStream.Close();
+
+            return string.Format("{0} bytes uploaded", bytes.Length);
+        }
+
+        [HttpPost]
+        public ActionResult SaveTutorial(FinishedGoodImage tutorial)
+        {
+            foreach (string file in Request.Files)
+            {
+                var fileContent = Request.Files[file];
+                if (fileContent != null && fileContent.ContentLength > 0)
+                {
+                    var inputStream = fileContent.InputStream;
+                    var fileName = Path.GetFileName(file);
+                    var path = Path.Combine(Server.MapPath("~/App_Data/Images"), fileName);
+                    using (var fileStream = System.IO.File.Create(path))
+                    {
+                        inputStream.CopyTo(fileStream);
+                    }
+                }
+            }
+            return Json("Tutorial Saved", JsonRequestBehavior.AllowGet);
+        }
+
+        //Recursion method for recursively get all child nodes
+        public void GetTreeview(List<Group> list, Group current, ref List<Group> returnList)
+        {
+            //get child of current item
+            var childs = list.Where(a => a.ParentId == current.GroupId).ToList();
+            current.Childrens = new List<Group>();
+            current.Childrens.AddRange(childs);
+            foreach (var i in childs)
+            {
+                GetTreeview(list, i, ref returnList);
+            }
+        }
+
+        public List<Group> BuildTree(List<Group> list)
+        {
+            List<Group> returnList = new List<Group>();
+            //find top levels items
+            var topLevels = list.Where(a => a.ParentId == list.OrderBy(b => b.GroupId).FirstOrDefault().ParentId);
+            returnList.AddRange(topLevels);
+            foreach (var i in topLevels)
+            {
+                GetTreeview(list, i, ref returnList);
+            }
+            return returnList;
+        }
+        public JsonResult GetFileStructure()
+        {
+            List<Group> list = new List<Group>();
+            using (PCBookWebAppContext dc = new PCBookWebAppContext())
+            {
+                list = dc.Groups.OrderBy(a => a.GroupName).ToList();
+            }
+
+            List<Group> treelist = new List<Group>();
+            if (list.Count > 0)
+            {
+                treelist = BuildTree(list);
+            }
+
+            return new JsonResult { Data = new { treeList = treelist }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
     }
+
+
 }

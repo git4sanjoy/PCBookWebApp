@@ -11,70 +11,80 @@ using System.Web.Http.Description;
 using PCBookWebApp.DAL;
 using PCBookWebApp.Models.ProcessModule;
 using PCBookWebApp.Models.ProcessModule.ViewModels;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
+using System.Data.Entity.Migrations;
+using System.Configuration;
+using System.Data.SqlClient;
 
 namespace PCBookWebApp.Controllers.ProcessModule.api
 {
+    [Authorize]
     public class ConversionsController : ApiController
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
 
-        ////GET: api/Conversions
-        //public IEnumerable<Conversion> GetConversions()
-        //{
-        //    var conversionData = (from con in db.Set<Conversion>()
 
-        //                          join p in db.PurchasedProducts on con.PurchaseProductId equals p.PurchasedProductId
-        //                          select new
-        //                          {
-        //                              ID = con.ConversionId,
-        //                              ConversionName = con.ConversionName,
-        //                              PurchaseProductName = p.PurchasedProductName,
-        //                              PurchasedProductId = p.PurchasedProductId
-        //                          }).ToList()
-        //                .Select(x => new Conversion
-        //                {
-        //                    ConversionId = x.ID,
-        //                    ConversionName = x.ConversionName,
-        //                    PurchaseProductId = x.PurchasedProductId,
-        //                    PurchaseProduct = new PurchasedProduct
-        //                    {
-        //                        PurchasedProductName = x.PurchaseProductName
-        //                    }
-        //                });
-
-        //    return conversionData;
-        //}
-        //[Route("api/Conversions/GetPurchaseProductList")]
-        //[HttpGet]
-        //public IHttpActionResult GetPurchaseProductList()
-        //{
-        //    var list = (from item in db.PurchasedProducts
-        //                select new
-        //                {
-        //                    item.PurchasedProductId,
-        //                    item.PurchasedProductName
-        //                }).ToList();
-        //    if (list == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(list);
-        //}
-
+        [Route("api/Conversions/ConversionsList")]
         [HttpGet]
-        //[ResponseType(typeof(VmConversion))]
-        public IQueryable<Conversion> GetConversions()
+        [ResponseType(typeof(Conversion))]
+        public IHttpActionResult GetProcesseLocationsList()
         {
-            return db.Conversions;
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
 
-            //return Ok(List);
+            List<Conversion> list = new List<Conversion>();
+            Conversion aObj = new Conversion();
+
+            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+            string queryString = @"SELECT        
+                                    ConversionId, ConversionName, ShowRoomId
+                                    FROM            
+                                    dbo.Conversions
+                                    WHERE (ShowRoomId = @showRoomId)";
+
+            using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                connection.Open();
+                command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                SqlDataReader reader = command.ExecuteReader();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        int id = (int)reader["ConversionId"];
+                        string name = (string)reader["ConversionName"];
+                        aObj = new Conversion();
+                        aObj.ConversionId = id;
+                        aObj.ConversionName = name;
+                        list.Add(aObj);
+                    }
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            return Ok(list);
         }
 
-        //public IQueryable<Conversion> GetTest()
-        //{
-        //    return db.Conversions;
-        //}
+        // GET: api/Conversions
+        [HttpGet]
+        public IQueryable<Conversion> GetConversions()
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+
+            return db.Conversions.Where(c => c.ShowRoomId == showRoomId);
+        }
+
 
         // GET: api/Conversions/5
         [ResponseType(typeof(Conversion))]
@@ -90,57 +100,71 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         }
 
         // PUT: api/Conversions/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutConversion(int id, Conversion conversion)
+        [ResponseType(typeof(Conversion))]
+        
+        public async Task<IHttpActionResult> PutConversion(int id, Conversion conversion)
         {
-            
-            conversion.DateUpdated = DateTime.Now;
-            conversion.DateCreated= db.Conversions.Where(x => x.ConversionId == id).Select(x => x.DateCreated).FirstOrDefault();
-            conversion.Active = true;
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var msg = 0;
+            var check = db.Conversions.FirstOrDefault(m => m.ConversionName == conversion.ConversionName);
+
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
             if (id != conversion.ConversionId)
             {
                 return BadRequest();
             }
-
-            db.Entry(conversion).State = EntityState.Modified;
-
-            try
+            //db.Entry(supplier).State = EntityState.Modified;
+            if (check == null)
             {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ConversionExists(id))
+                try
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                    var obj = db.Conversions.FirstOrDefault(m => m.ConversionId == conversion.ConversionId);
+                    conversion.DateCreated = obj.DateCreated;
+                    conversion.CreatedBy= obj.CreatedBy;
+                    conversion.DateUpdated = DateTime.Now;
+                    conversion.ShowRoomId = obj.ShowRoomId;
+                    conversion.Active = true;
 
-            return StatusCode(HttpStatusCode.NoContent);
+                    db.Conversions.AddOrUpdate(conversion);
+                    await db.SaveChangesAsync();
+                    msg = 1;
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ConversionExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            return Ok(msg);
+            //return StatusCode(HttpStatusCode.NoContent);
         }
 
         // POST: api/Conversions
         [ResponseType(typeof(Conversion))]
-        public IHttpActionResult PostConversion(Conversion conversion)
+        public async Task<IHttpActionResult> PostConversion(Conversion conversion)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            string userName = User.Identity.GetUserName();
+
+            conversion.CreatedBy = userName;
+            conversion.ShowRoomId = showRoomId;
             conversion.DateCreated = DateTime.Now;
+            conversion.Active = true;
             db.Conversions.Add(conversion);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
             return CreatedAtRoute("DefaultApi", new { id = conversion.ConversionId }, conversion);
+            
         }
 
         // DELETE: api/Conversions/5

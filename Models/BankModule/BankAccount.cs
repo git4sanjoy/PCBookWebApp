@@ -25,7 +25,7 @@ namespace PCBookWebApp.Models.BankModule
         public int ShowRoomId { get; set; }
 
         [Required]
-        [StringLength(25)]
+        [StringLength(240)]
         public string BankAccountNumber { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]

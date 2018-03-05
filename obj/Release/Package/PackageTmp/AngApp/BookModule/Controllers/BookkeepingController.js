@@ -59,7 +59,8 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
 
         // For 3 DatePicker
         $scope.voucher.vouchrDate = new Date();
-        $scope.HonourDate = new Date();
+        //$scope.HonourDate = new Date();
+        //$scope.receiveCheckHonourDate = new Date();
         $scope.open = function ($event) {
             $event.preventDefault();
             $event.stopPropagation();
@@ -73,6 +74,11 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
         $scope.honourDatePickerIsOpen = false;
         $scope.HonourDatePickerOpen = function () {
             this.honourDatePickerIsOpen = true;
+        };
+
+        $scope.receiveCheckHonourDatePickerIsOpen = false;
+        $scope.ReceiveCheckHonourDatePickerOpen = function () {
+            this.receiveCheckHonourDatePickerIsOpen = true;
         };
         // End DatePicker
         $http({
@@ -166,9 +172,14 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                 //return false;
                 var voucherId = 0;
 
-
+                var costCenterId = null;
+                var costCenterName = "";
                 // Add Voucher After Check Entry
                 var fd = $filter('date')($scope.voucher.vouchrDate, "yyyy-MM-dd");
+                if ($scope.costCenterListBankPayment) {
+                    costCenterId = $scope.costCenterListBankPayment.CostCenterId;
+                    costCenterName = $scope.costCenterListBankPayment.CostCenterName;
+                }
                 var aVoucher = {
                     VoucherTypeId: $scope.voucher.vouchrType.VoucherTypeId,
                     VoucherDate: fd,
@@ -185,7 +196,9 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                         drOrCrId: 1,
                         paymentOrReceive: false,
                         bookId: 0,
-                        trialBalanceId: 0
+                        trialBalanceId: 0,
+                        CostCenterId: costCenterId,
+                        CostCenterName: costCenterName
                     }, {
                         description: accountNumber,
                         ledgerId: ledgerIdBank,
@@ -195,7 +208,9 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                         drOrCrId: 2,
                         paymentOrReceive: true,
                         bookId: 0,
-                        trialBalanceId: 0
+                        trialBalanceId: 0,
+                        CostCenterId: costCenterId,
+                        CostCenterName: costCenterName
                     }]
                 };
 
@@ -220,7 +235,8 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                             ShowRoomId: 0,
                             TrialBalanceId: 0,
                             BookId: 0,
-                            CheckId: 0
+                            CheckId: 0,
+                            CostCenterId: item.CostCenterId
                         });
                     })
 
@@ -380,7 +396,7 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
             $scope.ledgerNameTypeahead = item;
         };
 
-        var strPiNo = cYear + "-" + month + "-";
+        
         //Create New Id
         $scope.GetVoucherNo = function () {
             CreateVoutureTypeWiseNewId()
@@ -399,7 +415,8 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
             var drAmount = 0;
             var crAmount = 0;
             var voucherNumber = "";
-
+            var costCenterId = null;
+            var costCenterName = "";
             if ($scope.voucher.voucherNumber) {
                 voucherNumber = $scope.voucher.voucherNumber;
             } else {
@@ -453,6 +470,11 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                     return false;
                 }                
             }
+            if ($scope.costCenterList) {
+                costCenterId = $scope.costCenterList.CostCenterId;
+                costCenterName = $scope.costCenterList.CostCenterName;
+            }
+
 
             var duelMark = false;
             $.each($scope.voucher.items, function (ii) {
@@ -465,7 +487,7 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
             var alreadyAdded = false;
             $.each($scope.voucher.items, function (i) {
                 if ($scope.voucher.items[i].description === ledgerName) {
-                    console.log($scope.voucher.items[i].description);
+                    //console.log($scope.voucher.items[i].description);
                     alreadyAdded = true;
                     return false;
                 }
@@ -490,7 +512,9 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                         drOrCrId: drOrCrId,
                         bookId: bookId,
                         trialBalanceId: trialBalanceId,
-                        paymentOrReceive: $scope.paymentOrReceiveModel
+                        paymentOrReceive: $scope.paymentOrReceiveModel,
+                        CostCenterId: costCenterId,
+                        CostCenterName: costCenterName
                     });
                     $scope.voucher.items[0].paymentOrReceive = true;
                 } else {
@@ -503,13 +527,15 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                         drOrCrId: drOrCrId,
                         bookId: bookId,
                         trialBalanceId: trialBalanceId,
-                        paymentOrReceive: $scope.paymentOrReceiveModel
+                        paymentOrReceive: $scope.paymentOrReceiveModel,
+                        CostCenterId: costCenterId,
+                        CostCenterName: costCenterName
                     });
                 }
                 $scope.ledgerNameTypeahead = "";
                 $scope.drAmount = "";
                 $scope.crAmount = "";
-
+                $scope.costCenterDdlList = {};
                 var addMore = confirm(ledgerName + " Added to voucher. Are you sure you want to add more?");
                 if (addMore) {
                     $scope.paymentOrReceiveModel = false;
@@ -598,6 +624,11 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                 }
             }
 
+            if ($scope.totalDr() !== $scope.totalCr()){
+                alert("Dr and Cr Amount should be same!!");
+                return false;
+            }
+            
             $http({
                 url: "/api/Vouchers",
                 data: voucherObj,
@@ -616,7 +647,8 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                         ReceiveOrPayment: item.paymentOrReceive,
                         ShowRoomId: 0,
                         TrialBalanceId: 0,
-                        BookId: 0
+                        BookId: 0,
+                        CostCenterId: item.CostCenterId
                     });
                 })
                 
@@ -783,7 +815,7 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                 angular.element('#vouchrType').focus();
                 return false;
             } else {
-
+                var strPiNo = $scope.voucher.vouchrDate.getFullYear() + "-" + ($scope.voucher.vouchrDate.getMonth() + 1) + "-";
                 $http({
                     url: "/api/Vouchers/GetNewVoucherId/" + fd + "/" + voucherTypeId,
                     method: "GET",
@@ -804,420 +836,73 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                 angular.element('#vouchrType').focus();
             }
         };
+
         $scope.moveToSaveButton = function () {
             angular.element('#saveButton').focus();
         };
+        $scope.GetCostCenterListById = function () {
+            if ($scope.ledgerNameTypeahead) {
+                var ledgerName = $scope.ledgerNameTypeahead.LedgerName;
+                var ledgerId = $scope.ledgerNameTypeahead.LedgerId;
+
+                $http({
+                    url: "/api/CostCenters/CostCenterListById/" + ledgerId,
+                    method: "GET",
+                    headers: authHeaders
+                }).success(function (data) {
+                    if (data.length > 0) {
+                        $scope.costCenterDdlList = data;
+                        //console.log(data);
+                    } else {
+                        $scope.costCenterDdlList = {};
+                    }
+                    
+                });
+
+            } else {
+                angular.element('#ledgerNameTypeahead').focus();
+            }
+
+        }
+        $scope.GetCostCenterListByIdBankPayment = function () {
+            if ($scope.Check.partyName) {
+                var ledgerName = $scope.Check.partyName.LedgerName;
+                var ledgerId = $scope.Check.partyName.LedgerId;
+
+                $http({
+                    url: "/api/CostCenters/CostCenterListById/" + ledgerId,
+                    method: "GET",
+                    headers: authHeaders
+                }).success(function (data) {
+                    if (data.length > 0) {
+                        $scope.costCenterDdlListBankPayment = data;
+                        //console.log(data);
+                    } else {
+                        $scope.costCenterDdlList = {};
+                    }
+
+                });
+
+            } else {
+                angular.element('#ledgerNameTypeahead').focus();
+            }
+
+        }
         $scope.bankVoucher = false;
+
+
+        $scope.$watch('voucher.vouchrDate', function (newVal, oldVal, ev) {
+            //alert(newVal)
+            if (angular.isUndefined(newVal)) {
+
+            } else {
+                $scope.voucher.vouchrType = {};
+                $scope.voucher.voucherNumber = '';
+                //console.log(data);
+            }
+
+        }, true);
+
+
     }])
 
-
-
-
-//var app = angular.module('PGAppCotton');
-
-//app.controller('ProformaInvoicesController', ['$scope', '$location', '$http', '$timeout', '$filter',
-//    function ($scope, $location, $http, $timeout, $filter) {
-
-//        $scope.clientMessage = true;
-//        $scope.serverMessage = true;
-//        $scope.messageType = "";
-//        $scope.message = "";
-
-//        var accesstoken = sessionStorage.getItem('accessToken');
-
-//        var authHeaders = {};
-//        if (accesstoken) {
-//            authHeaders.Authorization = 'Bearer ' + accesstoken;
-//        }
-//        var currentTime = new Date()
-//        // returns the month (from 0 to 11)
-//        var month = currentTime.getMonth() + 1
-//        var day = currentTime.getDate()
-//        var year = currentTime.getFullYear()
-//        var cYear = year;
-
-
-//        $scope.deliveryOptionList = [];
-//        $http({
-//            url: "/api/DeliveryOptions/GetDeliveryOptionsListDdl",
-//            method: "GET",
-//            headers: authHeaders
-//        }).success(function (data) {
-//            $scope.deliveryOptionList = data;
-//        });
-
-//        $scope.bankList = [];
-//        $http({
-//            url: "/api/Banks/GetBanksListDdl",
-//            method: "GET",
-//            headers: authHeaders
-//        }).success(function (data) {
-//            $scope.bankList = data;
-//            //console.log(data);
-//        });
-
-//        $scope.invoice = {
-//            deliveryOption: { DeliveryOptionId: 1, DeliveryOptionName: 'At Site' },
-//            //bankDdl: { BankId: 1, BankName: 'At Site' },
-//            invoiceDate: new Date(),
-//            validity: 10,
-//            number: strPiNo,
-//            ratePersent: 17,
-//            paymentDays: 90,
-//            customer_info: {
-//                name: "",
-//                Address1: 'None',
-//                Address2: 'None',
-//                Address3: 'None'
-//            }
-//            //,
-//            //items: [{
-//            //    qty: 10,
-//            //    description: 'item',
-//            //    cost: 9.95,
-//            //    discount:1
-//            //}]
-//        };
-//        var strPiNo = "PCSML/EXP/" + cYear + "/";
-//        //Create New Id
-//        $scope.invoice.number = 0;
-//        $http({
-//            url: "/api/ProformaInvoices/GetNewProformaInvoiceId",
-//            method: "GET",
-//            headers: authHeaders
-//        }).success(function (data) {
-//            var len = 4;
-//            if (data.ProformaInvoiceId.length >= len)
-//                newStrId = data.ProformaInvoiceId;
-//            else
-//                newStrId = ("000" + data.ProformaInvoiceId).slice(-len);
-//            //$scope.invoice.number = strPiNo + data.ProformaInvoiceId;
-//            $scope.invoice.number = strPiNo + newStrId;
-//        });
-
-//        $scope.invoice.items = [];
-//        $scope.invoice.deliveryOption = [];
-//        $scope.invoice.deliveryOption = { DeliveryOptionId: 1, DeliveryOptionName: 'At Site' };
-
-//        $scope.addItem = function () {
-//            if ($scope.productName) {
-//                var productName = $scope.productName.ProductName;
-
-//            } else {
-//                alert('Please input Product Name');
-//                angular.element('#productName').focus();
-//                return false;
-//            }
-//            if ($scope.itemQuentity) {
-//                var quentity = $scope.itemQuentity;
-
-//            } else {
-//                alert('Please input Quantity');
-//                angular.element('#itemQuentity').focus();
-//                return false;
-//            }
-
-//            $scope.invoice.items.push({
-//                description: $scope.productName,
-//                qty: $scope.itemQuentity,
-//                cost: $scope.itemCost
-//            });
-//            $scope.productName = "";
-//            $scope.itemQuentity = "";
-//            $scope.itemCost = "";
-
-
-//            var addMoreProduct = confirm(productName + " Added to Cart. Are you sure you want to add more?");
-//            if (addMoreProduct) {
-//                angular.element('#productName').focus();
-//            } else {
-//                angular.element('#finalDiscount').focus();
-//            }
-
-//        },
-
-//            $scope.removeItem = function (index) {
-//                $scope.invoice.items.splice(index, 1);
-//            },
-
-//            $scope.total = function () {
-//                var total = 0;
-//                angular.forEach($scope.invoice.items, function (item) {
-//                    total += item.qty * (item.cost);
-//                })
-//                return total;
-//            }
-//        $scope.totalQuantity = function () {
-//            var totalQu = 0;
-//            angular.forEach($scope.invoice.items, function (item) {
-//                totalQu += item.qty;
-//            })
-//            return totalQu;
-//        }
-
-
-//        // For 3 DatePicker
-//        //$scope.invoice.invoiceDate = new Date();
-
-//        $scope.open = function ($event) {
-//            $event.preventDefault();
-//            $event.stopPropagation();
-//            $scope.opened = true;
-//        };
-
-//        $scope.invoiceDatePickerIsOpen = false;
-//        $scope.InvoiceDatePickerOpen = function () {
-//            this.invoiceDatePickerIsOpen = true;
-//        };
-
-//        // End DatePicker
-
-
-//        $scope.customerList = [];
-//        $http({
-//            url: "/api/Buyers/GetMatricsListDdl",
-//            method: "GET",
-//            headers: authHeaders
-//        }).success(function (data) {
-//            $scope.customerList = data;
-//            //console.log(data);
-//        });
-
-//        $scope.productList = [];
-//        $http({
-//            url: "/api/Products/GetProductsDropDownList",
-//            method: "GET",
-//            headers: authHeaders
-//        }).success(function (data) {
-//            $scope.productList = data;
-//        });
-
-//        $scope.changeSelectCustomerName = function (item) {
-//            $scope.invoice.customer_info.name = item;
-//        };
-//        $scope.changeSelectProductName = function (item) {
-//            $scope.productName = item;
-//        };
-//        $scope.GetCustomerDetailById = function () {
-//            var buyerId = $scope.invoice.customer_info.name.BuyerId;
-//            $http({
-//                url: "/api/Buyers/" + buyerId,
-//                method: "GET",
-//                headers: authHeaders
-//            }).success(function (data) {
-//                $scope.invoice.customer_info.Address1 = data.Address1;
-//                $scope.invoice.customer_info.Address2 = data.Address2;
-//                $scope.invoice.customer_info.Address3 = data.Address3;
-//            });
-//        };
-//        $scope.GetBankDetailById = function () {
-//            var bankId = $scope.invoice.bankDdl.BankId;
-//            $http({
-//                url: "/api/Banks/" + bankId,
-//                method: "GET",
-//                headers: authHeaders
-//            }).success(function (data) {
-//                $scope.bankDetail = data;
-//            });
-//        };
-//        $scope.GetProductDetailById = function () {
-//            if ($scope.productName) {
-//                var productName = $scope.productName.ProductName;
-//                var productId = $scope.productName.ProductId;
-//                $http({
-//                    url: "/api/Products/GetProductById/" + productId,
-//                    method: "GET",
-//                    headers: authHeaders
-//                }).success(function (data) {
-//                    $scope.itemCost = data[0].Rate;
-//                    //console.log(data[0].Rate);
-//                });
-//            } else {
-//                angular.element('#productName').focus();
-//            }
-//        };
-
-//        $scope.saveInvoice = function () {
-//            var deliveryOptionId = "";
-//            var deliveryOptionName = "";
-//            var customerName = "";
-
-//            if ($scope.invoice.customer_info.name) {
-//                customerName = $scope.invoice.customer_info.name;
-//            } else {
-//                alert('Please input customer name');
-//                angular.element('#CustomerName').focus();
-//                return false;
-//            }
-
-//            if ($scope.invoice.deliveryOption.DeliveryOptionId) {
-//                deliveryOptionId = $scope.invoice.deliveryOption.DeliveryOptionId;
-//                deliveryOptionName = $scope.invoice.deliveryOption.DeliveryOptionName;
-//            } else {
-//                alert('Select Delivery Option');
-//                angular.element('#deliveryOption').focus();
-//                return false;
-//            }
-//            if ($scope.invoice.items.length == 0) {
-//                alert('No Entry Found!! Please Add Product.');
-//                angular.element('#productName').focus();
-//                return false;
-//            }
-
-
-
-
-//            var proformaInvoices = {
-//                DeliveryOptionId: $scope.invoice.deliveryOption.DeliveryOptionId,
-//                ProformaInvoiceDate: $scope.invoice.invoiceDate,
-//                ProformaInvoiceNo: $scope.invoice.number,
-//                RatePersent: $scope.invoice.ratePersent,
-//                Validity: $scope.invoice.validity,
-//                PaymentDays: $scope.invoice.paymentDays,
-//                BankId: $scope.invoice.bankDdl.BankId,
-//                BuyerId: $scope.invoice.customer_info.name.BuyerId
-//            };
-//            var piDetail = $scope.invoice.items;
-
-
-//            $http({
-//                url: "/api/ProformaInvoices/PostProformaInvoice",
-//                data: proformaInvoices,
-//                method: "POST",
-//                headers: authHeaders
-//            }).success(function (data) {
-//                var proformaInvoiceId = data.ProformaInvoiceId;
-//                var proformaInvoiceItems = [];
-//                angular.forEach(piDetail, function (item) {
-//                    proformaInvoiceItems.push({
-//                        ProformaInvoiceId: proformaInvoiceId,
-//                        ProductId: item.description.ProductId,
-//                        Quantity: item.qty,
-//                        Rate: item.cost
-//                    });
-//                })
-
-//                $http({
-//                    url: "/api/ProformaInvoiceDetails/PostProformaInvoiceDetail",
-//                    data: proformaInvoiceItems,
-//                    method: "POST",
-//                    headers: authHeaders
-//                }).success(function (data) {
-//                    $scope.message = "Proforma Invoice Successfully Created.";
-//                    $scope.messageType = "success";
-//                    $scope.clientMessage = false;
-//                    $timeout(function () { $scope.clientMessage = true; }, 5000);
-//                    //alert('Requisition Saved');
-
-//                    angular.element('#CustomerName').focus();
-
-//                }).error(function (error) {
-//                    $scope.validationErrors = [];
-//                    if (error.ModelState && angular.isObject(error.ModelState)) {
-//                        for (var key in error.ModelState) {
-//                            $scope.validationErrors.push(error.ModelState[key][0]);
-//                        }
-//                    } else {
-//                        $scope.validationErrors.push('Unable to add Unit.');
-//                    };
-//                    $scope.messageType = "danger";
-//                    $scope.serverMessage = false;
-//                    $timeout(function () { $scope.serverMessage = true; }, 5000);
-//                });
-//            }).error(function (error) {
-//                $scope.validationErrors = [];
-//                if (error.ModelState && angular.isObject(error.ModelState)) {
-//                    for (var key in error.ModelState) {
-//                        $scope.validationErrors.push(error.ModelState[key][0]);
-//                    }
-//                } else {
-//                    $scope.validationErrors.push('Unable to add Unit.');
-//                };
-//                $scope.messageType = "danger";
-//                $scope.serverMessage = false;
-//                $timeout(function () { $scope.serverMessage = true; }, 5000);
-//            });
-
-
-
-//            //console.log($scope.invoice);
-//            //alert('PI Saved');
-//            $scope.invoice = {
-//                deliveryOption: { DeliveryOptionId: deliveryOptionId, DeliveryOptionName: deliveryOptionName },
-//                invoiceDate: new Date($scope.invoice.invoiceDate),
-//                validity: 10,
-//                number: strPiNo,
-//                ratePersent: 17,
-//                paymentDays: 90,
-//                customer_info: {
-//                    name: "",
-//                    Address1: 'None',
-//                    Address2: 'None',
-//                    Address3: 'None'
-//                }
-//            };
-//            $scope.invoice.items = [];
-//            angular.element('#CustomerName').focus();
-
-//        };
-
-//        $scope.printToCart = function (printSectionId) {
-//            var innerContents = document.getElementById(printSectionId).innerHTML;
-//            var popupWinindow = window.open('', '_blank', 'width=900,height=700,scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no');
-//            popupWinindow.document.open();
-//            popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="http://cotton.pakizagroup.com/Content/site.css" /></head><body onload="window.print()">' + innerContents + '</html>');
-//            popupWinindow.document.close();
-//        };
-
-//        $scope.numberInWords = function (num) {
-//            return toWords(num);
-//        };
-
-//        var th = ['', 'thousand', 'million', 'billion', 'trillion'];
-//        var dg = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
-//        var tn = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-//        var tw = ['twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-
-//        function toWords(s) {
-//            s = s.toString();
-//            s = s.replace(/[\, ]/g, '');
-//            if (s != parseFloat(s)) return 'not a number';
-//            var x = s.indexOf('.');
-//            if (x == -1) x = s.length;
-//            if (x > 15) return 'too big';
-//            var n = s.split('');
-//            var str = '';
-//            var sk = 0;
-//            for (var i = 0; i < x; i++) {
-//                if ((x - i) % 3 == 2) {
-//                    if (n[i] == '1') {
-//                        str += tn[Number(n[i + 1])] + ' ';
-//                        i++;
-//                        sk = 1;
-//                    } else if (n[i] != 0) {
-//                        str += tw[n[i] - 2] + ' ';
-//                        sk = 1;
-//                    }
-//                } else if (n[i] != 0) {
-//                    str += dg[n[i]] + ' ';
-//                    if ((x - i) % 3 == 0) str += 'hundred ';
-//                    sk = 1;
-//                }
-
-
-//                if ((x - i) % 3 == 1) {
-//                    if (sk) str += th[(x - i - 1) / 3] + ' ';
-//                    sk = 0;
-//                }
-//            }
-//            if (x != s.length) {
-//                var y = s.length;
-//                str += 'point ';
-//                for (var i = x + 1; i < y; i++) str += dg[n[i]] + ' ';
-//            }
-//            return str.replace(/\s+/g, ' ');
-//        };
-
-
-
-//    }]);

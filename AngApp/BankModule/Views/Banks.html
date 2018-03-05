@@ -44,6 +44,11 @@
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <td colspan="6">
+                        <button class="btn btn-success" ng-click="addUser()"><i class="fa fa-plus"></i> Add Bank</button>
+                    </td>
+                </tr>
                 <tr ng-repeat="productObj in users">
                     <td>
                         <!-- editable username (text with validation) -->
@@ -88,13 +93,7 @@
                     </td>
                 </tr>
             </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="6">
-                        <button class="btn btn-success" ng-click="addUser()"><i class="fa fa-plus"></i> Add Bank</button>
-                    </td>
-                </tr>
-            </tfoot>
+
         </table>
 
     </div><!-- /.box-body -->

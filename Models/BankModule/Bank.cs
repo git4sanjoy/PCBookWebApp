@@ -14,7 +14,7 @@ namespace PCBookWebApp.Models.BankModule
         public int BankId { get; set; }
 
         [Required]
-        [StringLength(25)]
+        [StringLength(240)]
         public string BankName { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }

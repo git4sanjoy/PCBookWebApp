@@ -17,6 +17,7 @@ using System.Data.SqlClient;
 using Microsoft.AspNet.Identity;
 using System.Data.Entity.Migrations;
 using PCBookWebApp.Models.BookModule;
+using PCBookWebApp.Models.BookModule.BookViewModel;
 
 namespace PCBookWebApp.Controllers.BookModule.api
 {
@@ -24,6 +25,54 @@ namespace PCBookWebApp.Controllers.BookModule.api
     public class GroupsController : ApiController
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
+
+        //[Route("api/Groups/RolesTree")]
+        //public IHttpActionResult GetRolesTree()
+        //{
+        //    object[] objRole = null;
+        //    try
+        //    {
+        //        objRole = (
+        //                from rl in db.Groups
+        //                where rl.ParentId == 1 && rl.Childrens == null
+        //                select new
+        //                {
+        //                    GroupId = rl.GroupId,
+        //                    GroupName = rl.GroupName,
+        //                    ParentId = rl.ParentId,
+        //                    Child = rl.Childrens,
+        //                    collapsed = true,
+        //                    children = from cl in db.Groups
+        //                               where cl.ParentId == rl.GroupId && cl.Child == 1
+        //                               select new
+        //                               {
+        //                                   GroupId = cl.GroupId,
+        //                                   GroupName = cl.GroupName,
+        //                                   ParentId = cl.ParentId,
+        //                                   Child = cl.Child,
+        //                                   collapsed = true,
+        //                                   children = from cld in db.Groups
+        //                                              where cld.ParentId == cl.GroupId && cl.Child == 1
+        //                                              select new
+        //                                              {
+        //                                                  GroupId = cld.GroupId,
+        //                                                  GroupName = cld.GroupName,
+        //                                                  ParentId = cld.ParentId,
+        //                                                  Child = cld.Child,
+        //                                                  collapsed = true
+        //                                              }
+        //                               }
+        //                }).ToArray();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        e.ToString();
+        //    }
+        //    return Json(new
+        //    {
+        //        objRole
+        //    });
+        //}
 
         [Route("api/Groups/GroupsMultiSelectList")]
         [HttpGet]
@@ -68,7 +117,27 @@ namespace PCBookWebApp.Controllers.BookModule.api
             }
             return Ok(unitList);
         }
-
+        [Route("api/Groups/GroupListMultiSelect")]
+        [HttpGet]
+        [ResponseType(typeof(Ledger))]
+        public IHttpActionResult GetGroupListMultiSelect()
+        {
+            string userName = User.Identity.GetUserName();
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+            var list = db.Groups
+                .Where(a => a.GroupName != "Primary" && a.IsParent == false && a.PrimaryId == null)
+                .Select(e => new { id = e.GroupId, label = e.GroupName })
+                .OrderBy(e => e.label);
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return Ok(list);
+        }
 
         [Route("api/Groups/GetGroupList")]
         [HttpGet]
@@ -94,9 +163,10 @@ namespace PCBookWebApp.Controllers.BookModule.api
             //                        dbo.Groups AS Groups_1 ON dbo.Groups.ParentId = Groups_1.GroupIdStr WHERE dbo.Groups.ShowRoomId=@showRoomId";
             string queryString = @"SELECT        
                                     dbo.Groups.GroupId, dbo.Groups.GroupName, dbo.Groups.PrimaryId, dbo.Groups.ParentId, dbo.Groups.GroupIdStr, dbo.Groups.TrialBalance, dbo.Groups.Provision, dbo.Groups.IsParent, 
-                                    Groups_1.GroupName AS UnderGroup
+                                    Groups_1.GroupName AS UnderGroup, dbo.Primaries.PrimaryName
                                     FROM            
                                     dbo.Groups LEFT OUTER JOIN
+                                    dbo.Primaries ON dbo.Groups.PrimaryId = dbo.Primaries.PrimaryId LEFT OUTER JOIN
                                     dbo.Groups AS Groups_1 ON dbo.Groups.ParentId = Groups_1.GroupId";
             using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -116,7 +186,10 @@ namespace PCBookWebApp.Controllers.BookModule.api
                         if (reader["UnderGroup"] != DBNull.Value) {
                             importProduct.UnderGroup = (string) reader["UnderGroup"];
                         }
-                        
+                        if (reader["PrimaryName"] != DBNull.Value)
+                        {
+                            importProduct.GeneralLedgerName = (string)reader["PrimaryName"];
+                        }
                         importProduct.TrialBalance = (bool)reader["TrialBalance"];
                         importProduct.Provision = (bool)reader["Provision"];
 
@@ -177,6 +250,69 @@ namespace PCBookWebApp.Controllers.BookModule.api
             }
             return Ok(list);
         }
+
+        [Route("api/Groups/GetGroupListTree")]
+        [HttpGet]
+        [ResponseType(typeof(ChartOfAccountView))]
+        public IHttpActionResult GetGroupListTree()
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+
+            List<ChartOfAccountView> list = new List<ChartOfAccountView>();
+            ChartOfAccountView aObj = new ChartOfAccountView();
+
+            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+            string queryString = @"SELECT        
+                                    t1.GroupName AS lev1, dbo.Primaries.PrimaryName, t2.GroupName AS lev2, t3.GroupName AS lev3, t4.GroupName AS lev4, t5.GroupName AS lev5
+                                    FROM            
+                                    dbo.Groups AS t1 FULL OUTER JOIN
+                                    dbo.Primaries LEFT OUTER JOIN
+                                    dbo.Groups AS t2 ON dbo.Primaries.PrimaryId = t2.PrimaryId ON t1.GroupId = t2.ParentId FULL OUTER JOIN
+                                    dbo.Groups AS t5 FULL OUTER JOIN
+                                    dbo.Groups AS t4 ON t5.ParentId = t4.GroupId FULL OUTER JOIN
+                                    dbo.Groups AS t3 ON t4.ParentId = t3.GroupId ON t2.GroupId = t3.ParentId
+                                    WHERE        
+                                    (t1.GroupName = 'Primary')
+                                    ORDER BY dbo.Primaries.PrimaryName";
+            using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                connection.Open();
+                //command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                SqlDataReader reader = command.ExecuteReader();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        //int id = (int) reader["GroupId"];  
+                        aObj = new ChartOfAccountView();
+                        //aObj.GroupId = id;
+                        aObj.lev2 = reader["lev2"].ToString();
+                        aObj.lev3 = reader["lev3"].ToString();
+                        aObj.lev4 = (string)reader["lev4"].ToString();
+                        aObj.lev5 = (string)reader["lev5"].ToString();
+                        if (reader["PrimaryName"] != DBNull.Value)
+                        {
+                            aObj.PrimaryName = reader["PrimaryName"].ToString();
+                        }
+                        list.Add(aObj);
+                    }
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            return Ok(list);
+        }
+
+
+
+
 
 
         // GET: api/Groups
@@ -321,7 +457,7 @@ namespace PCBookWebApp.Controllers.BookModule.api
 
             // group.ShowRoomId = showRoomId;
 
-            var parentId = group.ParentId;
+            var ParentId = group.ParentId;
 
             string userName = User.Identity.GetUserName();
             DateTime createdAt = DateTime.Now;
@@ -369,16 +505,16 @@ namespace PCBookWebApp.Controllers.BookModule.api
             string groupIdStr = (string) (groupIdStrParent + "-"+ groupId);
 
             // Only for 1st time creare primary group
-            if (parentId == 0)
+            if (ParentId == 0)
             {
                 string groupIdStr1 =  groupId.ToString();
                 //Update Balance Table
                 SqlConnection sqlUpdateCon = new SqlConnection(ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString);
                 SqlCommand cmdUpdate = new SqlCommand();
                 cmdUpdate.CommandType = CommandType.Text;
-                cmdUpdate.CommandText = "UPDATE dbo.Groups SET [ParentId ] = @parentId , [GroupIdStr] = @groupIdStr1 WHERE [GroupId] = @groupId1";
+                cmdUpdate.CommandText = "UPDATE dbo.Groups SET [ParentId ] = @ParentId , [GroupIdStr] = @groupIdStr1 WHERE [GroupId] = @groupId1";
                 cmdUpdate.Parameters.AddWithValue("@groupIdStr1", groupIdStr1);
-                cmdUpdate.Parameters.AddWithValue("@parentId", (int)groupId);
+                cmdUpdate.Parameters.AddWithValue("@ParentId", (int)groupId);
                 cmdUpdate.Parameters.AddWithValue("@groupId1", (int)groupId);
 
                 cmdUpdate.Connection = sqlUpdateCon;

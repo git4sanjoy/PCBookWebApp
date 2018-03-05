@@ -21,7 +21,7 @@ namespace PCBookWebApp.Models.ProcessModule
         [MaxLength(50), MinLength(2)]
         public string PurchasedProductName { get; set; }
 
-
+        public int MatricId { get; set; }
 
 
         public bool Active { get; set; }
@@ -39,6 +39,6 @@ namespace PCBookWebApp.Models.ProcessModule
         [Required(ErrorMessage = "Show Room Name is required.")]
         public int ShowRoomId { get; set; }
         public virtual ShowRoom ShowRoom { get; set; }
-
+        public virtual Matric Matric { get; set; }
     }
 }

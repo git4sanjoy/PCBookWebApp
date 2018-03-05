@@ -3,21 +3,86 @@ using PCBookWebApp.DAL;
 using PCBookWebApp.Models.ProcessModule;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
+using System.Data.Entity.Validation;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 
 namespace PCBookWebApp.Controllers.ProcessModule.api
 {
-    //[Authorize]
+    [Authorize]
     public class StoreDeliveryController : ApiController
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
+        Process process;
+        [Route("api/StoreDelivery/GetDetailhData")]
+        [HttpGet]
+        //[ResponseType(typeof(Purchase))]
+        public IHttpActionResult GetDetailhData()
+        {
+            var list = (from item in db.Purchases
+                        join prod in db.PurchasedProducts on item.PurchasedProductId equals prod.PurchasedProductId
+                        select new
+                        {
+                            item.PurchaseId,
+                            item.ProcesseLocationId,
+                            item.ProcesseLocation.ProcesseLocationName,
+                            item.ProcessListId,
+                            item.ProcessList.ProcessListName,
+                            item.PurchaseDate,
+                            item.PChallanNo,
+                            item.DeliveryQuantity,
+                            prod.PurchasedProductName,
+                            prod.PurchasedProductId
+                        }).ToList()
+                         .Where(p => p.PChallanNo.Contains("2018"))
+                            .GroupBy(d => d.PChallanNo)
+                            .Select(
+                                g => new
+                                {
+                                    Key = g.Key,
+                                    DeliveryQuantity = g.Sum(s => s.DeliveryQuantity),
+                                    PurchaseId = g.First().PurchaseId,
+                                    ProcessListName = g.First().ProcessListName,
+                                    ProcesseLocationId = g.First().ProcesseLocationId,
+                                    ProcesseLocationName = g.First().ProcesseLocationName,
+                                    ProcessListId = g.First().ProcessListId,
+                                    PurchaseDate = g.First().PurchaseDate,
+                                    PChallanNo = g.First().PChallanNo,
+                                    PurchasedProductName = g.First().PurchasedProductName,
+                                    PurchasedProductId = g.First().PurchasedProductId
+                                });
+            return Ok(list);
+        }
+        [Route("api/StoreDelivery/GetSearchData/{chalanNo}")]
+        [HttpGet]
+        //[ResponseType(typeof(Purchase))]
+        public IHttpActionResult GetSearchData(string chalanNo)
+        {
+            var list = (from item in db.Purchases
+                        join prod in db.PurchasedProducts on item.PurchasedProductId equals prod.PurchasedProductId
+                        where item.PChallanNo == chalanNo
+                        select new
+                        {
+                            item.PurchaseId,
+                            item.ProcesseLocationId,
+                            item.ProcessListId,
+                            item.PurchaseDate,
+                            item.PChallanNo,
+                            item.DeliveryQuantity,
+                            prod.PurchasedProductName,
+                            prod.PurchasedProductId
+                        }).ToList();
+            return Ok(new { list });
+        }
 
         // GET: api/Purchases
         public IQueryable<Purchase> GetPurchases()
@@ -34,7 +99,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                             item.PurchaseId,
                             item.PurchaseDate,
                             item.PChallanNo,
-                            item.Quantity,
+                            item.DeliveryQuantity,
                             item.SE,
                             item.Amount,
                             item.Discount,
@@ -89,6 +154,47 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
 
             return Ok(new { list, supplierList, purchasedProductList, showRoomList, processlocationList, processList });
         }
+        [HttpPost]
+        [Route("api/StoreDelivery/PurchasesListForGrid")]
+        public IQueryable<Purchase> PurchasesListForGrid(string chalanNo)
+        {
+            return db.Purchases;
+            //string userId = User.Identity.GetUserId();
+            //var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            //var list = (from item in db.Purchases
+            //            where item.ShowRoomId == showRoomId
+            //            select new
+            //            {
+            //                item.PurchaseId,
+            //                item.PurchaseDate,
+            //                item.PChallanNo,
+            //                item.DeliveryQuantity,
+            //                item.SE,
+            //                item.Amount,
+            //                item.Discount,
+            //                item.Active,
+            //                item.CreatedBy,
+            //                item.DateCreated,
+            //                item.DateUpdated,
+            //                item.ShowRoomId,
+            //                item.ShowRoom.ShowRoomName,
+            //                item.PurchasedProductId,
+            //                item.PurchasedProduct.PurchasedProductName,
+            //                item.SupplierId,
+            //                item.Supplier.SupplierName
+            //                //item.Active
+
+            //            }).ToList();
+
+
+
+            //if (list == null)
+            //{
+            //    return NotFound();
+            //}
+
+            //return Ok(new { list });
+        }
         // GET: api/Purchases/5
         [ResponseType(typeof(Purchase))]
         public IHttpActionResult GetPurchase(int id)
@@ -105,28 +211,47 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         // PUT: api/Purchases/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutPurchase(int id, Purchase purchase)
-
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
-            if (id != purchase.PurchaseId)
-            {
-                return BadRequest();
-            }
+            //if (id != purchase.PurchaseId)
+            //{
+            //    return BadRequest();
+            //}
 
-            db.Entry(purchase).State = EntityState.Modified;
+            // db.Entry(purchase).State = EntityState.Modified;
+
+            var chalanNoObj = purchase.PChallanNo;
 
             try
-            {
-                var createdDate = db.Purchases.Where(x => x.PurchaseId == id).Select(x => x.DateCreated).FirstOrDefault();
-                purchase.DateCreated = createdDate;
+            {              
+
+                var obj = db.Purchases.FirstOrDefault(m => m.PurchaseId == purchase.PurchaseId);
+
+                purchase.DateCreated = obj.DateCreated;
                 purchase.DateUpdated = DateTime.Now;
+                purchase.CreatedBy = obj.CreatedBy;
+                purchase.ShowRoomId = 1;
                 purchase.Active = true;
+                purchase.SupplierId = 2;
+                purchase.Amount = 0;                
                 db.Purchases.AddOrUpdate(purchase);
                 db.SaveChanges();
+
+                //var process = (from item in db.Processes
+                //           where item.ProcesseLocationId == purchase.ProcesseLocationId &&
+                //           item.ProcessListId == purchase.ProcessListId &&
+                //           item.LotNo == purchase.PChallanNo &&
+                //           item.PurchasedProductId == purchase.PurchasedProductId &&
+                //           item.ReceiveQuantity == obj.DeliveryQuantity
+                //           select item).FirstOrDefault();
+              
+                //process.ReceiveQuantity = purchase.DeliveryQuantity;               
+                //db.Processes.AddOrUpdate(process);
+                //db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -140,59 +265,236 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(chalanNoObj);
+            //return StatusCode(HttpStatusCode.NoContent);
         }
 
         // POST: api/Purchases
         [ResponseType(typeof(Purchase))]
-        public IHttpActionResult PostPurchase(Purchase purchase)
+        public async Task<IHttpActionResult> PostPurchase(Purchase purchase)
         {
-            //purchase.PurchaseDate = DateTime.Now;
-            //string userId = User.Identity.GetUserId();
-            //var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
-            //string userName = User.Identity.GetUserName();
+            // From 24 Feb 2018
 
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            try
-            {
-                //purchase.ShowRoomId = showRoomId;
-                //purchase.CreatedBy = userName;
-                purchase.DateCreated = DateTime.Now;
-                purchase.DateUpdated = purchase.DateCreated;
-                purchase.Active = true;
-                db.Purchases.Add(purchase);
-                db.SaveChanges();
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            string userName = User.Identity.GetUserName();
             
+            using (var dbContextTransaction = db.Database.BeginTransaction())
+            {
+                try
+                {
 
+                    purchase.ShowRoomId = showRoomId;
+                    purchase.CreatedBy = userName;
+                    purchase.DateCreated = DateTime.Now;
+                    purchase.DateUpdated = purchase.DateCreated;
+                    purchase.Active = true;
+                    db.Purchases.Add(purchase);
+                    await db.SaveChangesAsync();
+                    if (purchase.PurchaseId > 0)
+                    {
+                        process = new Process
+                        {
+                            PurchaseId = purchase.PurchaseId,
+                            LotNo = purchase.PChallanNo,
+                            PurchasedProductId = purchase.PurchasedProductId,
+                            ProcessListId = (int)purchase.ProcessListId,
+                            ReceiveQuantity = purchase.DeliveryQuantity,
+                            ProcesseLocationId = (int)purchase.ProcesseLocationId,
+                            ProcessDate = purchase.PurchaseDate,
+                            SE = purchase.SE,
+                            Discount = purchase.Discount,
+                            ShowRoomId = showRoomId,
+                            CreatedBy = userName,
+                            DateCreated = DateTime.Now
+                        };
+
+                        db.Processes.Add(process);
+                        db.SaveChanges();
+                    }
+                    dbContextTransaction.Commit();
+                }
+                catch (Exception)
+                {
+                    dbContextTransaction.Rollback();
+                }
+
+            }
             return CreatedAtRoute("DefaultApi", new { id = purchase.PurchaseId }, purchase);
         }
+        [Route("api/StoreDelivery/GetMemoId")]
+        [HttpGet]
+        public IHttpActionResult GetMemoId()
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+
+            DateTime bdate = DateTime.Now;
+            string currentMonth = bdate.Month.ToString();
+            string currentYear = bdate.Year.ToString();
+
+
+            Purchase chalanNoObj = new Purchase();
+            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+            string queryString = @"SELECT CAST(ISNULL(MAX(RIGHT(PChallanNo, 6)), 0) + 1 AS varchar(20)) AS NewId
+                                    FROM  Purchases where ShowRoomId=@showRoomId and year(PurchaseDate)= @year 
+                                    and ProcesseLocationId is not null";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                connection.Open();
+                command.Parameters.Add(new SqlParameter("@year", currentYear));
+                command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                SqlDataReader reader = command.ExecuteReader();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        chalanNoObj = new Purchase();
+                        if (reader["NewId"] != DBNull.Value)
+                        {
+                            chalanNoObj.PChallanNo = (string)reader["NewId"];
+                        }
+                    }
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            return Ok(chalanNoObj);
+        }
+
 
         // DELETE: api/Purchases/5
         [ResponseType(typeof(Purchase))]
         public IHttpActionResult DeletePurchase(int id)
         {
             Purchase purchase = db.Purchases.Find(id);
+
+            var pro = (from item in db.Processes
+                       where item.ProcesseLocationId == purchase.ProcesseLocationId &&
+                       item.ProcessListId == purchase.ProcessListId &&
+                       item.LotNo == purchase.PChallanNo &&
+                       item.PurchasedProductId == purchase.PurchasedProductId &&
+                       item.ReceiveQuantity == purchase.DeliveryQuantity
+                       select new
+                       {
+                           ProcessId = item.ProcessId
+                       }).FirstOrDefault();
+            if(pro !=null)
+            {
+                Process process = db.Processes.Find(pro.ProcessId);
+                db.Processes.Remove(process);
+                db.SaveChanges();
+            }
+            
+
+
+            db.Purchases.Remove(purchase);
+            db.SaveChanges();
+
             if (purchase == null)
             {
                 return NotFound();
             }
 
-            db.Purchases.Remove(purchase);
-            db.SaveChanges();
+
 
             return Ok(purchase);
         }
 
+        [Route("api/StoreDelivery/DeleteByLotNo/{lotNo}/{processeLocationId}")]
+        [HttpDelete]
+        public IHttpActionResult DeleteByLotNo(string lotNo, int processeLocationId)
+        {
+            using (var dbContextTransaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    string userId = User.Identity.GetUserId();
+                    var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+                    string userName = User.Identity.GetUserName();
+
+
+                    IEnumerable<Process> rpcessesIds = db.Processes.Where(pro => pro.LotNo == lotNo &&
+                                                pro.ProcesseLocationId == processeLocationId &&
+                                                pro.ShowRoomId == showRoomId);
+
+
+                    if (rpcessesIds != null)
+                    {
+                        db.Processes.RemoveRange(rpcessesIds);
+                        db.SaveChanges();
+                    }
+
+                    IEnumerable<Purchase> purchaseIds = db.Purchases.Where(pur => pur.PChallanNo == lotNo &&
+                                                pur.ProcesseLocationId == processeLocationId &&
+                                                pur.ShowRoomId == showRoomId);
+
+                    if (purchaseIds != null)
+                    {
+
+                        db.Purchases.RemoveRange(purchaseIds);
+                        db.SaveChanges();
+                    }
+                    dbContextTransaction.Commit();
+                }
+                catch (Exception)
+                {
+
+                    dbContextTransaction.Rollback();
+                }
+                
+            }
+            return Ok();
+        }
+
+        [Route("api/StoreDelivery/GetData/{chalanNo}")]
+        [HttpGet]
+        [ResponseType(typeof(Purchase))]
+        public IHttpActionResult GetData(string chalanNo)
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var list = (from item in db.Purchases
+                        where item.ShowRoomId == showRoomId && item.PChallanNo == chalanNo
+                        select new
+                        {
+                            item.PurchaseId,
+                            item.PurchaseDate,
+                            item.PChallanNo,
+                            item.DeliveryQuantity,
+                            item.SE,
+                            item.Amount,
+                            item.Discount,
+                            item.Active,
+                            item.CreatedBy,
+                            item.DateCreated,
+                            item.DateUpdated,
+                            item.ShowRoomId,
+                            item.ShowRoom.ShowRoomName,
+                            item.PurchasedProductId,
+                            item.PurchasedProduct.PurchasedProductName,
+                            item.SupplierId,
+                            item.Supplier.SupplierName
+                            //item.Active
+
+                        }).ToList();
+
+
+
+            if (list == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new { list });
+            //return Ok(id);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

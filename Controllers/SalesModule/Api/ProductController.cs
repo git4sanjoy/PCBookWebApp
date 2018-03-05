@@ -87,18 +87,31 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
             //ViewBag.AccountUserList = BankAccounts;
             return Ok(ImportProductList);
         }
+
         // GET: api/Product/GetDropDownList/
         [Route("api/Product/GetDropDownList")]
         [HttpGet]
         [ResponseType(typeof(Product))]
         public IHttpActionResult GetDropDownList()
         {
-            var unitList = db.Products.Select(e => new { ProductId = e.ProductId, ProductName = e.ProductName, ProductNameBangla = e.ProductNameBangla, Rate = e.Rate, Discount = e.Discount });
-            if (unitList == null)
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                                .Where(a => a.Id == userId)
+                                .Select(a => a.ShowRoomId)
+                                .FirstOrDefault();
+            var unitId = db.ShowRooms
+                                .Where(a => a.ShowRoomId == showRoomId)
+                                .Select(a => a.UnitId)
+                                .FirstOrDefault();
+
+            var list = db.Products
+                .Where(p=> p.ShowRoom.UnitId== unitId)
+                .Select(e => new { ProductId = e.ProductId, ProductName = e.ProductName, ProductNameBangla = e.ProductNameBangla, Rate = e.Rate, Discount = e.Discount });
+            if (list == null)
             {
                 return NotFound();
             }
-            return Ok(unitList);
+            return Ok(list);
         }
 
 

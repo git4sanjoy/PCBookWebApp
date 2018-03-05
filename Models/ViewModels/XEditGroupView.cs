@@ -18,6 +18,9 @@ namespace PCBookWebApp.Models.ViewModels
         public string Website { get; set; }
         public string UnderGroup { get; set; }
         public string PrimaryName { get; set; }
+        public string GeneralLedgerName { get; set; }
+        public string DistrictNameBangla { get; set; }
+
         public bool TrialBalance { get;set;}
         public bool Provision { get; set; }
 

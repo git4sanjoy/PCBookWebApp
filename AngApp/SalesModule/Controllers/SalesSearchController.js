@@ -52,14 +52,28 @@ app.controller('SalesSearchController', ['$scope', '$location', '$http', '$timeo
                     headers: authHeaders
                 }).success(function (data) {
                     if (data.length > 0) {
-                        $scope.CreditLimit = data[0].CreditLimit;
-                        $scope.TotalCredit = data[0].TotalCredit;
                         $scope.Address = data[0].Address;
+                        $scope.DistrictName = data[0].DistrictName;
                         $scope.Image = data[0].Image;
+                        $scope.BfAmount = data[0].BfAmount;
+                        $scope.BFDate = data[0].BFDate;
+                        $scope.CreditLimit = data[0].CreditLimit;
+                        $scope.ActualCredit = data[0].ActualCredit;
+                        $scope.TotalSale = data[0].TotalSale;
+                        $scope.TotalCollection = data[0].TotalCollection;
+                        $scope.TotalDiscount = data[0].TotalDiscount;
+
                     } else {
+                        $scope.Address = '';
+                        $scope.DistrictName = '';
+                        $scope.Image = '';
+                        $scope.BfAmount = 0;
+                        $scope.BFDate = 0;
                         $scope.CreditLimit = 0;
-                        $scope.TotalCredit = 0;
-                        $scope.Image = "";
+                        $scope.ActualCredit = 0;
+                        $scope.TotalSale = 0;
+                        $scope.TotalCollection = 0;
+                        $scope.TotalDiscount = 0;
                     }
 
                 }).error(function (error) {
@@ -99,15 +113,61 @@ app.controller('SalesSearchController', ['$scope', '$location', '$http', '$timeo
         //$scope.memoMaster.ToDate = new Date();
         ////End DatePicker
 
+        $scope.deleteInvoice = function (memo) {
+
+            deleteObj = confirm('Are you sure you want to delete the Memo?');
+            if (deleteObj) {
+                $http({
+                    url: "/api/MemoMasters/" + memo.MemoMasterId,
+                    method: "DELETE",
+                    headers: authHeaders
+                }).success(function (data) {
+                    //$.each($scope.checkBookList, function (i) {
+                    //    if ($scope.checkBookList[i].CheckBookId === Id) {
+                    //        $scope.checkBookList.splice(i, 1);
+                    //        return false;
+                    //    }
+                    //});
+                    //$scope.CheckBook = {};
+                    $scope.memoMaster.memoNo = "";
+                    $scope.memos = {};
+                    alert("No Record Found");
+                    angular.element('#memoNo').focus();
+                    $scope.Message = 'Memo Deleted Successfull!';
+                    $scope.searchForm.$setPristine();
+                    $scope.searchForm.$setUntouched();
+                    $scope.loginAlertMessage = false;
+                    $timeout(function () { $scope.loginAlertMessage = true; }, 3000);
+                    $scope.loading = true;
+                    angular.element('#memoNo').focus();
+                }).error(function (data) {
+                    $scope.error = "An Error has occured while Saving Customer! " + data;
+                    $scope.loading = true;
+                });
+            }
+        };
+
+        $scope.clearForm = function () {
+            $scope.searchForm.$setPristine();
+            $scope.searchForm.$setUntouched();
+            $scope.Address = "";
+            $scope.memoMaster = {};
+            $scope.memos = {};
+            angular.element('#memoNo').focus();
+        };
+
         $scope.submitSearchForm = function () {
             $scope.submitted = true;
             $scope.memos = {};
             $scope.categoryWiseGroupingSaleList = {};
             if ($scope.searchForm.$valid) {
 
-                var memoNo = 0;
+                var memoNo = null
                 if ($scope.memoMaster.memoNo) {
                     memoNo = $scope.memoMaster.memoNo;
+                }
+                if (memoNo !=null) {
+                    
                     $http({
                         url: "/api/MemoMasters/GetMemo/" + memoNo,
                         method: "GET",
@@ -125,8 +185,7 @@ app.controller('SalesSearchController', ['$scope', '$location', '$http', '$timeo
                         
                     });
                 }
-
-                if ($scope.memoMaster.FromDate && $scope.memoMaster.ToDate) {
+                if ($scope.memoMaster.FromDate && $scope.memoMaster.ToDate && memoNo==null) {
                     
                     var fd = $filter('date')($scope.memoMaster.FromDate, "yyyy-MM-dd");
                     var td = $filter('date')($scope.memoMaster.ToDate, "yyyy-MM-dd");
@@ -177,9 +236,6 @@ app.controller('SalesSearchController', ['$scope', '$location', '$http', '$timeo
                 }
 
             }
-            else {
-                alert("Please  correct form errors!");
-            }
         };
         $scope.total = function (memoItems) {
             var total = 0;
@@ -189,7 +245,7 @@ app.controller('SalesSearchController', ['$scope', '$location', '$http', '$timeo
             return total;
         },
         $scope.totalSale = function (memos) {
-        var total = 0;
+            var total = 0;
             angular.forEach(memos, function (items) {
                 //total += item.MemoDetailViews[i].Quantity * (item.MemoDetailViews[i].Rate - item.MemoDetailViews[i].Discount);
                 angular.forEach(items.MemoDetailViews, function (item) {
@@ -212,6 +268,33 @@ app.controller('SalesSearchController', ['$scope', '$location', '$http', '$timeo
             })
             return (_total + gat - fdis - paid_amount);
         },
+
+
+        $scope.totalCashSale = function (memos) {
+            var _totalCashSale = 0;
+            angular.forEach(memos, function (items) {
+                if (items.SaleType === 'Cash Sale') {
+                    angular.forEach(items.MemoDetailViews, function (item) {
+                        _totalCashSale += item.Quantity * (item.Rate - item.Discount);
+                    })
+                }
+            })
+            return _totalCashSale;
+        },
+        $scope.totalCreditSale = function (memos) {
+            var _totalCreditSale = 0;
+            angular.forEach(memos, function (items) {
+                if (items.SaleType !== 'Cash Sale') {
+                    angular.forEach(items.MemoDetailViews, function (item) {
+                        _totalCreditSale += item.Quantity * (item.Rate - item.Discount);
+                    })
+                }  
+            })
+            return _totalCreditSale;
+        },
+
+
+
         $scope.printMemo = function (printSectionId) {
             var innerContents = document.getElementById(printSectionId).innerHTML;
             var popupWinindow = window.open('', '_blank', 'width=900,height=700,scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no');

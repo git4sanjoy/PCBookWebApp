@@ -10,13 +10,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   </PropertyGroup>
   <ItemGroup>
     <File Include="AngApp/app.js">
-      <publishTime>02/01/2018 17:58:10</publishTime>
+      <publishTime>03/04/2018 23:49:50</publishTime>
     </File>
     <File Include="AngApp/BankModule/Controllers/BankAccountsController.js">
       <publishTime>01/09/2018 21:41:02</publishTime>
     </File>
     <File Include="AngApp/BankModule/Controllers/BanksController.js">
-      <publishTime>01/09/2018 15:09:46</publishTime>
+      <publishTime>02/26/2018 13:01:41</publishTime>
     </File>
     <File Include="AngApp/BankModule/Controllers/CheckBooksController.js">
       <publishTime>01/10/2018 16:23:03</publishTime>
@@ -25,25 +25,28 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/09/2018 13:42:03</publishTime>
     </File>
     <File Include="AngApp/BankModule/Views/BankAccounts.html">
-      <publishTime>01/21/2018 23:07:37</publishTime>
+      <publishTime>02/26/2018 13:00:09</publishTime>
     </File>
     <File Include="AngApp/BankModule/Views/Banks.html">
-      <publishTime>01/21/2018 23:07:30</publishTime>
+      <publishTime>02/26/2018 13:00:59</publishTime>
     </File>
     <File Include="AngApp/BankModule/Views/CheckBooks.html">
-      <publishTime>01/21/2018 23:08:04</publishTime>
+      <publishTime>03/03/2018 15:16:32</publishTime>
     </File>
     <File Include="AngApp/BankModule/Views/Checks.html">
       <publishTime>01/09/2018 12:15:36</publishTime>
     </File>
     <File Include="AngApp/BookModule/Controllers/BookkeepingController.js">
-      <publishTime>01/13/2018 20:34:38</publishTime>
+      <publishTime>02/27/2018 13:23:57</publishTime>
+    </File>
+    <File Include="AngApp/BookModule/Controllers/CostCenterController.js">
+      <publishTime>02/11/2018 20:55:24</publishTime>
     </File>
     <File Include="AngApp/BookModule/Controllers/dashboardController.js">
       <publishTime>07/26/2017 13:27:20</publishTime>
     </File>
     <File Include="AngApp/BookModule/Controllers/GroupsController.js">
-      <publishTime>01/10/2018 13:29:08</publishTime>
+      <publishTime>03/03/2018 17:36:02</publishTime>
     </File>
     <File Include="AngApp/BookModule/Controllers/LedgersController.js">
       <publishTime>01/09/2018 20:13:12</publishTime>
@@ -58,10 +61,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/14/2018 23:57:04</publishTime>
     </File>
     <File Include="AngApp/BookModule/Controllers/ReportsController.js">
-      <publishTime>01/27/2018 10:29:44</publishTime>
+      <publishTime>03/03/2018 15:10:32</publishTime>
     </File>
     <File Include="AngApp/BookModule/Controllers/SearchController.js">
-      <publishTime>01/15/2018 16:03:56</publishTime>
+      <publishTime>03/01/2018 16:08:17</publishTime>
     </File>
     <File Include="AngApp/BookModule/Controllers/TransctionTypesController.js">
       <publishTime>07/26/2017 13:27:20</publishTime>
@@ -70,28 +73,31 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/02/2017 17:25:40</publishTime>
     </File>
     <File Include="AngApp/BookModule/Views/Bookkeeping.html">
-      <publishTime>01/21/2018 23:05:57</publishTime>
+      <publishTime>03/04/2018 20:46:26</publishTime>
+    </File>
+    <File Include="AngApp/BookModule/Views/CostCenter.html">
+      <publishTime>02/11/2018 18:03:20</publishTime>
     </File>
     <File Include="AngApp/BookModule/Views/Dashboard.html">
       <publishTime>01/28/2018 20:22:00</publishTime>
     </File>
     <File Include="AngApp/BookModule/Views/Groups.html">
-      <publishTime>01/21/2018 23:05:58</publishTime>
+      <publishTime>03/03/2018 16:51:41</publishTime>
     </File>
     <File Include="AngApp/BookModule/Views/Ledgers.html">
       <publishTime>01/21/2018 23:05:58</publishTime>
     </File>
     <File Include="AngApp/BookModule/Views/Primaries.html">
-      <publishTime>01/21/2018 23:05:59</publishTime>
+      <publishTime>02/11/2018 14:09:38</publishTime>
     </File>
     <File Include="AngApp/BookModule/Views/Provision.html">
       <publishTime>01/21/2018 23:05:59</publishTime>
     </File>
     <File Include="AngApp/BookModule/Views/Reports.html">
-      <publishTime>01/21/2018 23:05:59</publishTime>
+      <publishTime>02/24/2018 14:46:16</publishTime>
     </File>
     <File Include="AngApp/BookModule/Views/Search.html">
-      <publishTime>01/21/2018 23:05:59</publishTime>
+      <publishTime>03/01/2018 16:14:35</publishTime>
     </File>
     <File Include="AngApp/BookModule/Views/TransctionTypes.html">
       <publishTime>01/21/2018 23:05:59</publishTime>
@@ -112,7 +118,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/06/2017 11:49:14</publishTime>
     </File>
     <File Include="AngApp/Controllers/dashboardController.js">
-      <publishTime>02/04/2018 10:24:22</publishTime>
+      <publishTime>03/01/2018 10:04:10</publishTime>
     </File>
     <File Include="AngApp/Controllers/errorController.js">
       <publishTime>07/26/2017 13:27:20</publishTime>
@@ -127,7 +133,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/08/2017 17:12:58</publishTime>
     </File>
     <File Include="AngApp/Controllers/loginController.js">
-      <publishTime>01/16/2018 10:25:47</publishTime>
+      <publishTime>02/27/2018 21:16:31</publishTime>
     </File>
     <File Include="AngApp/Controllers/navController.js">
       <publishTime>07/26/2017 13:27:20</publishTime>
@@ -142,7 +148,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/27/2017 11:21:37</publishTime>
     </File>
     <File Include="AngApp/Controllers/RolesController.js">
-      <publishTime>07/26/2017 13:27:20</publishTime>
+      <publishTime>02/27/2018 21:22:02</publishTime>
     </File>
     <File Include="AngApp/Controllers/ShowRoomController.js">
       <publishTime>01/21/2018 21:05:36</publishTime>
@@ -163,10 +169,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/08/2017 17:25:40</publishTime>
     </File>
     <File Include="AngApp/Directives/Directives.js">
-      <publishTime>01/27/2018 16:27:01</publishTime>
+      <publishTime>02/27/2018 17:01:18</publishTime>
     </File>
     <File Include="AngApp/Factories/accountService.js">
       <publishTime>07/26/2017 13:27:20</publishTime>
+    </File>
+    <File Include="AngApp/Factories/akFileUploaderService.js">
+      <publishTime>02/27/2018 00:15:13</publishTime>
     </File>
     <File Include="AngApp/Factories/dataService.js">
       <publishTime>07/26/2017 13:27:20</publishTime>
@@ -175,7 +184,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/26/2017 13:27:20</publishTime>
     </File>
     <File Include="AngApp/Factories/filterServices.js">
-      <publishTime>07/26/2017 13:27:20</publishTime>
+      <publishTime>02/12/2018 13:56:01</publishTime>
     </File>
     <File Include="AngApp/Factories/loginService.js">
       <publishTime>07/31/2017 20:32:59</publishTime>
@@ -183,14 +192,116 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="AngApp/Factories/userService.js">
       <publishTime>07/26/2017 13:27:20</publishTime>
     </File>
+    <File Include="AngApp/ProcessModule/Controllers/ConversionController.js">
+      <publishTime>02/19/2018 11:29:58</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/ConversionDetailController.js">
+      <publishTime>02/19/2018 11:31:29</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/DesignGalleryController.js">
+      <publishTime>03/01/2018 11:28:58</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/FinishedGoodController.js">
+      <publishTime>03/01/2018 11:37:42</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/MatricsController.js">
+      <publishTime>02/26/2018 10:09:16</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/ProcessController.js">
+      <publishTime>02/25/2018 22:16:41</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/ProcesseLocationController.js">
+      <publishTime>02/20/2018 10:38:42</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/ProcessListController.js">
+      <publishTime>02/22/2018 18:06:22</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/ProcessReportController.js">
+      <publishTime>02/25/2018 22:02:07</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/ProductTypesController.js">
+      <publishTime>02/15/2018 13:32:08</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/PurchaseController.js">
+      <publishTime>02/27/2018 11:26:42</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/PurchasedProductsController.js">
+      <publishTime>02/19/2018 11:25:59</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/StoreDeliveryController.js">
+      <publishTime>02/27/2018 11:26:42</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/SuppliersController.js">
+      <publishTime>02/15/2018 16:02:47</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/UnitRoleController.js">
+      <publishTime>02/15/2018 11:54:52</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Controllers/vssver2.scc">
+      <publishTime>02/05/2018 17:04:57</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/Conversion.html">
+      <publishTime>02/24/2018 16:36:14</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/ConversionDetail.html">
+      <publishTime>02/24/2018 16:36:32</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/DesignGallery.html">
+      <publishTime>03/01/2018 11:12:18</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/FinishedGood.html">
+      <publishTime>03/01/2018 11:34:49</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/Matric.html">
+      <publishTime>02/26/2018 10:09:39</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/Process.html">
+      <publishTime>02/27/2018 11:26:33</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/ProcesseLocations.html">
+      <publishTime>02/26/2018 10:14:20</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/ProcessList.html">
+      <publishTime>02/15/2018 14:02:12</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/ProcessReport.html">
+      <publishTime>02/25/2018 20:58:17</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/ProductTypes.html">
+      <publishTime>02/20/2018 17:55:09</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/Purchase.html">
+      <publishTime>02/27/2018 11:26:33</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/PurchasedProducts.html">
+      <publishTime>02/24/2018 14:53:25</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/StoreDelivery.html">
+      <publishTime>02/27/2018 11:26:33</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/Suppliers.html">
+      <publishTime>02/26/2018 10:21:19</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/tabDialog.tmpl.html">
+      <publishTime>02/28/2018 13:51:28</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/UnitRole.html">
+      <publishTime>02/17/2018 11:43:14</publishTime>
+    </File>
+    <File Include="AngApp/ProcessModule/Views/vssver2.scc">
+      <publishTime>02/05/2018 17:04:57</publishTime>
+    </File>
     <File Include="AngApp/SalesModule/Controllers/CartController.js">
-      <publishTime>02/01/2018 10:59:46</publishTime>
+      <publishTime>02/26/2018 17:26:43</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/CustomerController.js">
       <publishTime>01/30/2018 09:58:49</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/DistrictController.js">
-      <publishTime>01/25/2018 14:29:27</publishTime>
+      <publishTime>03/03/2018 13:06:24</publishTime>
+    </File>
+    <File Include="AngApp/SalesModule/Controllers/DivisionsController.js">
+      <publishTime>03/04/2018 22:21:32</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/GoogleMapController.js">
       <publishTime>02/03/2018 09:53:48</publishTime>
@@ -202,7 +313,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/16/2018 10:06:54</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/PaymentsController.js">
-      <publishTime>02/03/2018 15:07:07</publishTime>
+      <publishTime>03/05/2018 11:49:03</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/ProductController.js">
       <publishTime>01/30/2018 09:58:49</publishTime>
@@ -211,34 +322,46 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/15/2018 21:25:12</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/SalesReportController.js">
-      <publishTime>02/01/2018 11:12:41</publishTime>
+      <publishTime>02/26/2018 13:54:22</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/SalesSearchController.js">
-      <publishTime>01/31/2018 10:41:41</publishTime>
+      <publishTime>03/04/2018 21:46:11</publishTime>
+    </File>
+    <File Include="AngApp/SalesModule/Controllers/SaleZoneController.js">
+      <publishTime>03/02/2018 21:08:04</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/SubCategoryController.js">
       <publishTime>01/16/2018 10:16:59</publishTime>
     </File>
+    <File Include="AngApp/SalesModule/Controllers/UnitManagersController.js">
+      <publishTime>03/04/2018 23:42:35</publishTime>
+    </File>
     <File Include="AngApp/SalesModule/Controllers/UpazilaController.js">
       <publishTime>01/25/2018 15:08:12</publishTime>
     </File>
+    <File Include="AngApp/SalesModule/Controllers/ZoneManagerController.js">
+      <publishTime>03/02/2018 16:19:30</publishTime>
+    </File>
     <File Include="AngApp/SalesModule/Views/Cart.html">
-      <publishTime>02/01/2018 11:16:56</publishTime>
+      <publishTime>02/26/2018 17:29:35</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/Customer.html">
       <publishTime>02/01/2018 23:55:06</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/District.html">
-      <publishTime>01/30/2018 10:03:28</publishTime>
+      <publishTime>03/03/2018 12:34:31</publishTime>
+    </File>
+    <File Include="AngApp/SalesModule/Views/Divisions.html">
+      <publishTime>03/04/2018 22:22:48</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/Invoice.html">
       <publishTime>01/15/2018 17:18:56</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/MainCategory.html">
-      <publishTime>01/25/2018 22:38:37</publishTime>
+      <publishTime>03/02/2018 21:30:02</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/Payment.html">
-      <publishTime>01/31/2018 10:52:09</publishTime>
+      <publishTime>03/04/2018 21:04:47</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/Product.html">
       <publishTime>02/01/2018 23:52:14</publishTime>
@@ -247,16 +370,25 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/25/2018 22:38:50</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/SalesReport.html">
-      <publishTime>02/01/2018 11:12:53</publishTime>
+      <publishTime>02/26/2018 13:49:39</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/SalesSearch.html">
-      <publishTime>01/31/2018 10:37:37</publishTime>
+      <publishTime>03/04/2018 21:55:57</publishTime>
+    </File>
+    <File Include="AngApp/SalesModule/Views/SaleZone.html">
+      <publishTime>03/02/2018 21:34:12</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/SubCategory.html">
-      <publishTime>01/25/2018 22:38:44</publishTime>
+      <publishTime>03/02/2018 21:31:28</publishTime>
+    </File>
+    <File Include="AngApp/SalesModule/Views/UnitManagers.html">
+      <publishTime>03/04/2018 23:56:59</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/Upazila.html">
-      <publishTime>01/30/2018 10:03:17</publishTime>
+      <publishTime>03/02/2018 21:40:45</publishTime>
+    </File>
+    <File Include="AngApp/SalesModule/Views/ZoneManager.html">
+      <publishTime>03/02/2018 21:39:07</publishTime>
     </File>
     <File Include="AngApp/Views/About.html">
       <publishTime>08/06/2017 14:40:07</publishTime>
@@ -271,7 +403,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/08/2017 10:34:49</publishTime>
     </File>
     <File Include="AngApp/Views/Dashboard.html">
-      <publishTime>02/04/2018 14:03:00</publishTime>
+      <publishTime>03/05/2018 10:27:29</publishTime>
     </File>
     <File Include="AngApp/Views/Error.html">
       <publishTime>07/26/2017 13:25:02</publishTime>
@@ -295,13 +427,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/26/2017 13:25:02</publishTime>
     </File>
     <File Include="AngApp/Views/Register.html">
-      <publishTime>08/02/2017 14:11:13</publishTime>
+      <publishTime>02/27/2018 21:10:54</publishTime>
     </File>
     <File Include="AngApp/Views/Reports.html">
       <publishTime>01/08/2017 21:32:48</publishTime>
     </File>
     <File Include="AngApp/Views/Roles.html">
-      <publishTime>07/26/2017 13:25:02</publishTime>
+      <publishTime>02/27/2018 21:32:53</publishTime>
     </File>
     <File Include="AngApp/Views/ShowRoom.html">
       <publishTime>01/21/2018 21:22:21</publishTime>
@@ -517,10 +649,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/28/2012 03:00:52</publishTime>
     </File>
     <File Include="bin/PCBookWebApp.dll">
-      <publishTime>02/04/2018 14:19:09</publishTime>
+      <publishTime>03/05/2018 10:21:14</publishTime>
     </File>
     <File Include="bin/PCBookWebApp.pdb">
-      <publishTime>02/04/2018 14:19:09</publishTime>
+      <publishTime>03/05/2018 10:21:14</publishTime>
     </File>
     <File Include="bin/roslyn/csc.exe">
       <publishTime>06/27/2016 14:50:24</publishTime>
@@ -641,6 +773,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Content/angular-material.min.css">
       <publishTime>07/26/2017 13:16:26</publishTime>
+    </File>
+    <File Include="Content/angular.treeview.css">
+      <publishTime>03/03/2018 16:41:05</publishTime>
     </File>
     <File Include="Content/bootstrap.css">
       <publishTime>07/26/2017 13:16:28</publishTime>
@@ -930,6 +1065,24 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Content/images/user2-160x160.png">
       <publishTime>01/22/2018 17:19:30</publishTime>
     </File>
+    <File Include="Content/img/file.png">
+      <publishTime>03/03/2018 16:41:12</publishTime>
+    </File>
+    <File Include="Content/img/folder-closed.png">
+      <publishTime>03/03/2018 16:41:12</publishTime>
+    </File>
+    <File Include="Content/img/folder.png">
+      <publishTime>03/03/2018 16:41:12</publishTime>
+    </File>
+    <File Include="Content/img/jsfiddle01.png">
+      <publishTime>03/03/2018 16:41:12</publishTime>
+    </File>
+    <File Include="Content/img/jsfiddle02.png">
+      <publishTime>03/03/2018 16:41:12</publishTime>
+    </File>
+    <File Include="Content/img/preview.png">
+      <publishTime>03/03/2018 16:41:12</publishTime>
+    </File>
     <File Include="Content/loading-bar.min.css">
       <publishTime>01/31/2018 17:58:53</publishTime>
     </File>
@@ -937,7 +1090,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/22/2018 21:13:28</publishTime>
     </File>
     <File Include="Content/Site.css">
-      <publishTime>02/01/2018 10:26:28</publishTime>
+      <publishTime>02/28/2018 12:01:44</publishTime>
     </File>
     <File Include="Content/sutonnymj-bold.woff">
       <publishTime>01/21/2018 15:04:55</publishTime>
@@ -1086,6 +1239,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Global.asax">
       <publishTime>07/26/2017 12:32:06</publishTime>
     </File>
+    <File Include="Models/ProcessModule/vssver2.scc">
+      <publishTime>02/13/2018 13:11:05</publishTime>
+    </File>
     <File Include="packages.config">
       <publishTime>07/26/2017 12:32:33</publishTime>
     </File>
@@ -1161,6 +1317,33 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Scripts/angular-xeditable/js/xeditable.min.js">
       <publishTime>07/26/2017 13:10:59</publishTime>
     </File>
+    <File Include="Scripts/angular.treeview/angular.treeview.js">
+      <publishTime>03/03/2018 16:40:42</publishTime>
+    </File>
+    <File Include="Scripts/angular.treeview/angular.treeview.min.js">
+      <publishTime>03/03/2018 16:40:42</publishTime>
+    </File>
+    <File Include="Scripts/angular.treeview/css/angular.treeview.css">
+      <publishTime>03/03/2018 16:40:48</publishTime>
+    </File>
+    <File Include="Scripts/angular.treeview/img/file.png">
+      <publishTime>03/03/2018 16:40:48</publishTime>
+    </File>
+    <File Include="Scripts/angular.treeview/img/folder-closed.png">
+      <publishTime>03/03/2018 16:40:48</publishTime>
+    </File>
+    <File Include="Scripts/angular.treeview/img/folder.png">
+      <publishTime>03/03/2018 16:40:48</publishTime>
+    </File>
+    <File Include="Scripts/angular.treeview/img/jsfiddle01.png">
+      <publishTime>03/03/2018 16:40:48</publishTime>
+    </File>
+    <File Include="Scripts/angular.treeview/img/jsfiddle02.png">
+      <publishTime>03/03/2018 16:40:48</publishTime>
+    </File>
+    <File Include="Scripts/angular.treeview/img/preview.png">
+      <publishTime>03/03/2018 16:40:48</publishTime>
+    </File>
     <File Include="Scripts/angular/angular-animate.min.js">
       <publishTime>07/26/2017 13:10:59</publishTime>
     </File>
@@ -1233,6 +1416,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Scripts/bootstrap.min.js">
       <publishTime>07/26/2017 13:10:59</publishTime>
     </File>
+    <File Include="Scripts/bootstrapvalidator.min.js">
+      <publishTime>08/06/2017 11:42:28</publishTime>
+    </File>
     <File Include="Scripts/fastclick/fastclick.js">
       <publishTime>07/26/2017 13:10:59</publishTime>
     </File>
@@ -1302,11 +1488,32 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Views/Bookkeeping/Index.cshtml">
       <publishTime>08/05/2017 12:40:08</publishTime>
     </File>
+    <File Include="Views/Conversion/Index.cshtml">
+      <publishTime>02/24/2018 16:33:38</publishTime>
+    </File>
+    <File Include="Views/ConversionDetail/Index.cshtml">
+      <publishTime>02/24/2018 16:33:55</publishTime>
+    </File>
     <File Include="Views/Customers/Index.cshtml">
       <publishTime>01/27/2018 20:44:30</publishTime>
     </File>
     <File Include="Views/Dashboard/Index.cshtml">
       <publishTime>01/27/2018 13:44:29</publishTime>
+    </File>
+    <File Include="Views/DesignGallery/Index.cshtml">
+      <publishTime>03/01/2018 11:17:54</publishTime>
+    </File>
+    <File Include="Views/District/Index.cshtml">
+      <publishTime>03/02/2018 21:44:19</publishTime>
+    </File>
+    <File Include="Views/Divisions/Index.cshtml">
+      <publishTime>03/04/2018 22:04:18</publishTime>
+    </File>
+    <File Include="Views/FinishedGood/Index.cshtml">
+      <publishTime>02/26/2018 23:34:40</publishTime>
+    </File>
+    <File Include="Views/Groups/Index.cshtml">
+      <publishTime>02/14/2018 10:46:03</publishTime>
     </File>
     <File Include="Views/Home/Contact.cshtml">
       <publishTime>01/09/2018 13:42:03</publishTime>
@@ -1317,11 +1524,38 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Views/Invoice/Index.cshtml">
       <publishTime>01/20/2018 22:06:19</publishTime>
     </File>
+    <File Include="Views/Matric/Index.cshtml">
+      <publishTime>02/05/2018 17:54:39</publishTime>
+    </File>
+    <File Include="Views/Matric/vssver2.scc">
+      <publishTime>02/05/2018 17:54:39</publishTime>
+    </File>
     <File Include="Views/Payment/Index.cshtml">
       <publishTime>01/22/2018 15:23:19</publishTime>
     </File>
+    <File Include="Views/Process/Index.cshtml">
+      <publishTime>02/05/2018 17:54:39</publishTime>
+    </File>
+    <File Include="Views/Process/vssver2.scc">
+      <publishTime>02/05/2018 17:54:39</publishTime>
+    </File>
+    <File Include="Views/ProcesseLocations/Index.cshtml">
+      <publishTime>02/24/2018 16:29:42</publishTime>
+    </File>
+    <File Include="Views/ProcessReport/Index.cshtml">
+      <publishTime>02/23/2018 22:43:39</publishTime>
+    </File>
     <File Include="Views/Products/Index.cshtml">
       <publishTime>01/31/2018 10:03:41</publishTime>
+    </File>
+    <File Include="Views/Purchase/Index.cshtml">
+      <publishTime>02/05/2018 17:54:39</publishTime>
+    </File>
+    <File Include="Views/Purchase/vssver2.scc">
+      <publishTime>02/05/2018 17:54:39</publishTime>
+    </File>
+    <File Include="Views/PurchasedProducts/Index.cshtml">
+      <publishTime>02/24/2018 14:52:03</publishTime>
     </File>
     <File Include="Views/Reports/Index.cshtml">
       <publishTime>08/01/2017 14:48:13</publishTime>
@@ -1332,23 +1566,41 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Views/SalesSearch/Index.cshtml">
       <publishTime>01/24/2018 17:09:12</publishTime>
     </File>
+    <File Include="Views/SaleZone/Index.cshtml">
+      <publishTime>03/01/2018 23:40:53</publishTime>
+    </File>
+    <File Include="Views/Search/Index.cshtml">
+      <publishTime>03/01/2018 13:25:11</publishTime>
+    </File>
     <File Include="Views/Shared/Error.cshtml">
       <publishTime>07/26/2017 12:32:06</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>02/01/2018 13:26:21</publishTime>
+      <publishTime>03/05/2018 00:02:21</publishTime>
+    </File>
+    <File Include="Views/StoreDelivery/Index.cshtml">
+      <publishTime>02/15/2018 22:08:03</publishTime>
+    </File>
+    <File Include="Views/Suppliers/Index.cshtml">
+      <publishTime>02/24/2018 16:29:42</publishTime>
+    </File>
+    <File Include="Views/UnitManagers/Index.cshtml">
+      <publishTime>03/04/2018 23:39:56</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>07/26/2017 12:32:06</publishTime>
+    </File>
+    <File Include="Views/ZoneManager/Index.cshtml">
+      <publishTime>03/01/2018 23:40:43</publishTime>
     </File>
     <File Include="Views/_ViewStart.cshtml">
       <publishTime>07/26/2017 12:32:06</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>02/04/2018 14:19:10</publishTime>
+      <publishTime>03/05/2018 10:21:15</publishTime>
     </File>
     <File Include="WebForms/Import/Index.aspx">
-      <publishTime>01/30/2018 09:48:57</publishTime>
+      <publishTime>02/12/2018 13:13:53</publishTime>
     </File>
   </ItemGroup>
 </Project>

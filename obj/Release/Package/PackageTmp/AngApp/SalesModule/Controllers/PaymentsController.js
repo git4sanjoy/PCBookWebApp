@@ -127,12 +127,12 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
 
         $scope.submitted = true;
         if ($scope.paymentForm.$valid) {
-            $scope.loading = true;
+            //$scope.loading = true;
             var fd = $filter('date')($scope.payment.invoiceDate, "yyyy-MM-dd");
             var hd = null;
             var customerId = 0;
             var customerName = "";
-            var amount;
+            var amount=0;
             var checkNo = null;
             var bankAccNo = null;
 
@@ -180,17 +180,18 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
                 return false;
             }
             if ($scope.payment.SCAmount) {
-                if ($scope.payment.SCAmount < 0) {
-                    alert("Amount Must be Positive");
-                    angular.element('#SCAmount').focus();
-                    return false;
-                }
+                //if ($scope.payment.SCAmount != 0) {
+                //    alert("Amount Must be Positive");
+                //    angular.element('#SCAmount').focus();
+                //    return false;
+                //}
                 amount = $scope.payment.SCAmount;
-            } else {
-                alert("Input Amount");
-                angular.element('#SCAmount').focus();
-                return false;
-            }
+            } 
+            //else {
+            //    alert("Input Amount");
+            //    angular.element('#SCAmount').focus();
+            //    return false;
+            //}
             ////Bank payment Validation
             if ($scope.data.paymentType == 'Bank') {
                 if ($scope.payment.honourDate) {
@@ -249,17 +250,17 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
 
                 };
                 $scope.users.push(aViewObj);
-
-                $scope.payment = {};
+                $scope.submitted = false;
                 $scope.CreditLimit = 0;
                 $scope.TotalCredit = 0;
-                $scope.Address = "None";
-                $scope.submitted = false;
+                $scope.Address = '';                
+                $scope.payment = {
+                    invoiceDate: fd
+                };
+                $scope.loading = false;
                 $scope.paymentForm.$setPristine();
                 $scope.paymentForm.$setUntouched();
-                $scope.loading = false;
-
-                angular.element('#customerAutoComplite').focus();
+                
                 $mdDialog.show(
                     $mdDialog.alert()
                         .parent(angular.element(document.querySelector('#popupContainer')))
@@ -270,7 +271,7 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
                         .ok('Ok!')
                         .targetEvent(ev)
                 );
-                //element[1].focus();
+                angular.element(document.querySelector('#customerAutoComplite')).focus();
             }).error(function (error) {
                 $scope.message = 'Unable to save Payment' + error.message;
                 $scope.messageType = "warning";
@@ -295,14 +296,28 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
                 headers: authHeaders
             }).success(function (data) {
                 if (data.length > 0) {
-                    $scope.CreditLimit = data[0].CreditLimit;
-                    $scope.TotalCredit = data[0].TotalCredit;
                     $scope.Address = data[0].Address;
+                    $scope.DistrictName = data[0].DistrictName;
                     $scope.Image = data[0].Image;
+                    $scope.BfAmount = data[0].BfAmount;
+                    $scope.BFDate = data[0].BFDate;
+                    $scope.CreditLimit = data[0].CreditLimit;
+                    $scope.ActualCredit = data[0].ActualCredit;
+                    $scope.TotalSale = data[0].TotalSale;
+                    $scope.TotalCollection = data[0].TotalCollection;
+                    $scope.TotalDiscount = data[0].TotalDiscount;
+
                 } else {
-                    $scope.CreditLimit = 0;
-                    $scope.TotalCredit = 0;
-                    $scope.Image = "";
+                    $scope.Address = '';
+                    $scope.DistrictName = '';
+                    $scope.Image = '';
+                    $scope.BfAmount = 0;
+                    $scope.BFDate = 0;
+                    $scope.CreditLimit =0;
+                    $scope.ActualCredit = 0;
+                    $scope.TotalSale = 0;
+                    $scope.TotalCollection = 0;
+                    $scope.TotalDiscount = 0;
                 }
 
             }).error(function (error) {
@@ -330,13 +345,22 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
             }).success(function (data) {
                 $scope.customerLedgers = [];
                 if (data.length > 0) {
-                    $scope.searchPayment.CreditLimit = data[0].CreditLimit;
-                    $scope.searchPayment.TotalCredit = data[0].TotalCredit;
                     $scope.searchPayment.Address = data[0].Address;
+                    $scope.searchPayment.DistrictName = data[0].DistrictName;
                     $scope.searchPayment.Image = data[0].Image;
+                    $scope.searchPayment.BfAmount = data[0].BfAmount;
+                    $scope.searchPayment.BFDate = data[0].BFDate;
+                    $scope.searchPayment.CreditLimit = data[0].CreditLimit;
+                    $scope.searchPayment.ActualCredit = data[0].ActualCredit;
+                    $scope.searchPayment.TotalSale = data[0].TotalSale;
+                    $scope.searchPayment.TotalCollection = data[0].TotalCollection;
+                    $scope.searchPayment.TotalDiscount = data[0].TotalDiscount;
                 } else {
                     $scope.searchPayment.CreditLimit = 0;
-                    $scope.searchPayment.TotalCredit = 0;
+                    $scope.searchPayment.ActualCredit = 0;
+                    $scope.searchPayment.TotalSale = 0;
+                    $scope.searchPayment.TotalCollection = 0;
+                    $scope.searchPayment.TotalDiscount = 0;
                     $scope.searchPayment.Address = "";
                     $scope.searchPayment.Image = "";
                 }
@@ -415,7 +439,41 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
             alert("Please  correct form errors!");
         }
     };
+
+    $scope.deletePayment = function (aPayment) {
+        deleteObj = confirm('Are you sure you want to delete the Payment Amount: ' + aPayment.SCAmount+'?');
+        if (deleteObj) {
+            var Id = aPayment.PaymentId;
+            
+            $http({
+                url: "/api/Payments/" + Id,
+                method: "DELETE",
+                headers: authHeaders
+            }).success(function (data) {
+                $.each($scope.customerLedgers, function (i) {
+                    if ($scope.customerLedgers[i].PaymentId === Id) {
+                        $scope.customerLedgers.splice(i, 1);
+                        return false;
+                    }
+                });
+
+                $scope.message = 'Payment Deleted Successfull!';
+                $scope.messageType = "danger";
+                $scope.clientMessage = false;
+                $timeout(function () { $scope.loginAlertMessage = true; }, 3000);
+                $scope.loading = false;
+                alert('Payment Deleted Successfull!');
+            }).error(function (data) {
+                $scope.error = "An Error has occured while Deleteding Payment! " + data;
+                $scope.loading = true;
+            });
+
+        }
+        
+    };
+
     $scope.clear = function () {
+        $scope.data.PartyAccount == false;
         $scope.customerLedgers = [];
         $scope.searchPayment = {};
         $scope.searchPayment.CreditLimit = 0;

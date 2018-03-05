@@ -11,6 +11,9 @@ using System.Web.Http.Description;
 using PCBookWebApp.DAL;
 using PCBookWebApp.Models.ProcessModule;
 using PCBookWebApp.Models.ProcessModule.ViewModels;
+using System.Threading.Tasks;
+using System.Data.Entity.Migrations;
+using Microsoft.AspNet.Identity;
 
 namespace PCBookWebApp.Controllers.ProcessModule.api
 {
@@ -78,6 +81,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                                       item.ConversionDetailsId,
                                       item.ConversionId,
                                       item.Conversion.ConversionName,
+                                      item.Quantity,
                                       item.PurchaseProductId,
                                       item.PurchaseProduct.PurchasedProductName,                                      
                                       item.Active,
@@ -94,6 +98,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                     Obj.PurchaseProductId = item.PurchaseProductId.ToString();
                     Obj.ConversionName = item.ConversionName;
                     Obj.PurchasedProductName = item.PurchasedProductName;
+                    Obj.Quantity = item.Quantity;
                 };
                 List.Add(Obj);
             }
@@ -119,54 +124,73 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         }
 
         // PUT: api/ConversionDetails/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutConversionDetail(int id, ConversionDetail conversionDetail)
+        [ResponseType(typeof(ConversionDetail))]
+       
+        public async Task<IHttpActionResult> PutConversionDetail(int id, ConversionDetail conversionDetail)
         {
-            conversionDetail.DateCreated = db.ConversionDetails.Where(x => x.ConversionDetailsId == id).Select(x => x.DateCreated).FirstOrDefault();
-            conversionDetail.DateUpdated = DateTime.Now;
-            conversionDetail.Active = true;
+            var msg = 0;
+            var check = db.ConversionDetails.FirstOrDefault(m => m.ConversionDetailsId == conversionDetail.ConversionId);
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != conversionDetail.ConversionDetailsId)
-            {
-                return BadRequest();
-            }
+            //if (id != conversionDetail.ConversionId)
+            //{
+            //    return BadRequest();
+            //}
+            //db.Entry(supplier).State = EntityState.Modified;
 
-            db.Entry(conversionDetail).State = EntityState.Modified;
-
-            try
+            if (check == null)
             {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ConversionDetailExists(id))
+                try
                 {
-                    return NotFound();
+                    var obj = db.ConversionDetails.FirstOrDefault(m => m.ConversionDetailsId == conversionDetail.ConversionDetailsId);
+                    //var createdDate = db.ConversionDetails.Where(x => x.SupplierId == id).Select(x => x.DateCreated).FirstOrDefault();
+                    conversionDetail.DateCreated = obj.DateCreated;
+                    conversionDetail.CreatedBy = obj.CreatedBy;
+                    conversionDetail.DateUpdated = DateTime.Now;
+                    //conversionDetail.ShowRoomId = obj.ShowRoomId;
+                    conversionDetail.Active = true;
+                    db.ConversionDetails.AddOrUpdate(conversionDetail);
+                    await db.SaveChangesAsync();
+                    msg = 1;
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!ConversionDetailExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(msg);
+            //return StatusCode(HttpStatusCode.NoContent);
         }
-
         // POST: api/ConversionDetails
         [ResponseType(typeof(ConversionDetail))]
         public IHttpActionResult PostConversionDetail(ConversionDetail conversionDetail)
         {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            string userName = User.Identity.GetUserName();
+
             var msg = 0;
             var check = db.ConversionDetails.FirstOrDefault(m => m.PurchaseProductId == conversionDetail.PurchaseProductId 
                                                                  && m.ConversionId == conversionDetail.ConversionId);
 
             if(check == null)
             {
+
                 conversionDetail.DateCreated = DateTime.Now;
+                conversionDetail.CreatedBy = userName;
+                conversionDetail.Active = true;
+
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);

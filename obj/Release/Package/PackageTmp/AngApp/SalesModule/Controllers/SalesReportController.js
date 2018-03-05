@@ -126,7 +126,7 @@ app.controller('SalesReportController', ['$scope', '$location', '$http', '$timeo
                 .position(pinTo);
 
             $mdToast.show(toast).then(function (response) {
-                if (response == 'ok') {
+                if (response === 'ok') {
                     alert('You clicked the \'UNDO\' action.');
                 }
             });

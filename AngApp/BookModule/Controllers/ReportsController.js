@@ -80,8 +80,9 @@ app.controller('ReportsController', ['$scope', '$http', '$filter', '$timeout',
 
         $scope.reportArray = [];
         $scope.reportArray.push({ name: "DateBetweenBook", Text: "Date Between Book", isDefault: true });
-        $scope.reportArray.push({ name: "DateBetweenBookGroupWise", Text: "Date Between Book Group Wise", isDefault: false });
         $scope.reportArray.push({ name: "DateBetweenLedger", Text: "Date Between Ledger", isDefault: false });
+        $scope.reportArray.push({ name: "DateBetweenBookGroupWise", Text: "Date Between Book Group Wise", isDefault: false });
+        
 
         $scope.reportOptionRadios = $scope.reportArray[0];
         $scope.reportOption = [];
@@ -164,7 +165,7 @@ app.controller('ReportsController', ['$scope', '$http', '$filter', '$timeout',
         $scope.groupListMultiSelectCustomText = { buttonDefaultText: '---Select Group Name---' };
         $scope.groupList = [];
         $http({
-            url: "/api/Groups/GroupsMultiSelectList",
+            url: "/api/Groups/GroupListMultiSelect",
             method: "GET",
             headers: authHeaders
         }).success(function (data) {
@@ -285,6 +286,7 @@ app.controller('ReportsController', ['$scope', '$http', '$filter', '$timeout',
             }
 
 
-        };//End Report Showing Methods***********
+        };
+        //End Report Showing Methods***********
         //**************************************
     }]);

@@ -17,6 +17,10 @@ namespace PCBookWebApp.Models.SalesModule
         [StringLength(145)]
         public string DistrictName { get; set; }
         public string DistrictNameBangla { get; set; }
+
+        public int? SaleZoneId { get; set; }
+
+
         public bool Active { get; set; }
         public string CreatedBy { get; set; }
 
@@ -26,5 +30,7 @@ namespace PCBookWebApp.Models.SalesModule
         [Display(Name = "Update Date")]
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public Nullable<System.DateTime> DateUpdated { get; set; }
+
+        public virtual SaleZone SaleZone { get; set; }
     }
 }

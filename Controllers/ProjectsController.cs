@@ -45,24 +45,58 @@ namespace PCBookWebApp.Controllers
             var noOfVoucherTypes = db.VoucherTypes.Count();
             var noOfGroups = db.Groups.Count();
 
+            var noOfPurchasedProducts = db.PurchasedProducts.Where(a => a.ShowRoomId == showRoomId).Count();
+            var noOfSupplier = db.Suppliers.Where(a => a.ShowRoomId == showRoomId).Count();
+            var noOfFactories = db.ProcesseLocations.Where(a => a.ShowRoomId == showRoomId).Count();
+
             var noOfLedgers = db.Ledgers.Where(a => a.ShowRoomId == showRoomId).Count();
             var noOfCustomers = db.Customers.Where(a => a.ShowRoomId == showRoomId).Count();
-            var noOfProducts = db.Products.Where(a => a.ShowRoomId == showRoomId).Count();
-            var lastSaleEntry = db.MemoMasters.Where(a => a.ShowRoomId == showRoomId).OrderByDescending(a => a.MemoDate).FirstOrDefault();
-            var lastBookEntry = db.Vouchers.Where(a => a.ShowRoomId == showRoomId).OrderByDescending(a => a.VoucherDate).FirstOrDefault();
 
+            var noOfProducts = db.Products.Count();
 
-            return Json(new
+            if (showRoomId > 0)
             {
-                //lastSaleEntryDate = (DateTime) lastSaleEntry.MemoDate,
-                lastSaleEntryDate = DateTime.Now,
-                noOfCustomers = noOfCustomers,
-                noOfProducts = noOfProducts,
-                noOfVoucherTypes = noOfVoucherTypes,
-                noOfGroups = noOfGroups,
-                noOfLedgers = noOfLedgers,
-                lastBookEntryDate = DateTime.Now
-            });
+                var lastSaleEntry = db.MemoMasters.Where(a => a.ShowRoomId == showRoomId).OrderByDescending(a => a.MemoDate).FirstOrDefault();
+                var lastBookEntry = db.Vouchers.Where(a => a.ShowRoomId == showRoomId).OrderByDescending(a => a.VoucherDate).FirstOrDefault();
+                DateTime lastBookEntryDate = DateTime.Now;
+                DateTime lastSaleEntryDate = DateTime.Now;
+                if (lastBookEntry != null) {
+                    lastBookEntryDate = (DateTime)lastBookEntry.VoucherDate;
+                }
+                if (lastSaleEntry != null)
+                {
+                    lastSaleEntryDate = (DateTime)lastSaleEntry.MemoDate;
+                }
+                return Json(new
+                {
+                    lastSaleEntryDate = lastSaleEntryDate,
+                    noOfCustomers = noOfCustomers,
+                    noOfProducts = noOfProducts,
+                    noOfVoucherTypes = noOfVoucherTypes,
+                    noOfGroups = noOfGroups,
+                    noOfLedgers = noOfLedgers,
+                    lastBookEntryDate = lastBookEntryDate,
+                    noOfPurchasedProducts= noOfPurchasedProducts,
+                    noOfSupplier= noOfSupplier,
+                    noOfFactories= noOfFactories
+                });
+            }
+            else {
+                return Json(new
+                {
+                    lastSaleEntryDate = DateTime.Now,
+                    noOfCustomers = noOfCustomers,
+                    noOfProducts = noOfProducts,
+                    noOfVoucherTypes = noOfVoucherTypes,
+                    noOfGroups = noOfGroups,
+                    noOfLedgers = noOfLedgers,
+                    lastBookEntryDate = DateTime.Now
+                });
+            }
+            
+
+
+            
         }
 
 

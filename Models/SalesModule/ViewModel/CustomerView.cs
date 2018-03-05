@@ -22,11 +22,19 @@ namespace PCBookWebApp.Models.SalesModule.ViewModel
         public string ShowRoomNameBangla { get; set; }
         public string CustomerNameBangla { get; set; }
         public string AddressBangla { get; set; }
-        public double CreditLimit { get; set; }
-        public double TotalCredit { get; set; }
 
+
+        public double CreditLimit { get; set; }
+        public double BfAmount { get; set; }
         public double ActualCredit { get; set; }
+        public double TotalSale { get; set; }
+        public double TotalCollection { get; set; }
+        public double TotalDiscount { get; set; }
+
+
         public string ShopName { get; set; }
         public string Image { get; set; } 
+        public string DistrictName { get; set; }
+        public DateTime BFDate { get; set; }
     }
 }

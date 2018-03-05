@@ -23,7 +23,7 @@ namespace PCBookWebApp.Models.ProcessModule
         public double ReceiveQuantity { get; set; }
         public double DeliveryQuantity { get; set; }
         public double? SE { get; set; }
-
+        public int? PurchaseId { get; set; }
         public double? Rate { get; set; }
         public double? Amount { get; set; }
         public double? Discount { get; set; }
@@ -52,5 +52,8 @@ namespace PCBookWebApp.Models.ProcessModule
         public virtual ProcesseLocation ProcesseLocation { get; set; }
         public virtual Conversion Conversion { get; set; }
         public virtual ShowRoom ShowRoom { get; set; }
+
+        public virtual Purchase Purchase { get; set; }
+
     }
 }

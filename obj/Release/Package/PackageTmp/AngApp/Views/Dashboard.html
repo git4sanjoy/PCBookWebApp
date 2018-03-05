@@ -1,6 +1,165 @@
-﻿
+﻿<!--Design Manager-->
+<div class="row" ng-show="userRole=='Design Manager'">
+    <div class="col-md-12">
+        <div class="box box-danger">
+            <div class="box-header with-border">
+                <form class="form-inline">
+                    <span class="box-title"><i class="fa fa-image"></i> Total Design : {{filteredMdList.length}} </span>
+                    <input ng-model="searchText" class="searchTextBox" type="text" value="" placeholder="Search" style="margin:0em 1em;">
+                </form>
+
+                <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+
+            <table class="table table-bordered table-striped">
+                <tr class="text-bold">
+                    <td>SL</td>
+                    <td>Image</td>
+                    <td>Design No</td>
+                    <td>Name</td>
+                    <td>Quantity</td>
+                    <td>Repeat</td>
+                    <td>Last Production</td>
+                </tr>
+                <tr ng-repeat="a in (filteredMdList = (designList | filter: searchText)) | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                    <td>{{$index+1}}</td>
+                    <td><img style="height:90px; width:70px" ng-src="{{a.Deal_Images[0].ImageUrl}}" alt="{{a.Description}}" /></td>
+                    <td>{{a.Name}}</td>
+                    <td>{{a.Description}}</td>
+                    <td>{{a.TotalProduction}}</td>
+                    <td>{{a.DealProductions.length>1 ? a.DealProductions.length-1 : 0}}</td>
+                    <td>{{a.LastProduction|date:"dd-MM-yyyy"}}</td>
+                </tr>
+            </table>
+
+
+                <pagination ng-model="currentPage"
+                            total-items="filteredMdList.length"
+                            max-size="maxSize"
+                            items-per-page="pageSize"
+                            boundary-links="true">
+                </pagination>
+
+            </div><!-- /.box-body -->
+
+        </div><!-- /.box -->
+    </div>
+
+</div>
+
+<!--Process Manager-->
+<div class="row" ng-show="userRole=='Process Manager' || userRole=='Process Officer'">
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-purple">
+            <div class="inner">
+                <h3>{{appDetails.lastBookEntryDate| date:'dd-MM-yy'}}</h3>
+                <p>Last Process Entry</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-calendar"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-aqua">
+            <div class="inner">
+                <h3>{{appDetails.noOfPurchasedProducts| number:0}}</h3>
+                <p>Products</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-apple"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-green">
+            <div class="inner">
+                <h3>{{appDetails.noOfSupplier| number:0}}</h3>
+                <p>Suppliers</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-users"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-red">
+            <div class="inner">
+                <h3>{{appDetails.noOfFactories| number:0}}</h3>
+                <p>Factories</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-industry"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+
+</div>
+
+<div class="row" ng-show="userRole=='Process Manager' || userRole=='Process Officer'">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <form class="form-inline">
+                    <span class="box-title"><i class="fa fa-pie-chart"></i> Process : {{piList.length}} </span>
+                    <div class="form-group">
+                        <label for="exampleInputNameYear" style="margin-left:1em;">Year</label>
+                        <select name="exampleInputNameYear"
+                                ng-model="yearDdl"
+                                ng-change="changedYear()"
+                                class="form-control">
+                            <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputNameMonth" style="margin-left:1em;">Month</label>
+                        <select name="exampleInputNameMonth"
+                                ng-model="monthDdl"
+                                ng-change="changedMonth()"
+                                ng-options="x as x.name for x in months track by x.id"
+                                class="form-control">
+                            <option value="">--Month--</option>
+                        </select>
+
+                    </div>
+
+                </form>
+
+                <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+
+
+
+
+            </div><!-- /.box-body -->
+            <!-- Loading (remove the following to stop the loading)-->
+            <div ng-class="class" ng-show="loading">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+            <!-- end loading -->
+        </div><!-- /.box -->
+    </div>
+</div>
+<!--End Process Manager-->
+
 <!--Accounts Manager-->
-<div class="row" ng-show="userRole=='Accounts Manager'">
+<div class="row" ng-show="userRole=='Accounts Manager' || userRole=='Accounts'">
     <div class="col-lg-3 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-purple">
@@ -56,7 +215,7 @@
 
 </div>
 
-<div class="row" ng-show="userRole=='Accounts Manager'">
+<div class="row" ng-show="userRole=='Accounts Manager' || userRole=='Accounts'">
     <div class="col-md-12">
         <div class="box box-success">
             <div class="box-header with-border">
@@ -108,8 +267,8 @@
 </div>
 <!--End Accounts Manager-->
 
-<!--Sales Manager-->
-<div class="row" ng-show="userRole=='Show Room Manager' || userRole=='Show Room Sales'">
+<!--Sales Manager Common Summary-->
+<div class="row" ng-show="userRole=='Show Room Sales'">
     <div class="col-lg-3 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-purple">
@@ -127,8 +286,8 @@
         <!-- small box -->
         <div class="small-box bg-aqua">
             <div class="inner">
-                <h3>{{0| number:0}}</h3>
-                <p>Credits</p>
+                <h3>{{customerClosingBalances |sumByKey:'Balance' |currency:"৳":"0"}}</h3>
+                <p>Show Room Credits</p>
             </div>
             <div class="icon">
                 <i class="fa fa-edit"></i>
@@ -164,11 +323,224 @@
     </div><!-- ./col -->
 
 </div>
+<!--Sales Manager Common Summary-->
 
-<div class="box box-default collapsed-box">
+<!-- /. Customers Closing Balance -->
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Sales'">
     <div class="box-header with-border">
         <div class="form-inline">
-            <h3 class="box-title"><i class="fa fa-bar-chart"></i> Managers Monthly Sale and Collection</h3>
+            <h3 class="box-title"><i class="fa fa-users"></i> Customers Closing Balances <span class="text-red">({{filteredList.length}})</span></h3>
+            <input ng-model="searchText" class="searchTextBox" type="text" value="" placeholder="Filter" style="margin:0em 1em;">
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
+        <div class="table-responsive">
+            <table id="customerBalanceTable" class="table table-bordered table-condensed table-hover table-striped">
+                <tr style="font-weight: bold" class="danger">
+                    <td style="" ng-click="sort('DistrictName')"><span class="glyphicon sort-icon" ng-show="sortKey=='DistrictName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> District</td>
+                    <td style="" ng-click="sort('SalesManName')"><span class="glyphicon sort-icon" ng-show="sortKey=='SalesManName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
+                    <td style="" ng-click="sort('CustomerName')"><span class="glyphicon sort-icon" ng-show="sortKey=='CustomerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CustomerName</td>
+                    <td style="" ng-click="sort('Limit')"><span class="glyphicon sort-icon" ng-show="sortKey=='Limit'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Limit</td>
+                    <td style="" ng-click="sort('BfAmount')"><span class="glyphicon sort-icon" ng-show="sortKey=='BfAmount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> BfAmount</td>
+                    <td style="" ng-click="sort('SaleCost')"><span class="glyphicon sort-icon" ng-show="sortKey=='SaleCost'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleAmount</td>
+                    <td style="" ng-click="sort('MemoDiscount')"><span class="glyphicon sort-icon" ng-show="sortKey=='MemoDiscount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>MDiscount</td>
+                    <td style="" ng-click="sort('GatOther')"><span class="glyphicon sort-icon" ng-show="sortKey=='GatOther'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Other</td>
+                    <td style="" ng-click="sort('PaymentAmount')"><span class="glyphicon sort-icon" ng-show="sortKey=='PaymentAmount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Collection</td>
+                    <td style="" ng-click="sort('Adjustment')"><span class="glyphicon sort-icon" ng-show="sortKey=='Adjustment'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Discount</td>
+                    <td style="" ng-click="sort('Balance')"><span class="glyphicon sort-icon" ng-show="sortKey=='Balance'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Balance</td>
+                </tr>
+                <tr class="text-bold info">
+                    <td colspan="3" style="text-align:left">Total:</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'Limit' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'BfAmount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'SaleCost' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'MemoDiscount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'GatOther' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'PaymentAmount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'Adjustment' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'Balance' |currency:"":"0"}}</td>
+                </tr>
+                <tr ng-repeat="user in (filteredList = (customerClosingBalances | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                    <td>{{ user.DistrictName }}</td>
+                    <td>{{ user.SalesManName }}</td>
+                    <td>{{ user.CustomerName || 'empty' }}</td>
+                    <td style="text-align:right">{{ user.Limit }}</td>
+                    <td style="text-align:right">{{ user.BfAmount }}</td>
+                    <td style="text-align:right">{{ user.SaleCost }}</td>
+                    <td style="text-align:right">{{ user.MemoDiscount }}</td>
+                    <td style="text-align:right">{{ user.GatOther }}</td>
+                    <td style="text-align:right">{{ user.PaymentAmount }}</td>
+                    <td style="text-align:right">{{ user.Adjustment }}</td>
+                    <td style="text-align:right">{{ user.Balance }}</td>
+                </tr>
+                <tr class="text-bold info">
+                    <td colspan="3" style="text-align:left">Total:</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'Limit' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'BfAmount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'SaleCost' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'MemoDiscount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'GatOther' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'PaymentAmount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'Adjustment' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'Balance' |currency:"":"0"}}</td>
+                </tr>
+            </table>
+        </div>
+        <!--<pagination ng-model="currentPage"
+                    total-items="filteredList.length"
+                    max-size="maxSize"
+                    items-per-page="pageSize"
+                    boundary-links="true">
+        </pagination>-->
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /. Customers Closing Balance -->
+
+<!-- /. Product Monthly Summary Wiget Box -->
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Sales'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-apple"></i> Products wise Monthly Sale</h3>
+            <div class="form-group">
+                <label for="yearDdlMonthlySales" style="margin-left:1em;">Year</label>
+                <select name="yearDdlMonthlyProductSales" id="yearDdlMonthlyProductSales"
+                        ng-model="yearDdlMonthlyProductSales"
+                        ng-change="changedMonthDdlMonthlyProductsSales()"
+                        class="form-control">
+                    <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="monthDdlMonthlySales" style="margin-left:1em;">Month</label>
+                <select name="monthDdlMonthlyProductSales" id="monthDdlMonthlyProductSales"
+                        ng-model="monthDdlMonthlyProductSales"
+                        ng-change="changedMonthDdlMonthlyProductsSales()"
+                        ng-options="x as x.name for x in months track by x.id"
+                        class="form-control">
+                    <option value="">--Month--</option>
+                </select>
+
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
+        <div class="row">
+            <div class="col-sm-12">
+                <canvas id="bar" class="chart chart-bar"
+                        chart-colors="colors"
+                        chart-data="dataProductBar" 
+                        chart-labels="labelsProductBar"
+                        chart-series="seriesProductBar">
+                </canvas>
+                <div class="table-responsive" ng-show="productWiseMonthlySaleFilteredList.length>0">
+                    <table class="table table-bordered table-condensed table-hover table-striped">
+                        <tr style="font-weight: bold" class="info">
+                            <td style="" ng-click="sort('ProductName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='ProductName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ProductName</td>
+                            <td style="" ng-click="sort('TotalQuantity')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalQuantity'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Quantity</td>
+                            
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{productWiseMonthlySaleFilteredList |sumByKey:'TotalQuantity' | currency:"" :"0"}}</td>
+
+                        </tr>
+                        <tr ng-repeat="s in (productWiseMonthlySaleFilteredList = (productWiseMonthlySale | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                            <td>{{ s.ProductName }}</td>
+                            <td style="text-align:right">{{ s.TotalQuantity }}</td>
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{productWiseMonthlySaleFilteredList |sumByKey:'TotalQuantity' | currency:"" :"0"}}</td>
+                            
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /. End Product Monthly Summary Wiget Box -->
+
+<!-- /. Product Wise Yearly Sale Quantity box -->
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Sales'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-apple"></i> Products wise Yearly Sale</h3>
+            <div class="form-group">
+                <label for="exampleInputNameYear" style="margin-left:1em;">Year</label>
+                <select name="exampleInputNameYear" id="yearDdlYearlySales"
+                        ng-model="yearDdlYearlyProductsSales"
+                        ng-change="changedYearDdlYearlyProductsSales()"
+                        class="form-control">
+                    <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
+        <div class="row">
+            <div class="col-sm-12">
+                <canvas id="barYear" class="chart chart-bar"
+                        chart-data="dataProductBarYear" 
+                        chart-labels="labelsProductBarYear"
+                        chart-colors="colors"
+                        chart-series="seriesProductBarYear">
+                </canvas>
+                <div class="table-responsive" ng-show="salesProductWiseYearlyFilteredList.length>0">
+                    <table class="table table-bordered table-condensed table-hover table-striped">
+                        <tr style="font-weight: bold" class="info">
+                            <td style="" ng-click="sort('ProductName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='ProductName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Product Name</td>
+                            <td style="" ng-click="sort('TotalQuantity')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalQuantity'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Quantity</td>                            
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{salesProductWiseYearlyFilteredList |sumByKey:'TotalQuantity' | currency:"" :"0"}}</td>
+                        </tr>
+                        <tr ng-repeat="y in (salesProductWiseYearlyFilteredList = (salesProductWiseYearly | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                            <td>{{ y.ProductName }}</td>
+                            <td style="text-align:right">{{ y.TotalQuantity }}</td>                            
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{salesProductWiseYearlyFilteredList |sumByKey:'TotalQuantity' | currency:"" :"0"}}</td>                            
+                        </tr>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /.End Product Wise Sale Quantity Yearly box -->
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Sales'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-user-secret"></i> Managers Monthly Sale and Collection</h3>
             <div class="form-group">
                 <label for="yearDdlMonthlySales" style="margin-left:1em;">Year</label>
                 <select name="yearDdlMonthlySales" id="yearDdlMonthlySales"
@@ -200,27 +572,27 @@
     <!-- /.box-header -->
     <div class="box-body" style="display: none;">
         <div class="row">
-            <div class="col-md-6 col-sm-12">
-                <canvas id="bar" class="chart chart-bar"
-                        chart-data="dataBar" chart-labels="labelsBar"
-                        chart-series="seriesBar"></canvas>
-            </div>
-            <div class="col-md-6 col-sm-12">
-                
+            <div class="col-md-4 col-sm-12">
+
                 <div class="table-responsive" ng-show="salesManWiseMonthlySale.length>0">
-                    <table class="table table-bordered table-condensed table-hover">
-                        <tr style="font-weight: bold">
+                    <table class="table table-bordered table-condensed table-hover table-striped">
+                        <tr style="font-weight: bold" class="info">
                             <td style="" ng-click="sort('SalesManName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='SalesManName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
-                            <td style="" ng-click="sort('TotalSaleTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalSaleTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleAmount</td>
-                            <td style="" ng-click="sort('TotalCollectionTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalCollectionTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CollectionAmount</td>
+                            <td style="" ng-click="sort('TotalSaleTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalSaleTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Sale</td>
+                            <td style="" ng-click="sort('TotalCollectionTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalCollectionTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Collection</td>
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{salesManFilteredList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
+                            <td style="text-align:right">{{salesManFilteredList |sumByKey:'TotalCollectionTaka' | currency:"" :"0"}}</td>
                         </tr>
                         <tr ng-repeat="s in (salesManFilteredList = (salesManWiseMonthlySale | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
                             <td>{{ s.SalesManName }}</td>
                             <td style="text-align:right">{{ s.TotalSaleTaka }}</td>
                             <td style="text-align:right">{{ s.TotalCollectionTaka }}</td>
                         </tr>
-                        <tr class="text-bold">
-                            <td style="text-align:right">Total:</td>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
                             <td style="text-align:right">{{salesManFilteredList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
                             <td style="text-align:right">{{salesManFilteredList |sumByKey:'TotalCollectionTaka' | currency:"" :"0"}}</td>
                         </tr>
@@ -229,18 +601,27 @@
                 </div>
 
             </div>
+            <div class="col-md-8 col-sm-12">
+                <canvas id="bar" class="chart chart-bar"
+                        chart-colors="colors"
+                        chart-dataset-override="datasetOverride"
+                        chart-data="dataBar" 
+                        chart-labels="labelsBar"
+                        chart-series="seriesBar">
+                </canvas>
+            </div>
+            
         </div>
 
 
     </div>
     <!-- /.box-body -->
 </div>
-<!-- /.box -->
-
-<div class="box box-default collapsed-box">
+<!-- /. Managers Monthly Sale Collection box -->
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Sales'">
     <div class="box-header with-border">
         <div class="form-inline">
-            <h3 class="box-title"><i class="fa fa-pie-chart"></i> Managers Yearly Sale and Collection</h3>
+            <h3 class="box-title"><i class="fa fa-user-secret"></i> Managers Yearly Sale and Collection</h3>
             <div class="form-group">
                 <label for="exampleInputNameYear" style="margin-left:1em;">Year</label>
                 <select name="exampleInputNameYear" id="yearDdlYearlySales"
@@ -263,27 +644,27 @@
     <!-- /.box-header -->
     <div class="box-body" style="display: none;">
         <div class="row">
-            <div class="col-md-6 col-sm-12">
-                <canvas id="barYear" class="chart chart-bar"
-                        chart-data="dataBarYear" chart-labels="labelsBarYear"
-                        chart-series="seriesBarYear"></canvas>
-            </div>
-            <div class="col-md-6 col-sm-12">
-
+            <div class="col-md-4 col-sm-12">
+                
                 <div class="table-responsive" ng-show="salesManWiseYearlySale.length>0">
-                    <table class="table table-bordered table-condensed table-hover">
-                        <tr style="font-weight: bold">
+                    <table class="table table-bordered table-condensed table-hover table-striped">
+                        <tr style="font-weight: bold" class="info">
                             <td style="" ng-click="sort('SalesManName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='SalesManName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
-                            <td style="" ng-click="sort('TotalSaleTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalSaleTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleAmount</td>
-                            <td style="" ng-click="sort('TotalCollectionTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalCollectionTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CollectionAmount</td>
+                            <td style="" ng-click="sort('TotalSaleTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalSaleTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Sale</td>
+                            <td style="" ng-click="sort('TotalCollectionTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalCollectionTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Collection</td>
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{salesManFilteredYearList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
+                            <td style="text-align:right">{{salesManFilteredYearList |sumByKey:'TotalCollectionTaka' | currency:"" :"0"}}</td>
                         </tr>
                         <tr ng-repeat="y in (salesManFilteredYearList = (salesManWiseYearlySale | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
                             <td>{{ y.SalesManName }}</td>
                             <td style="text-align:right">{{ y.TotalSaleTaka }}</td>
                             <td style="text-align:right">{{ y.TotalCollectionTaka }}</td>
                         </tr>
-                        <tr class="text-bold">
-                            <td style="text-align:right">Total:</td>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
                             <td style="text-align:right">{{salesManFilteredYearList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
                             <td style="text-align:right">{{salesManFilteredYearList |sumByKey:'TotalCollectionTaka' | currency:"" :"0"}}</td>
                         </tr>
@@ -292,105 +673,39 @@
                 </div>
 
             </div>
+            <div class="col-md-8 col-sm-12">
+                <canvas id="barYear" class="chart chart-bar"
+                        chart-colors="colors"
+                        chart-dataset-override="datasetOverride"
+                        chart-data="dataBarYear" 
+                        chart-labels="labelsBarYear"
+                        chart-series="seriesBarYear">
+                </canvas>
+            </div>
+            
         </div>
 
 
     </div>
     <!-- /.box-body -->
 </div>
-<!-- /.box -->
-
-<div class="box box-default collapsed-box">
-    <div class="box-header with-border">
-        <div class="form-inline">
-            <h3 class="box-title"><i class="fa fa-users"></i> Customers Closing Balances <small class="label label-default text-red">{{filteredList.length}}</small></h3>
-            <input ng-model="searchText" class="searchTextBox" type="text" value="" placeholder="Filter" style="margin:0em 1em;">
-        </div>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                <i class="fa fa-plus"></i>
-            </button>
-        </div>
-        <!-- /.box-tools -->
-    </div>
-    <!-- /.box-header -->
-    <div class="box-body" style="display: none;">
-        <div class="table-responsive">
-
-            <table class="table table-bordered table-condensed table-hover table-striped">
-                <tr style="font-weight: bold" class="">
-                    <td style="" ng-click="sort('DistrictName')"><span class="glyphicon sort-icon" ng-show="sortKey=='DistrictName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> District</td>
-                    <td style="" ng-click="sort('SalesManName')"><span class="glyphicon sort-icon" ng-show="sortKey=='SalesManName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
-                    <td style="" ng-click="sort('CustomerName')"><span class="glyphicon sort-icon" ng-show="sortKey=='CustomerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CustomerName</td>
-                    <td style="" ng-click="sort('Limit')"><span class="glyphicon sort-icon" ng-show="sortKey=='Limit'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Limit</td>
-                    <td style="" ng-click="sort('SaleCost')"><span class="glyphicon sort-icon" ng-show="sortKey=='SaleCost'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleAmount</td>
-                    <td style="" ng-click="sort('GatOther')"><span class="glyphicon sort-icon" ng-show="sortKey=='GatOther'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Other</td>
-                    <td style="" ng-click="sort('MemoDiscount')"><span class="glyphicon sort-icon" ng-show="sortKey=='MemoDiscount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Discount</td>
-                    <td style="" ng-click="sort('PaymentAmount')"><span class="glyphicon sort-icon" ng-show="sortKey=='PaymentAmount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Payment</td>
-                    <td style="" ng-click="sort('Adjustment')"><span class="glyphicon sort-icon" ng-show="sortKey=='Adjustment'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Adjustment</td>
-                    <td style="" ng-click="sort('Balance')"><span class="glyphicon sort-icon" ng-show="sortKey=='Balance'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Balance</td>
-                    <td style="" ng-click="sort('MemoDate')"><span class="glyphicon sort-icon" ng-show="sortKey=='MemoDate'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> LastMemo</td>
-                    <td style="" ng-click="sort('PaymentDate')"><span class="glyphicon sort-icon" ng-show="sortKey=='PaymentDate'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> LastPayment</td>
-
-                </tr>
-                <tr ng-repeat="user in (filteredList = (customerClosingBalances | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
-                    <td>{{ user.DistrictName }}</td>
-                    <td>{{ user.SalesManName }}</td>
-
-                    <td>{{ user.CustomerName || 'empty' }}</td>
-                    <td style="text-align:right">{{ user.Limit }}</td>
-                    <td style="text-align:right">{{ user.SaleCost }}</td>
-                    <td style="text-align:right">{{ user.GatOther }}</td>
-                    <td style="text-align:right">{{ user.MemoDiscount }}</td>
-                    <td style="text-align:right">{{ user.PaymentAmount }}</td>
-                    <td style="text-align:right">{{ user.Adjustment }}</td>
-                    <td style="text-align:right">{{ user.Balance }}</td>
-                    <td>{{ user.MemoDate|date: 'dd/MM/yyyy' }}</td>
-                    <td>{{ user.PaymentDate|date: 'dd/MM/yyyy' | hideIfEmpty: 'dd.MM.yyyy'}}</td>
-
-                </tr>
-                <tr class="text-bold">
-                    <td colspan="3" style="text-align:right">Total:</td>
-                    <td style="text-align:right">{{filteredList |sumByKey:'Limit' |currency:"":"0"}}</td>
-                    <td style="text-align:right">{{filteredList |sumByKey:'SaleCost' |currency:"":"0"}}</td>
-                    <td style="text-align:right">{{filteredList |sumByKey:'GatOther' |currency:"":"0"}}</td>
-                    <td style="text-align:right">{{filteredList |sumByKey:'MemoDiscount' |currency:"":"0"}}</td>
-                    <td style="text-align:right">{{filteredList |sumByKey:'PaymentAmount' |currency:"":"0"}}</td>
-                    <td style="text-align:right">{{filteredList |sumByKey:'Adjustment' |currency:"":"0"}}</td>
-                    <td style="text-align:right">{{filteredList |sumByKey:'Balance' |currency:"":"0"}}</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </table>
-
-        </div>
-        <pagination ng-model="currentPage"
-                    total-items="filteredList.length"
-                    max-size="maxSize"
-                    items-per-page="pageSize"
-                    boundary-links="true">
-        </pagination>
-
-    </div>
-    <!-- /.box-body -->
-</div>
-<!-- /.box -->
-
-<div class="box box-default" ng-show="userRole=='Show Room Manager' || userRole=='Show Room Sales'">
+<!-- /. Manager Yearly Sale Collection box -->
+<!-- /.Daily Sale Box box -->
+<div class="box box-default" ng-show="userRole=='Show Room Sales'">
     <div class="box-header with-border">
         <div class="form-inline">
             <h3 class="box-title"><i class="fa fa-calendar"></i> Sales on Date</h3>
             <div class="form-group">
                 <input class="form-control" type="text" tabindex="" name="saleDate" id="saleDate"
-                        ng-change="dateSaleInGoogleMap()"
-                        move-focus-by-enter-key
-                        ng-focus="FromDatePickerOpen()"
-                        datepicker-localdate
-                        datepicker-popup="dd/MM/yyyy"
-                        is-open="fromDatePickerIsOpen"
-                        ng-click="FromDatePickerOpen()"
-                        ng-model="saleDate" />
-                   
+                       ng-change="dateSaleInGoogleMap()"
+                       move-focus-by-enter-key
+                       ng-focus="FromDatePickerOpen()"
+                       datepicker-localdate
+                       datepicker-popup="dd/MM/yyyy"
+                       is-open="fromDatePickerIsOpen"
+                       ng-click="FromDatePickerOpen()"
+                       ng-model="saleDate" />
+
             </div>
             <div class="form-group">
                 <label for="" style="margin-left:1em;">Manager</label>
@@ -408,97 +723,78 @@
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
     </div>
-
     <div class="box-body">
         <div class="row">
             <div class="col-md-6 col-sm-12">
-                <!--The calendar -->
-                <style>
-                    #map {
-                        height: 600px;
-                    }
-
-                    #floating-panel {
-                        position: absolute;
-                        top: 10px;
-                        left: 32%;
-                        z-index: 5;
-                        background-color: #fff;
-                        padding: 5px;
-                        border: 1px solid #999;
-                        text-align: center;
-                        font-family: 'Roboto','sans-serif';
-                        line-height: 13px;
-                        padding-left: 10px;
-                        color: #000000;
-                        padding-right: 10px;
-                    }
-
-                    #floating-panel {
-                        margin-left: -52px;
-                    }
-                </style>
-
-                <div id="floating-panel">
-                    <button id="drop" onclick="drop()">Drop Sales</button>
-                </div>
-                <div id="map"></div>
-
-            </div>
-            <div class="col-md-6 col-sm-12">
                 <div class="table-responsive" ng-show="dateSalesinMapList.length>0">
                     <table class="table table-bordered table-condensed table-hover">
-                        <tr style="font-weight: bold">
+                        <tr class="danger text-bold">
                             <td style="" ng-click="sort('DistrictName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='DistrictName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> District</td>
                             <td style="" ng-click="sort('TotalSaleTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalSaleTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleAmount</td>
+                        </tr>
+                        <tr class="info text-bold">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{dateSalesinMapFilteredList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
                         </tr>
                         <tr ng-repeat="b in (dateSalesinMapFilteredList = (dateSalesinMapList | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
                             <td>{{ b.DistrictName }}</td>
                             <td style="text-align:right">{{ b.TotalSaleTaka }}</td>
                         </tr>
-                        <tr class="text-bold">
+                        <tr class="danger text-bold">
                             <td style="text-align:right">Total:</td>
                             <td style="text-align:right">{{dateSalesinMapFilteredList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
                         </tr>
                     </table>
-
                 </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <!--The GoogleMap -->
+                <style>
+                    #map {
+                        height: 550px;
+                    }
+                </style>
+
+                <div id="map"></div>
+
             </div>
         </div>
     </div><!-- /.box-body -->
-
-
     <!-- /.box-footer -->
 </div>
+<!-- /.Daily Sale Box box -->
 <!--End Sales Manager-->
 
-
 <script>
-    function loadDailySaleInMap() {
-        clearMarkers();
-        var accesstoken = sessionStorage.getItem('accessToken');
-        var authHeaders = {};
-        if (accesstoken) {
-            authHeaders.Authorization = 'Bearer ' + accesstoken;
-        }
+    (function () {
+        //Onload Document
+    })();
 
-        var url = "http://localhost:12005/api/MemoMasters/GetDateSalesInMap/" + '2018-02-03' + '/' + 0;
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("GET", url, true);
-        xhttp.setRequestHeader("Content-type", "application/json");
-        xhttp.setRequestHeader('Authorization', 'Bearer ' + accesstoken);
-        xhttp.send();
-        //var response = JSON.parse(xhttp.responseText);
-        console.log(xhttp.responseText);
-    }
-    var districtSaleList = [
-        { place: 'JAMALPUR', TotalSaleTaka: 34000 },
-        { place: 'KUSTIA',  TotalSaleTaka: 15000},
-        { place: 'BAGERHAT' ,TotalSaleTaka: 29275},
-        { place: 'SATHKHIRA', TotalSaleTaka: 42500},
-        { place: 'FARIDPUR', TotalSaleTaka: 32660}
-    ];
+    var districtSaleList = [];
+    //Get Current date
+    var date = new Date();
+    var yyyy = date.getFullYear().toString();
+    var mm = (date.getMonth() + 1).toString();
+    var dd = date.getDate().toString();
+    var mmChars = mm.split('');
+    var ddChars = dd.split('');
+    var saleDate = ( yyyy + '-' + (mmChars[1] ? mm : "0" + mmChars[0]) + '-' + (ddChars[1] ? dd : "0" + ddChars[0]));
 
+    //End Current Date
+    $.ajax({
+        url: '/Dashboard/GetDateSalesInMapJQueryCall/?Date=' + saleDate,
+        type: "GET",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({Date :'2018-02-03', SalesManId: 0}),
+        success: function (data) {
+            var arr = [];           
+            $.each(data, function (index, value) {
+                arr.push({ place: JSON.stringify(value.DistrictName), TotalSaleTaka: JSON.stringify(value.TotalSaleTaka) });
+            })
+            districtSaleList = arr;
+        },
+    });
     var markers = [];
     var map;
 
@@ -512,31 +808,24 @@
 
 
     function setMarkers(map, locations) {
-        
         var marker, i
-        
-        for (i = 0; i < locations.length; i++) {
-
-            var add = locations[i].place;
-            var amount = locations[i].TotalSaleTaka;
-            var tk = locations[i].TotalSaleTaka
-            var plaseObj = {};
-            var geocoder = new google.maps.Geocoder();
-
-            if (geocoder) {
-
-                geocoder.geocode({
-                    'address': add
-                }, function (results, status, tk) {
+        var geocoder = new google.maps.Geocoder();
+        for (idx in locations) {
+            var location = locations[idx];
+            var address = location['place'];
+            geocoder.geocode({ 'address': address }, function (location, idx) {
+                return (function (results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
-                        //console.log(results[0].address_components[0].long_name);                       
-                        plaseObj = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng() };    
+                        var latlng = results[0].geometry.location;
+                        var plaseObj = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng() };
+                        //console.log(location);
+                        //console.log(idx);
                         var marker = new google.maps.Marker({
-                            map: map, title: add, position: plaseObj
+                            map: map, title: location.place, position: plaseObj
                         });
-                        map.setCenter(marker.getPosition())
+                        //map.setCenter(marker.getPosition())
 
-                        var content = "<h4>" + results[0].address_components[0].long_name + " Amount: " + tk + "</h4>";
+                        var content = '<h4>' + location.place + ': ' + location.TotalSaleTaka + '</h4>';
                         var infowindow = new google.maps.InfoWindow()
                         google.maps.event.addListener(marker, 'click', (function (marker, content, infowindow) {
                             return function () {
@@ -544,39 +833,15 @@
                                 infowindow.open(map, marker);
                             };
                         })(marker, content, infowindow));
+
                     }
                 });
-                //console.log(plaseObj);               
-            }
-
+            }(location, idx));
         }
     }
 
-    function clearMarkers() {
-        for (var i = 0; i < markers.length; i++) {
-            markers[i].setMap(null);
-        }
-        markers = [];
-    }
-    function getLatLng(addr) {
-        var geocoder = new google.maps.Geocoder();
-        //console.log(addr);
-        if (geocoder) {
-
-            geocoder.geocode({
-                'address': addr
-            }, function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    //console.log(results[0].address_components[0].long_name);  
-                    var plaseObj = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng() };
-                    console.log('Location:' + addr + " lat: " + plaseObj.lat + "lng: " + plaseObj.lng);
-                    return plaseObj;
-                }
-            });
-        }
-    }
+    //document.getElementById("saleDate").onchange()
 </script>
-
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9-411AYtIuknkcqsKJabhUDc5-L-9XEY&callback=initMap&language=bn&region=BD" ">
 </script>

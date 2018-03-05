@@ -1,0 +1,143 @@
+﻿<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cube"></i> Unit Manager </h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <form name="unitManagerForm" novalidate role="form" class="form-horizontal" id="unitManagerForm" ng-submit="submitunitManagerForm()">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Manager Id</label>
+                    <div class="input-group" ng-class="{ 'has-error' : unitManagerForm.userListCmb.$invalid && (unitManagerForm.userListCmb.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                        <select name="userListCmb" class="form-control" id="userListCmb" tabindex="1"
+                                ng-focus="true"
+                                ng-model="unitManager.userListCmb"
+                                ng-options="s.UserName for s in usersList track by s.Id"
+                                ng-required="true">
+                            <option value="">--Select User Name--</option>
+                        </select>
+                    </div>
+                    <p ng-show="unitManagerForm.userListCmb.$error.required && (unitManagerForm.userListCmb.$dirty || submitted)" class="help-block">User name is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Unit Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : unitManagerForm.unitCmb.$invalid && (unitManagerForm.unitCmb.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-cube"></i></span>
+                        <select name="unitCmb" class="form-control" id="unitCmb" tabindex="2"
+                                ng-focus="true"
+                                ng-model="unitManager.unitCmb"
+                                ng-options="s.UnitName for s in showRoomList track by s.UnitId"
+                                ng-required="true">
+                            <option value="">--Select Show Room No--</option>
+                        </select>
+                    </div>
+                    <p ng-show="unitManagerForm.unitCmb.$error.required && (unitManagerForm.unitCmb.$dirty || submitted)" class="help-block">Show Room name is required.</p>
+                </div>
+
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Manager Name</label>
+                    <div class="input-group" ng-class="{ 'has-error' : unitManagerForm.officerName.$invalid && (unitManagerForm.officerName.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-user-md"></i></span>
+                        <input id="officerName" type="text" class="form-control" name="officerName" autocomplete="off" tabindex="3"
+                               move-focus-by-enter-key
+                               ng-model="unitManager.officerName"
+                               ng-required="true">
+                    </div>
+                    <p ng-show="unitManagerForm.officerName.$error.required && (unitManagerForm.officerName.$dirty || submitted)" class="help-block">Officer name is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Address</label>
+                    <div class="input-group" ng-class="{ 'has-error' : unitManagerForm.address.$invalid && (unitManagerForm.address.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
+                        <input id="address" type="text" class="form-control" name="address" autocomplete="off" tabindex="4"
+                               move-focus-by-enter-key
+                               ng-model="unitManager.address" />
+                    </div>
+                    <p ng-show="unitManagerForm.address.$error.required && (unitManagerForm.address.$dirty || submitted)" class="help-block">Address is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Phone</label>
+                    <div class="input-group" ng-class="{ 'has-error' : unitManagerForm.phone.$invalid && (unitManagerForm.phone.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-mobile-phone"></i></span>
+                        <input id="phone" type="text" class="form-control" name="phone" autocomplete="off" tabindex="5"
+                               move-focus-by-enter-key
+                               ng-model="unitManager.phone" />
+                    </div>
+                    <p ng-show="unitManagerForm.phone.$error.required && (unitManagerForm.phone.$dirty || submitted)" class="help-block">Phone is required.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Email</label>
+                    <div class="input-group" ng-class="{ 'has-error' : unitManagerForm.address.$invalid && (unitManagerForm.address.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-at"></i></span>
+                        <input id="email" type="text" class="form-control" name="email" autocomplete="off" tabindex="6"
+                               move-focus-by-enter-key
+                               ng-model="unitManager.email" />
+                    </div>
+                    <p ng-show="unitManagerForm.email.$error.required && (unitManagerForm.email.$dirty || submitted)" class="help-block">Email is required.</p>
+                </div>
+            </div>
+        </div><!-- /.box-body -->
+
+        <div class="box-footer no-border">
+            <button type="submit" class="btn btn-success" tabindex="7"
+                    move-focus-by-enter-key
+                    ng-hide="addButton"
+                    ng-disabled="unitManagerForm.$invalid">
+                <i class="fa fa-pencil"></i> Save Unit Manager
+            </button>
+            <button type="button" class="btn btn-default"
+                    ng-hide="cancelButton"
+                    ng-click="clear()">
+                <span class="glyphicon glyphicon-remove"></span> Clear
+            </button>
+        </div><!-- /.box-footer -->
+    </form>
+</div>
+
+<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cubes"></i> Unit Manager {{officerList.length}}</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <table class="table table-bordered table-hover table-condensed">
+            <tr style="font-weight: bold" class="info">
+                <td style="width:20%;white-space: nowrap;">Unit Name</td>
+                <td style="width:15%;white-space: nowrap;">Show Room Name</td>
+                <td style="width:15%;white-space: nowrap;">User Name</td>
+                <td style="width:20%;white-space: nowrap;">Officer Name</td>
+                <td style="width:10%;white-space: nowrap;">Address</td>
+                <td style="width:10%;white-space: nowrap;">Phone</td>
+                <td style="width:10%;white-space: nowrap;">Email</td>
+            </tr>
+
+            <tr ng-repeat="officer in officerList">
+                <td>{{ officer.UnitName  }} </td>
+                <td>{{officer.ShowRoomName }}</td>
+                <td>{{officer.UserName}}</td>
+                <td>{{officer.OfficerName}}</td>
+                <td>{{officer.Address}}</td>
+                <td>{{officer.Phone}}</td>
+                <td>{{officer.Email}}</td>
+            </tr>
+        </table>
+
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>
+
+
+
+
+

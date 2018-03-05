@@ -11,13 +11,20 @@ app.controller('GroupsController', ['$scope', '$location', '$http', '$timeout', 
             else
                 $scope.class = "overlay";
         };
+        $scope.data = {
+            cb1: true
+        };
+        //$scope.message = 'false';
 
+        $scope.onChange = function (cbState) {
+            //$scope.message = cbState;
+        };
         $scope.clientMessage = true;
         $scope.serverMessage = true;
         $scope.messageType = "";
         $scope.message = "";
 
-        $scope.pageSize = 50;
+        $scope.pageSize = 15;
         $scope.currentPage = 1;
         $scope.primaryListCmbDiv = false;
 
@@ -60,7 +67,14 @@ app.controller('GroupsController', ['$scope', '$location', '$http', '$timeout', 
         }).success(function (data) {
             $scope.groupsList = data;
         });
-
+        $scope.groupsListTree = [];
+        $http({
+            url: "/api/Groups/GetGroupListTree",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.groupsListTree = data;
+        });
 
         $scope.checkUnderGroup = function () {
             var groupname = $scope.group.groupListCmb.GroupName;
@@ -206,5 +220,13 @@ app.controller('GroupsController', ['$scope', '$location', '$http', '$timeout', 
         //        return "Non editable item `Primary`";
         //    }
         //};
+        // Get Treeview Data
+        $http({
+            url: "/api/Groups/RolesTree",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (response) {
+            $scope.List = response.data.treeList;
+        });
 
 }]);

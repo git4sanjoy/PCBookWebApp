@@ -20,10 +20,12 @@
                 <div class="row" ng-show="Address">
                     <div class="col-md-3 col-sm-6 col-xs-12">
                         <div class="info-box">
-                            <span class="info-box-icon bg-aqua"><img ng-src="{{Image ? 'Upload/Customers/'+Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
+                            <span class="info-box-icon bg-aqua"><img ng-src="{{Image ? 'Upload/Customers/'+searchPayment.Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Address</span>
-                                <span class="info-box-number" style="font-size:.9em;">{{Address}}</span>
+                                <span class="info-box-number" style="font-size:1em;">{{Address}}</span>
+                                <span class="info-box-text">District</span>
+                                <span class="info-box-number" style="font-size:1em;">{{DistrictName}}</span>
                             </div><!-- /.info-box-content -->
                         </div><!-- /.info-box -->
                     </div><!-- /.col -->
@@ -31,8 +33,10 @@
                         <div class="info-box">
                             <span class="info-box-icon bg-green">৳</span>
                             <div class="info-box-content">
-                                <span class="info-box-text">Credit Limit</span>
-                                <span class="info-box-number">{{CreditLimit| currency:"৳":0}}</span>
+                                <span class="info-box-text">BF Amount</span>
+                                <span class="info-box-number" style="font-size:1em;color:red;">{{BfAmount | currency:"৳":0}}</span>
+                                <span class="info-box-text">BF Date</span>
+                                <span class="info-box-number" ng-show="BfAmount>0" style="font-size:1em;">{{BFDate | date : "dd-MM-yyyy"}}</span>
                             </div><!-- /.info-box-content -->
                         </div><!-- /.info-box -->
                     </div><!-- /.col -->
@@ -40,8 +44,10 @@
                         <div class="info-box">
                             <span class="info-box-icon bg-yellow"><i class="fa fa-files-o"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-text">Credit</span>
-                                <span class="info-box-number">{{TotalCredit| currency:"৳":0}}</span>
+                                <span class="info-box-text">Sale</span>
+                                <span class="info-box-number" style="font-size:1em;">{{TotalSale| currency:"৳":0}}</span>
+                                <span class="info-box-text">Collection</span>
+                                <span class="info-box-number" style="font-size:1em;">{{TotalCollection| currency:"৳":0}}</span>
                             </div><!-- /.info-box-content -->
                         </div><!-- /.info-box -->
                     </div><!-- /.col -->
@@ -49,12 +55,17 @@
                         <div class="info-box">
                             <span class="info-box-icon bg-red"><i class="fa fa-star-o"></i></span>
                             <div class="info-box-content">
+                                <span class="info-box-text">Discount</span>
+                                <span class="info-box-number" style="font-size:1em;">{{ TotalDiscount | currency:"৳":0}}</span>
+
                                 <span class="info-box-text">Balance</span>
-                                <span class="info-box-number">{{ CreditLimit == 0 ? 0 : (CreditLimit-TotalCredit) | currency:"৳":0 }}</span>
-                            </div><!-- /.info-box-content -->
-                        </div><!-- /.info-box -->
-                    </div><!-- /.col -->
+                                <span class="info-box-number" style="font-size:1em;">{{ ActualCredit == 0 ? 0 :(ActualCredit) | currency:"৳":0}}</span>
+
+                            </div><!-- /.info-box -->
+                        </div><!-- /.col -->
+                    </div>
                 </div>
+
 
                 <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex-gt-sm>
@@ -84,19 +95,22 @@
                                ng-keydown='$event.keyCode == 13 && GetCustomerDetailById()'
                                ng-keyup="updatePartyTypeaheadList(payment.customerAutoComplite)"
                                typeahead-on-select="changeSelectCustomerName($item)"
-                               typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:8">
+                               typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:20">
                     </md-input-container>
 
                     <md-input-container class="md-block" flex-gt-sm>
                         <label>Collection Amount</label>
                         <input id="SCAmount" type="number" class="form-control" name="SCAmount" autocomplete="off" tabindex="3"
+                                onfocus="javascript: if(this.value == '0'){ this.value = ''; }" 
+                                onblur="javascript: if(this.value==''){this.value='0';}"
                                move-focus-by-enter-key
-                               ng-model="payment.SCAmount"
-                               ng-required="true">
+                               ng-model="payment.SCAmount">
                     </md-input-container>
                     <md-input-container class="md-block" flex-gt-sm>
                         <label>Adjustment Discount</label>
-                        <input id="TCAmount" type="number" class="form-control" name="TCAmount" autocomplete="off" tabindex="4"
+                        <input id="SDiscount" type="number" class="form-control" name="SDiscount" autocomplete="off" tabindex="4"
+                                onfocus="javascript: if(this.value == '0'){ this.value = ''; }" 
+                                onblur="javascript: if(this.value==''){this.value='0';}"
                                move-focus-by-enter-key
                                ng-disabled="discountTextBoxEditable"
                                ng-model="payment.SDiscount">
@@ -203,7 +217,6 @@
         <form name="searchPaymentForm" novalidate role="form" class="" id="searchPaymentForm" ng-submit="searchPayments()">
 
             <md-card-content style="padding-bottom:0">
-
                 <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex-gt-sm>
                         <div class="form-group">
@@ -237,7 +250,7 @@
                     </md-input-container>
                     <md-input-container class="md-block" flex-gt-sm>
                         <label>Customer Name</label>
-                        <input style="min-width:200px;" id="customerAutoCompliteSerch" type="text" class="form-control" name="customerAutoCompliteSerch" autocomplete="off" tabindex=""
+                        <input style="min-width:200px;" id="CustomerAutoCompliteSerch" type="text" class="form-control" name="CustomerAutoCompliteSerch" autocomplete="off" tabindex=""
                                ng-model="searchPayment.customerAutoComplite"
                                move-focus-by-enter-key
                                ng-change="GetNewMemoId()"
@@ -247,23 +260,28 @@
                                typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:20">
                     </md-input-container>
                     <md-input-container class="md-block" flex-gt-sm>
-                        <md-checkbox  ng-model="data.PartyAccount" aria-label="Register" tabindex="" style="margin-right:2em;font-weight:bold;">
-                            With Sales
+                        <md-checkbox ng-model="data.PartyAccount" aria-label="Sale" tabindex="" style="margin-right:2em;font-weight:bold;">
+                            Credit Sales
                         </md-checkbox>
+
                     </md-input-container>
-                    <md-input-container class="md-block" flex-gt-sm>
-                        <md-button class="md-raised md-primary" tabindex="10" type="submit"
-                                   aria-label="Favorite"
-                                   move-focus-by-enter-key
-                                   ng-disabled="searchPaymentForm.$invalid">
-                            <i class="fa fa-search"></i> Search
-                        </md-button>
-                    </md-input-container>
-                    <md-input-container class="md-block" flex-gt-sm>
-                        <md-button class="md-raised md-default" tabindex="10" type="button" ng-click="clear()">
-                            <i class="fa fa-refresh"></i> Clear
-                        </md-button>
-                    </md-input-container>
+
+                    <div layout-gt-sm="row">
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <md-button class="md-raised md-primary" tabindex="10" type="submit"
+                                       aria-label="Favorite"
+                                       move-focus-by-enter-key
+                                       ng-disabled="searchPaymentForm.$invalid">
+                                <i class="fa fa-search"></i> Search
+                            </md-button>
+                        </md-input-container>
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <md-button class="md-raised md-default" tabindex="10" type="button" ng-click="clear()">
+                                <i class="fa fa-refresh"></i> Clear
+                            </md-button>
+                        </md-input-container>
+                    </div>
+
                 </div>
 
                 <div class="row" ng-show="searchPayment.Address">
@@ -272,7 +290,9 @@
                             <span class="info-box-icon bg-aqua"><img ng-src="{{searchPayment.Image ? 'Upload/Customers/'+searchPayment.Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Address</span>
-                                <span class="info-box-number" style="font-size:.9em;">{{searchPayment.Address}}</span>
+                                <span class="info-box-number" style="font-size:1em;">{{searchPayment.Address}}</span>
+                                <span class="info-box-text">District</span>
+                                <span class="info-box-number" style="font-size:1em;">{{searchPayment.DistrictName}}</span>
                             </div><!-- /.info-box-content -->
                         </div><!-- /.info-box -->
                     </div><!-- /.col -->
@@ -280,8 +300,10 @@
                         <div class="info-box">
                             <span class="info-box-icon bg-green">৳</span>
                             <div class="info-box-content">
-                                <span class="info-box-text">Credit Limit</span>
-                                <span class="info-box-number">{{searchPayment.CreditLimit| currency:"৳":0}}</span>
+                                <span class="info-box-text">BF Amount</span>
+                                <span class="info-box-number" style="font-size:1em;color:red;">{{searchPayment.BfAmount | currency:"৳":0}}</span>
+                                <span class="info-box-text">BF Date</span>
+                                <span class="info-box-number" ng-show="searchPayment.BfAmount>0" style="font-size:1em;">{{searchPayment.BFDate | date : "dd-MM-yyyy"}}</span>
                             </div><!-- /.info-box-content -->
                         </div><!-- /.info-box -->
                     </div><!-- /.col -->
@@ -289,8 +311,10 @@
                         <div class="info-box">
                             <span class="info-box-icon bg-yellow"><i class="fa fa-files-o"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-text">Credit</span>
-                                <span class="info-box-number">{{searchPayment.TotalCredit| currency:"৳":0}}</span>
+                                <span class="info-box-text">Sale</span>
+                                <span class="info-box-number" style="font-size:1em;">{{searchPayment.TotalSale| currency:"৳":0}}</span>
+                                <span class="info-box-text">Collection</span>
+                                <span class="info-box-number" style="font-size:1em;">{{searchPayment.TotalCollection| currency:"৳":0}}</span>
                             </div><!-- /.info-box-content -->
                         </div><!-- /.info-box -->
                     </div><!-- /.col -->
@@ -298,11 +322,15 @@
                         <div class="info-box">
                             <span class="info-box-icon bg-red"><i class="fa fa-star-o"></i></span>
                             <div class="info-box-content">
+                                <span class="info-box-text">Discount</span>
+                                <span class="info-box-number" style="font-size:1em;">{{ searchPayment.TotalDiscount | currency:"৳":0}}</span>
+
                                 <span class="info-box-text">Balance</span>
-                                <span class="info-box-number">{{ searchPayment.CreditLimit == 0 ? 0 :(searchPayment.CreditLimit - searchPayment.TotalCredit) | currency:"৳":0}}</span>
-                            </div><!-- /.info-box-content -->
-                        </div><!-- /.info-box -->
-                    </div><!-- /.col -->
+                                <span class="info-box-number" style="font-size:1em;">{{ searchPayment.ActualCredit == 0 ? 0 :(searchPayment.ActualCredit) | currency:"৳":0}}</span>
+
+                            </div><!-- /.info-box -->
+                        </div><!-- /.col -->
+                    </div>
                 </div>
             </md-card-content>
 
@@ -310,15 +338,22 @@
 
         <table class="table table-bordered table-hover table-condensed" ng-show="customerLedgers.length>0">
             <tr style="font-weight: bold" class="danger">
-                <td style="width:10%">Date</td>
-                <td style="width:30%">Customer Name</td>
-                <td style="width:15%;">Sales Amount</td>
-                <td style="width:15%;">Collection</td>
-                <td style="width:15%;">Discount</td>
-                <td style="width:10%">Remark</td>
+                <td style="width:10%;text-align:center">Date</td>
+                <td style="width:30%;text-align:center">Customer Name</td>
+                <td style="width:15%;text-align:center">Sales</td>
+                <td style="width:15%;text-align:center">Collection</td>
+                <td style="width:15%;text-align:center">Discount</td>
+                <td style="width:10%;text-align:center">Remark</td>
                 <td style="width:5%">Action</td>
             </tr>
-
+            <tr class="danger text-bold">
+                <td colspan="2" style="text-align:right">Total:</td>
+                <td style="text-align:right">{{customerSaleLedgers |sumByKey:'NetMemoAmount' |currency:"":"0"}}</td>
+                <td style="text-align:right">{{customerLedgers |sumByKey:'SCAmount' |currency:"":"0"}}</td>
+                <td style="text-align:right">{{customerLedgers |sumByKey:'SDiscount' |currency:"":"0"}}</td>
+                <td></td>
+                <td></td>
+            </tr>
             <tr ng-repeat="aSaleLedger in customerSaleLedgers">
                 <td>{{ (aSaleLedger.MemoDate | date : "dd-MM-yyyy") || 'empty' }}</td>
                 <td>{{ aSaleLedger.CustomerName }}</td>
@@ -332,11 +367,13 @@
             <tr ng-repeat="aCustomerLedger in customerLedgers">
                 <td>{{ (aCustomerLedger.PaymentDate | date : "dd-MM-yyyy") || 'empty' }}</td>
                 <td>{{ aCustomerLedger.CustomerName }}</td>
-                <td  style="text-align:right">{{ aCustomerLedger.SSAmount || 0 }}</td>
-                <td  style="text-align:right">{{ aCustomerLedger.SCAmount || 0 }}</td>
-                <td  style="text-align:right">{{ aCustomerLedger.SDiscount || 0  }}</td>
+                <td style="text-align:right">{{ aCustomerLedger.SSAmount || 0 }}</td>
+                <td style="text-align:right">{{ aCustomerLedger.SCAmount || 0 }}</td>
+                <td style="text-align:right">{{ aCustomerLedger.SDiscount || 0  }}</td>
                 <td>{{ aCustomerLedger.PaymentType }}</td>
-                <td style="white-space: nowrap"></td>
+                <td style="white-space: nowrap">
+                    <button class="btn btn-danger btn-block" ng-click="deletePayment(aCustomerLedger)" ng-show="aCustomerLedger.PaymentType === 'Cash'"><i class="fa fa-trash"></i></button>
+                </td>
             </tr>
 
 
@@ -345,7 +382,8 @@
                 <td style="text-align:right">{{customerSaleLedgers |sumByKey:'NetMemoAmount' |currency:"":"0"}}</td>
                 <td style="text-align:right">{{customerLedgers |sumByKey:'SCAmount' |currency:"":"0"}}</td>
                 <td style="text-align:right">{{customerLedgers |sumByKey:'SDiscount' |currency:"":"0"}}</td>
-                <td colspan="2"></td>
+                <td></td>
+                <td></td>
             </tr>
         </table>
 

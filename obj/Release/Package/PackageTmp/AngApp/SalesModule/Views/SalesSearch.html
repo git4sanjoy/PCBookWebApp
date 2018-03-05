@@ -12,11 +12,19 @@
         <md-card-content style="padding-bottom:0">
             <div layout-gt-sm="row">
                 <md-input-container class="md-block" flex-gt-sm>
+                    <label>Invoice No</label>
+                    <input id="memoNo" type="text" class="form-control" name="memoNo" autocomplete="off" tabindex="1"
+                           move-focus-by-enter-key
+                           ng-model="memoMaster.memoNo">
+
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
                     <div class="form-group">
                         <label for="invoiceDate">From Date</label>
                         <div class="input-group" ng-class="{ 'has-error' : searchForm.FromDate.$invalid && (searchForm.FromDate.$dirty || submitted)}">
 
-                            <input class="form-control" type="text" id="FromDate" name="FromDate" tabindex="1" autocomplete="off"
+                            <input class="form-control" type="text" id="FromDate" name="FromDate" tabindex="2" autocomplete="off"
                                    move-focus-by-enter-key
                                    ng-focus="FromDatePickerOpen()"
                                    datepicker-localdate
@@ -31,7 +39,7 @@
                 <md-input-container class="md-block" flex-gt-sm>
                     <label>To Date</label>
                     <div class="input-group" ng-class="{ 'has-error' : searchForm.ToDate.$invalid && (searchForm.ToDate.$dirty || submitted)}">
-                        <input class="form-control" type="text" id="ToDate" name="ToDate" tabindex="2" autocomplete="off"
+                        <input class="form-control" type="text" id="ToDate" name="ToDate" tabindex="3" autocomplete="off"
                                move-focus-by-enter-key
                                ng-focus="ToDatePickerOpen()"
                                datepicker-localdate
@@ -43,38 +51,47 @@
                 </md-input-container>
                 <md-input-container class="md-block" flex-gt-sm>
                     <label>Customer Name</label>
-                    <input id="customerAutoComplite" type="text" class="form-control" name="customerAutoComplite" autocomplete="off" tabindex="3"
+                    <input id="customerAutoComplite" type="text" class="form-control" name="customerAutoComplite" autocomplete="off" tabindex="4"
                            ng-model="memoMaster.customerAutoComplite"
                            move-focus-by-enter-key
                            ng-keydown='$event.keyCode == 13 && GetCustomerDetailById()'
                            ng-keyup="updatePartyTypeaheadList(memoMaster.customerAutoComplite)"
                            typeahead-on-select="changeSelectCustomerName($item)"
-                           typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:8">
-                </md-input-container>
-                <md-input-container class="md-block" flex-gt-sm>
-                    <label>Invoice No</label>
-                    <input id="memoNo" type="text" class="form-control" name="memoNo" autocomplete="off" tabindex="4"
-                           move-focus-by-enter-key
-                           ng-model="memoMaster.memoNo">
-
-                </md-input-container>
-                <md-input-container class="md-block" flex-gt-sm>
-                    <md-button class="md-raised md-primary" tabindex="5" type="submit"
-                               aria-label="Favorite"
-                               move-focus-by-enter-key
-                               ng-disabled="searchForm.$invalid">
-                        <i class="fa fa-search"></i> Search
-                    </md-button>
+                           typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:20">
                 </md-input-container>
 
+
+
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <md-button class="md-raised md-primary" tabindex="5" type="submit"
+                                   aria-label="Favorite"
+                                   move-focus-by-enter-key
+                                   ng-disabled="searchForm.$invalid">
+                            <i class="fa fa-search"></i> Search
+                        </md-button>
+
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+
+                        <md-button class="md-raised md-default" tabindex="6" type="button"
+                                   ng-click="clearForm()"
+                                   aria-label="Favorite"
+                                   move-focus-by-enter-key>
+                            <i class="fa fa-recycle"></i> Clear
+                        </md-button>
+                    </md-input-container>
+                </div>
             </div>
+            <!--Customer Details-->
             <div class="row" ng-show="Address">
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box bg-aqua">
                         <span class="info-box-icon"><img ng-src="{{Image ? 'Upload/Customers/'+Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Address</span>
-                            <span class="info-box-number"></span>
+                            <span class="info-box-text">District</span>
+
+                            <span class="info-box-number">{{DistrictName}}</span>
                             <div class="progress">
                                 <div class="progress-bar" style="width: 100%"></div>
                             </div>
@@ -88,13 +105,13 @@
                     <div class="info-box bg-red">
                         <span class="info-box-icon"><i class="fa fa-thumbs-o-up"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Credit Limit</span>
-                            <span class="info-box-number">{{CreditLimit| currency:"৳":0}}</span>
+                            <span class="info-box-text">BF Amount</span>
+                            <span class="info-box-number">{{BfAmount| currency:"৳":0}}</span>
                             <div class="progress">
                                 <div class="progress-bar" style="width: 100%"></div>
                             </div>
                             <span class="progress-description">
-                                
+                                Bf Date: {{BFDate | date : "dd-MM-yyyy"}}
                             </span>
                         </div><!-- /.info-box-content -->
                     </div><!-- /.info-box -->
@@ -103,13 +120,13 @@
                     <div class="info-box bg-yellow">
                         <span class="info-box-icon"><i class="fa fa-calendar"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Credit</span>
-                            <span class="info-box-number">{{TotalCredit| currency:"৳":0}}</span>
+                            <span class="info-box-text">Sales</span>
+                            <span class="info-box-number">{{TotalSale| currency:"৳":0}}</span>
                             <div class="progress">
                                 <div class="progress-bar" style="width: 100%"></div>
                             </div>
                             <span class="progress-description">
-                                
+                                Col : {{TotalCollection| currency:"৳":0}}
                             </span>
                         </div><!-- /.info-box-content -->
                     </div><!-- /.info-box -->
@@ -118,27 +135,29 @@
                     <div class="info-box bg-green">
                         <span class="info-box-icon"><i class="fa fa-comments-o"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Limit Balance</span>
-                            <span class="info-box-number">{{ CreditLimit == 0 ? 0 :  (CreditLimit-TotalCredit) | currency:"৳":0}}</span>
+                            <span class="info-box-text">Balance</span>
+                            <span class="info-box-number">{{ ActualCredit == 0 ? 0 :(ActualCredit) | currency:"৳":0}}</span>
                             <div class="progress">
                                 <div class="progress-bar" style="width: 100%"></div>
                             </div>
                             <span class="progress-description">
-                                
+                                Discount : {{ TotalDiscount == 0 ? 0 :  (TotalDiscount) | currency:"৳":0}}
                             </span>
                         </div><!-- /.info-box-content -->
                     </div><!-- /.info-box -->
                 </div><!-- /.col -->
             </div>
+            <!--Sales Details-->
             <div class="row" ng-show="memos.length>0">
                 
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box">
-                        <span class="info-box-icon bg-aqua"><i class="fa fa fa-shopping-cart"></i></span>
+                        <span class="info-box-icon bg-aqua"><i class="fa fa-cart-plus"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-text">Sales</span>
-                            <span class="info-box-number">{{totalSale(memos)|currency:"":"0"}}</span>
-                            <span class="info-box-text">Invoices: <span class="text-red">{{memos.length|number:"0"}}</span></span>
+                            <span class="info-box-number">{{totalSale(memos)|currency:"৳":"0"}}</span>
+                            <span class="info-box-text">Invoices <span class="text-red"></span></span>
+                            <span class="info-box-number">{{memos.length|number:"0"}}</span>
                         </div><!-- /.info-box-content -->
                     </div><!-- /.info-box -->
                 </div><!-- /.col -->
@@ -147,10 +166,12 @@
 
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box">
-                        <span class="info-box-icon bg-red"><i class="fa fa-beer"></i></span>
+                        <span class="info-box-icon bg-red"><i class="fa fa-calculator"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Discount</span>
-                            <span class="info-box-number">{{memos|sumByKey:'MemoDiscount' |currency:"":"0"}}</span>
+                            <span class="info-box-text">Cash Sales</span>
+                            <span class="info-box-number">{{totalCashSale(memos)|currency:"৳":"0"}}</span>
+                            <span class="info-box-text">Credit Sales</span>
+                            <span class="info-box-number">{{totalCreditSale(memos)|currency:"৳":"0"}}</span>
                         </div><!-- /.info-box-content -->
                     </div><!-- /.info-box -->
                 </div><!-- /.col -->
@@ -158,7 +179,9 @@
                     <div class="info-box">
                         <span class="info-box-icon bg-yellow"><i class="fa fa-ambulance"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Other Expencess</span>
+                            <span class="info-box-text">Memo Discount</span>
+                            <span class="info-box-number">{{memos|sumByKey:'MemoDiscount' |currency:"":"0"}}</span>
+                            <span class="info-box-text">Expencess</span>
                             <span class="info-box-number">{{memos|sumByKey:'GatOther' |currency:"":"0"}}</span>
                         </div><!-- /.info-box-content -->
                     </div><!-- /.info-box -->
@@ -168,19 +191,21 @@
                         <span class="info-box-icon bg-green">৳</span>
                         <div class="info-box-content">
                             <span class="info-box-text">Collections</span>
-                            <span class="info-box-number">{{collections[0].SCAmount |currency:"":"0"}}<small></small></span>
-                            <span class="info-box-text">Adjustment: <span class="text-red">{{collections[0].SDiscount |currency:"":"0"}}</span></span>
+                            <span class="info-box-number">{{collections[0].SCAmount |currency:"৳":"0"}}<small></small></span>
+                            <span class="info-box-text">Discount</span>
+                            <span class="info-box-number text-red">{{collections[0].SDiscount |currency:"৳":"0"}}</span>
                         </div><!-- /.info-box-content -->
                     </div><!-- /.info-box -->
                 </div><!-- /.col -->
-
+                
                 <div class="col-sm-12">
                     <div class="progress-group" ng-repeat="(key, value) in categoryWiseGroupingSaleList | groupBy: 'MainCategoryName'">
-                        <span class="progress-text">{{ key }}</span>
-                        <span class="progress-number"><b>{{ GetGroupSumOfILineQu(value) |number:"0" }}</b>/{{ GetGroupSumOfILineTotal(value) |currency }}</span>
-                        <div class="progress sm">
-                            <div class="progress-bar" style="width: 100%;"></div>
+                        <span class="progress-text">{{ key }} <small class="text-red text-sm">{{(GetGroupSumOfILineTotal(value)/totalSale(memos)*100)|number:"0"}}%</small></span>
+                        <span class="progress-number"><b>{{ GetGroupSumOfILineQu(value) |number:"0" }}</b>/<b class="text-green">{{ GetGroupSumOfILineTotal(value) |currency:"৳":"0" }}</b></span>
+                        <div class="progress progress-xs progress-striped active">
+                            <div class="progress-bar progress-bar-success" style="width: {{(GetGroupSumOfILineTotal(value)/totalSale(memos)*100)}}%;"></div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -193,11 +218,10 @@
 
     <md-card-content>
 
-
         <accordion close-others="oneAtATime" ng-repeat="m in memos">
             <accordion-group>
                 <accordion-heading>
-                    Voucher No: {{m.MemoNo}} <small class="text-red">{{m.CustomerName}}</small><small class="text-green"> Total: {{grandTotal(m.MemoDetailViews,m.GatOther, m.MemoDiscount) | currency:"৳":"0"}}</small><i class="pull-right glyphicon" ng-class="{'fa fa-toggle-off': status.open, 'fa fa-toggle-on': !status.open}"></i>
+                    Date: {{m.MemoDate |date:"dd-MM-yyyy"}} Voucher No: {{m.MemoNo}} <small class="text-red">{{m.CustomerName}}</small><small class="text-green"> Total: {{grandTotal(m.MemoDetailViews,m.GatOther, m.MemoDiscount) | currency:"৳":"0"}}</small><i class="pull-right glyphicon" ng-class="{'fa fa-toggle-off': status.open, 'fa fa-toggle-on': !status.open}"></i>
                 </accordion-heading>
                 <md-content>
                     <md-tabs md-dynamic-height md-border-bottom>
@@ -209,6 +233,7 @@
                                         <center><img src="Content/images/pakiza-collection.png" /></center>
                                         <center><h4>House 97, Road 11/A, Dhanmondi, Dhaka 1209</h4></center>
                                         <center><strong>Showroom Name : {{m.ShowRoomName}}</strong></center>
+                                        <center>Duplicate Copy</center>
                                     </div>
                                     <table class="table table-bordered">
                                         <tr class="text-bold">
@@ -285,6 +310,7 @@
 
                                     </table>
                                     <div class="col-sm-12">
+                                        <button class="btn btn-danger" ng-click="deleteInvoice(m)"><i class="fa fa-trash"></i> Delete</button>
                                         <button id="" class=" print-hide-button btn btn-primary pull-right" ng-click="printMemo('printable-memo-english'+$index)"><i class="fa fa-print"></i> Print</button>
                                     </div>
                                 </div>
@@ -298,6 +324,7 @@
                                         <center><img id="" src="Content/images/pfc-bangla.png" /></center>
                                         <center><h4>হাউজ নং ৯৭, রোড নং ১১ / এ, ধানমন্ডি, ঢাকা</h4></center>
                                         <center><strong>দোকানের নাম: {{m.ShowRoomNameBangla}}</strong></center>
+                                        <center>Duplicate Copy</center>
                                     </div>
                                     <table class="table table-bordered">
                                         <tr class="text-bold">

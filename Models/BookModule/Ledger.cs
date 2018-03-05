@@ -15,7 +15,7 @@ namespace PCBookWebApp.Models.BookModule
 
         [Display(Name = "Ledger Name")]
         [Required(ErrorMessage = "Ledger Name is required.")]
-        [MaxLength(50), MinLength(2)]
+        [MaxLength(240), MinLength(2)]
         public string LedgerName { get; set; }
 
         [Required]

@@ -35,6 +35,7 @@ namespace PCBookWebApp.Models.BookModule
 
         public int? CheckId { get; set; }
         public int? BankAccountId { get; set; }
+        public int? CostCenterId { get; set; }
 
         //Additional Attribute
         public bool Active { get; set; }

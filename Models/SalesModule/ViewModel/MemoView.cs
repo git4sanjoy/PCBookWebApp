@@ -26,6 +26,7 @@ namespace PCBookWebApp.Models.SalesModule.ViewModel
         public string SalesManName { get; set; }
         public string UpazilaName { get; set; }
         public string DistrictName { get; set; }
+        public string SaleType { get; set; }
 
         public double MemoDiscount { get; set; }
         public double GatOther { get; set; }

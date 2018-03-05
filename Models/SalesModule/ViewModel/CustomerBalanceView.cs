@@ -8,6 +8,7 @@ namespace PCBookWebApp.Models.SalesModule.ViewModel
     public class CustomerBalanceView
     {
         public int CustomerId { get; set; }
+        public double BfAmount { get; set; }
         public double Limit { get; set; }
         public double Credit { get; set; }
         public double Adjustment { get; set; }

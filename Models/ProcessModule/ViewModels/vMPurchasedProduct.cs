@@ -9,12 +9,14 @@ namespace PCBookWebApp.Models.ProcessModule.ViewModels
     {
         public int PurchasedProductId { get; set; }
 
+        public int MatricId { get; set; }
 
         public string ProductTypeId { get; set; }
-
 
         public string PurchasedProductName { get; set; }
 
         public string ProductTypeName { get; set; }
+
+        public string MatricName { get; set; }
     }
 }

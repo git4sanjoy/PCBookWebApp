@@ -20,6 +20,7 @@ namespace PCBookWebApp.Controllers
     {
         ApplicationDbContext context = new ApplicationDbContext();
 
+
         // GET: api/Roles
         [Route("api/Roles")]
         [HttpGet]
@@ -189,11 +190,14 @@ namespace PCBookWebApp.Controllers
 
             string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
             string queryString = @"SELECT        
-                                    dbo.AspNetUserRoles.UserId, dbo.AspNetUsers.UserName, dbo.AspNetUserRoles.RoleId, dbo.AspNetRoles.Name
+                                    dbo.AspNetUsers.Id, dbo.AspNetUsers.FullName AS Name, dbo.AspNetUsers.Email, dbo.AspNetRoles.Name AS RoleName, dbo.ShowRooms.ShowRoomName, dbo.AspNetUsers.UserName
                                     FROM            
-                                    dbo.AspNetUserRoles INNER JOIN
-                                    dbo.AspNetUsers ON dbo.AspNetUserRoles.UserId = dbo.AspNetUsers.Id INNER JOIN
-                                    dbo.AspNetRoles ON dbo.AspNetUserRoles.RoleId = dbo.AspNetRoles.Id";
+                                    dbo.ShowRooms INNER JOIN
+                                    dbo.ShowRoomUsers ON dbo.ShowRooms.ShowRoomId = dbo.ShowRoomUsers.ShowRoomId RIGHT OUTER JOIN
+                                    dbo.AspNetUsers INNER JOIN
+                                    dbo.AspNetUserRoles ON dbo.AspNetUsers.Id = dbo.AspNetUserRoles.UserId INNER JOIN
+                                    dbo.AspNetRoles ON dbo.AspNetUserRoles.RoleId = dbo.AspNetRoles.Id ON dbo.ShowRoomUsers.Id = dbo.AspNetUsers.Id ORDER BY dbo.ShowRooms.ShowRoomName, RoleName";
+            
 
             using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -206,11 +210,15 @@ namespace PCBookWebApp.Controllers
                     while (reader.Read())
                     {
                         string userName = (string)reader["UserName"];
-                        string roleName = (string)reader["Name"];
+                        string roleName = (string)reader["RoleName"];
                         userRole = new UserRole();
                         userRole.UserName = userName;
                         userRole.RoleName = roleName;
-
+                        userRole.FullName = (string)reader["Name"];
+                        if (reader["ShowRoomName"] != DBNull.Value) {
+                            userRole.ShowRoomName = (string) reader["ShowRoomName"];
+                        }
+                        
                         userRoles.Add(userRole);
                     }
                 }

@@ -112,6 +112,12 @@ namespace PCBookWebApp
                 role.Name = "Show Room Manager";
                 roleManager.Create(role);
             }
+            if (!roleManager.RoleExists("Unit Manager"))
+            {
+                var role = new IdentityRole();
+                role.Name = "Unit Manager";
+                roleManager.Create(role);
+            }
             if (!roleManager.RoleExists("Show Room Sales"))
             {
                 var role = new IdentityRole();
@@ -138,7 +144,12 @@ namespace PCBookWebApp
                 role.Name = "Process Officer";
                 roleManager.Create(role);
             }
-
+            if (!roleManager.RoleExists("Design Manager"))
+            {
+                var role = new IdentityRole();
+                role.Name = "Design Manager";
+                roleManager.Create(role);
+            }
         }
     }
 }

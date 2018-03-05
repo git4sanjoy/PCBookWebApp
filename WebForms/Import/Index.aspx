@@ -121,7 +121,7 @@
 
 	<div id="page">
 		<div id="logo">
-			<h1><a href="http://localhost:12005/WebForms/Import/Index.aspx" id="logoLink">PC App v-1.0.1</a></h1>
+			<h1><a href="http://localhost:12005/WebForms/Import/Index.aspx" id="logoLink"  style="color:orange;">PC App v-1.0.1</a></h1>
 		</div>
 		<div id="nav">
 			<ul>
@@ -141,10 +141,13 @@
                     <asp:Label ID="lblStatus" runat="server" Font-Bold="True" Font-Size="Larger" ForeColor="#006600"></asp:Label>
                     <br />
                     <br />
-                    <asp:Button ID="Button1" runat="server" Text="Memo Master Data ...." Font-Bold="True" Font-Size="Larger" ForeColor="Red" OnClick="Button1_Click" BackColor="#33CCFF" BorderColor="#003399" BorderStyle="Ridge" Width="461px" />
+                    <asp:Button ID="Button1" runat="server" Text="Memo Master Data ...." Font-Bold="True" Font-Size="Medium" ForeColor="White" OnClick="Button1_Click" BackColor="#FF9900" BorderColor="#FF9900" BorderStyle="None" Width="317px" Height="50px" />
                     <br />
                     <br />
-                    <asp:Button ID="Button2" runat="server" OnClick="Button2_Click" Text="Memo Details Data ...." BackColor="#33CCFF" Font-Bold="True" Font-Size="Larger" ForeColor="#FF3300" Width="462px" />
+                    <asp:Button ID="Button2" runat="server" OnClick="Button2_Click" Text="Memo Details Data ...." BackColor="#FF9900" Font-Bold="True" Font-Size="Medium" ForeColor="White" Width="316px" BorderColor="#FF9900" BorderStyle="None" Height="50px" />
+                    <br />
+                    <br />
+                    <asp:Button ID="UpdateMemoNo" runat="server" Text="Update Memo No" Height="50px" OnClick="UpdateMemoNo_Click" Width="317px" />
                 </div>
             </form>
             <!-- webpage content goes here in the body -->

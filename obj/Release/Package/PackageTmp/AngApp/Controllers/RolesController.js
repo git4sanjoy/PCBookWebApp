@@ -7,7 +7,8 @@ app.controller('RolesController', ['$scope', '$location', '$http', '$timeout', '
         $scope.serverMessage = true;
         $scope.messageType = "";
         $scope.message = "";
-
+        $scope.pageSize = 20;
+        $scope.currentPage = 1;
 
         var accesstoken = sessionStorage.getItem('accessToken');
 
@@ -16,7 +17,15 @@ app.controller('RolesController', ['$scope', '$location', '$http', '$timeout', '
             authHeaders.Authorization = 'Bearer ' + accesstoken;
         }
 
-
+        $scope.showRoomList = [];
+        $http({
+            url: "/api/showRooms/GetAllShowRoom",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.showRoomList = data;
+            //console.log(data);
+        });
         $scope.roles = [];
         $http({
             url: "/api/Roles",

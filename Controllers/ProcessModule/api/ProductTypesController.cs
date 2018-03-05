@@ -36,6 +36,8 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                         {
                             item.ProductTypeId,
                             item.ProductTypeName,
+                            item.ShowRoomId,
+                            item.ShowRoom.ShowRoomName,
                             item.Active,
                             item.CreatedBy,
                             item.DateCreated,
@@ -80,10 +82,10 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             var msg = 0;
             var check = db.ProductTypes.FirstOrDefault(m => m.ProductTypeName == productType.ProductTypeName);
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
             if (id != productType.ProductTypeId)
             {
@@ -96,8 +98,10 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             {
                 try
                 {
-                    var createdDate = db.ProductTypes.Where(x => x.ProductTypeId == id).Select(x => x.DateCreated).FirstOrDefault();
-                    productType.DateCreated = createdDate;
+                    var obj = db.ProductTypes.FirstOrDefault(m => m.ProductTypeId == productType.ProductTypeId); 
+                    productType.ShowRoomId = obj.ShowRoomId;
+                    productType.CreatedBy = obj.CreatedBy;
+                    productType.DateCreated = obj.DateCreated;
                     productType.DateUpdated = DateTime.Now;
                     productType.Active = true;
                     db.ProductTypes.AddOrUpdate(productType);
@@ -124,19 +128,23 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         [ResponseType(typeof(ProductType))]
         public async Task<IHttpActionResult> PostProductType(ProductType productType)
         {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
             string userName = User.Identity.GetUserName();
 
             var msg = 0;
             var check = db.ProductTypes.FirstOrDefault(m => m.ProductTypeName == productType.ProductTypeName);
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
             if(check == null)
             {
                 try
                 {
+                    productType.ShowRoomId = showRoomId;
                     productType.CreatedBy = userName;
                     productType.DateCreated = DateTime.Now;
                     productType.DateCreated = productType.DateCreated;

@@ -10,13 +10,89 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using PCBookWebApp.DAL;
 using PCBookWebApp.Models.ProcessModule;
+using Microsoft.AspNet.Identity;
+using System.Threading.Tasks;
+using System.Data.Entity.Migrations;
+using System.Data.SqlClient;
+using System.Configuration;
 
 namespace PCBookWebApp.Controllers.ProcessModule.api
 {
-    //[Authorize]
+    [Authorize]
     public class ProcesseLocationsController : ApiController
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
+
+        [Route("api/ProcesseLocations/ProcesseLocationsMultiSelectList")]
+        [HttpGet]
+        public IHttpActionResult GetProcesseLocationsMultiSelectList()
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+
+            var list = db.ProcesseLocations
+                            .Where(d => d.ShowRoomId == showRoomId)
+                            .OrderBy(d => d.ProcesseLocationName)
+                            .Select(e => new {
+                                id = e.ProcesseLocationId,
+                                label = e.ProcesseLocationName
+                            });
+
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return Ok(list);
+        }
+        [Route("api/ProcesseLocations/GetProcesseLocationsList")]
+        [HttpGet]
+        [ResponseType(typeof(ProcesseLocation))]
+        public IHttpActionResult GetProcesseLocationsList()
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers
+                .Where(a => a.Id == userId)
+                .Select(a => a.ShowRoomId)
+                .FirstOrDefault();
+
+            List<ProcesseLocation> list = new List<ProcesseLocation>();
+            ProcesseLocation aObj = new ProcesseLocation();
+
+            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+            string queryString = @"SELECT        
+                                    ProcesseLocationId, ProcesseLocationName, ShowRoomId
+                                    FROM            
+                                    dbo.ProcesseLocations
+                                    WHERE (ShowRoomId = @showRoomId)";
+
+            using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                connection.Open();
+                command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                SqlDataReader reader = command.ExecuteReader();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        int id = (int)reader["ProcesseLocationId"];
+                        string name = (string)reader["ProcesseLocationName"];
+                        aObj = new ProcesseLocation();
+                        aObj.ProcesseLocationId = id;
+                        aObj.ProcesseLocationName = name;
+                        list.Add(aObj);
+                    }
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            return Ok(list);
+        }
 
         // GET: api/ProcesseLocations
         public IQueryable<ProcesseLocation> GetProcesseLocations()
@@ -38,54 +114,77 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         }
 
         // PUT: api/ProcesseLocations/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutProcesseLocation(int id, ProcesseLocation processeLocation)
+        [ResponseType(typeof(ProcesseLocation))]
+        
+        public async Task<IHttpActionResult> PutProcesseLocation(int id, ProcesseLocation processeLocation)
         {
-            processeLocation.DateCreated = db.ProcesseLocations.Where(x => x.ProcesseLocationId == id).Select(x => x.DateCreated).FirstOrDefault();
-            processeLocation.DateUpdated = DateTime.Now;
-            processeLocation.Active = true;
+            var msg = 0;
+            var check = db.ProcesseLocations.FirstOrDefault(m => m.ProcesseLocationName == processeLocation.ProcesseLocationName);
+
             //if (!ModelState.IsValid)
             //{
             //    return BadRequest(ModelState);
             //}
-
             if (id != processeLocation.ProcesseLocationId)
             {
                 return BadRequest();
             }
-
-            db.Entry(processeLocation).State = EntityState.Modified;
-
-            try
+            if (check == null)
             {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProcesseLocationExists(id))
+                try
                 {
-                    return NotFound();
+                    var obj = db.ProcesseLocations.Where(x => x.ProcesseLocationId == id).FirstOrDefault();
+                    processeLocation.CreatedBy = obj.CreatedBy;
+                    processeLocation.DateCreated = obj.DateCreated;
+                    processeLocation.DateUpdated = DateTime.Now;
+                    processeLocation.Active = true;
+                    processeLocation.ShowRoomId = obj.ShowRoomId;
+                    db.ProcesseLocations.AddOrUpdate(processeLocation);
+                    await db.SaveChangesAsync();
+                    msg = 1;
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!ProcesseLocationExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(msg);
         }
 
         // POST: api/ProcesseLocations
         [ResponseType(typeof(ProcesseLocation))]
         public IHttpActionResult PostProcesseLocation(ProcesseLocation processeLocation)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
-            processeLocation.DateCreated = DateTime.Now;
-            db.ProcesseLocations.Add(processeLocation);
-            db.SaveChanges();
+            try
+            {
+                string userId = User.Identity.GetUserId();
+                var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+                string userName = User.Identity.GetUserName();
+                //if (!ModelState.IsValid)
+                //{
+                //    return BadRequest(ModelState);
+                //}
+                processeLocation.CreatedBy = userName;
+                processeLocation.ShowRoomId = showRoomId;
+                processeLocation.DateCreated = DateTime.Now;
+                processeLocation.Active = true;
+
+                db.ProcesseLocations.Add(processeLocation);
+                db.SaveChanges();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
 
             return CreatedAtRoute("DefaultApi", new { id = processeLocation.ProcesseLocationId }, processeLocation);
         }
