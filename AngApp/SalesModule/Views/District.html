@@ -1,7 +1,7 @@
 ﻿
 <div class="box box-danger">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-cubes"></i> Districts <small class="label label-danger">{{districtList.length}}</small></h3>
+        <h3 class="box-title"><i class="fa fa-cubes"></i> Districts <small class="label label-danger">{{users.length}}</small></h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -34,44 +34,44 @@
         <!--End Client side error messageing-->
         <form name="districtForm" novalidate role="form" class="form-horizontal" id="districtForm" ng-submit="submitDistrictForm()">
 
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="input-group" ng-class="{ 'has-error' : districtForm.DistrictName.$invalid && (districtForm.DistrictName.$dirty || submitted)}" style="width:100%">
-                            <label>District Name</label>
-                            <input type="text" placeholder="Locations via http://google.com" class="form-control" id="DistrictName" name="DistrictName" tabindex="1" autocomplete="off"
-                                   move-focus-by-enter-key
-                                   ng-attr-tabindex="1"
-                                   ng-model="district.DistrictName"
-                                   typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations">
-                            <i ng-show="loadingLocations" class="fa fa-spin"></i>
-                        </div>
-                        <p ng-show="districtForm.DistrictName.$error.required && (districtForm.DistrictName.$dirty || submitted)" class="help-block">Upazila Name is required.</p>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="input-group" ng-class="{ 'has-error' : districtForm.DistrictName.$invalid && (districtForm.DistrictName.$dirty || submitted)}" style="width:100%">
+                        <label>District Name</label>
+                        <input type="text" placeholder="Locations via http://google.com" class="form-control" id="DistrictName" name="DistrictName" tabindex="1" autocomplete="off"
+                               move-focus-by-enter-key
+                               ng-attr-tabindex="1"
+                               ng-model="district.DistrictName"
+                               typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations">
+                        <i ng-show="loadingLocations" class="fa fa-spin"></i>
                     </div>
-                    <div class="col-md-4">
-                        <div class="input-group" ng-class="{ 'has-error' : districtForm.DistrictNameBangla.$invalid && (districtForm.DistrictNameBangla.$dirty || submitted)}" style="width:100%">
-                            <label>জেলার নাম বাংলা</label>
-                            <input type="text" placeholder="" class="form-control" id="DistrictNameBangla" name="DistrictNameBangla" tabindex="2" autocomplete="off"
-                                   move-focus-by-enter-key
-                                   ng-attr-tabindex="2"
-                                   ng-model="district.DistrictNameBangla">
-                        </div>
-                        <p ng-show="districtForm.DistrictNameBangla.$error.required && (districtForm.DistrictNameBangla.$dirty || submitted)" class="help-block">Upazila Name is required.</p>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="input-group" ng-class="{ 'has-error' : districtForm.SaleZoneName.$invalid && (districtForm.SaleZoneName.$dirty || submitted)}" style="width:100%">
-                            <label>Zone Name</label>
-                            <select id="SaleZoneName" name="SaleZoneName" class="form-control" tabindex="3"
-                                    ng-focus="true"
-                                    move-focus-by-enter-key
-                                    ng-model="district.SaleZoneName"
-                                    ng-options="l.SaleZoneName for l in saleZoneList track by l.SaleZoneId"
-                                    ng-required="true">
-                                <option value="">--Select Zone Name--</option>
-                            </select>
-                        </div>
-                        <p ng-show="districtForm.SaleZoneName.$error.required && (districtForm.SaleZoneName.$dirty || submitted)" class="help-block">Zone Name is required.</p>
-                    </div>
+                    <p ng-show="districtForm.DistrictName.$error.required && (districtForm.DistrictName.$dirty || submitted)" class="help-block">Upazila Name is required.</p>
                 </div>
+                <div class="col-md-4">
+                    <div class="input-group" ng-class="{ 'has-error' : districtForm.DistrictNameBangla.$invalid && (districtForm.DistrictNameBangla.$dirty || submitted)}" style="width:100%">
+                        <label>জেলার নাম বাংলা</label>
+                        <input type="text" placeholder="" class="form-control" id="DistrictNameBangla" name="DistrictNameBangla" tabindex="2" autocomplete="off"
+                               move-focus-by-enter-key
+                               ng-attr-tabindex="2"
+                               ng-model="district.DistrictNameBangla">
+                    </div>
+                    <p ng-show="districtForm.DistrictNameBangla.$error.required && (districtForm.DistrictNameBangla.$dirty || submitted)" class="help-block">Upazila Name is required.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group" ng-class="{ 'has-error' : districtForm.SaleZoneName.$invalid && (districtForm.SaleZoneName.$dirty || submitted)}" style="width:100%">
+                        <label>Zone Name</label>
+                        <select id="SaleZoneName" name="SaleZoneName" class="form-control" tabindex="3"
+                                ng-focus="true"
+                                move-focus-by-enter-key
+                                ng-model="district.SaleZoneName"
+                                ng-options="l.SaleZoneName for l in saleZoneList track by l.SaleZoneId"
+                                ng-required="true">
+                            <option value="">--Select Zone Name--</option>
+                        </select>
+                    </div>
+                    <p ng-show="districtForm.SaleZoneName.$error.required && (districtForm.SaleZoneName.$dirty || submitted)" class="help-block">Zone Name is required.</p>
+                </div>
+            </div>
 
             <div class="row" style="margin-top:1em;">
                 <div class="col-sm-12">
@@ -87,17 +87,31 @@
                         <span class="glyphicon glyphicon-remove"></span> Clear
                     </button>
                 </div>
-                
+
             </div>
 
 
         </form>
         <table class="table table-bordered table-hover table-condensed" style="margin-top:1em;">
+            <tr style="font-weight: bold" class="danger">
+                <td align="center" ng-click="sort('name')">
+                    <span class="glyphicon sort-icon" ng-show="sortKey=='name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    District Name
+                </td>
+                <td align="center" ng-click="sort('DistrictNameBangla')">
+                    <span class="glyphicon sort-icon" ng-show="sortKey=='DistrictNameBangla'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    জেলার নাম বাংলা
+                </td>
+                <td align="center" ng-click="sort('status')">
+                    <span class="glyphicon sort-icon" ng-show="sortKey=='status'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    Zone
+                </td>
+            </tr>
             <tr style="font-weight: bold; white-space: nowrap" class="danger">
 
                 <!-- username header -->
                 <td style="width:40%">
-                    
+
                     <form editable-form name="nameform" onaftersave="saveColumn('name')" ng-show="nameform.$visible">
                         <button type="submit" ng-disabled="nameform.$waiting" class="btn btn-primary">
                             <i class="fa fa-save"></i> Save
@@ -107,13 +121,13 @@
                         </button>
                     </form>
                     <button class="btn btn-default btn-block" ng-show="!nameform.$visible" ng-click="nameform.$show()">
-                        <i class="fa fa-edit"></i> District Name
+                        <i class="fa fa-edit"></i> Edit District Name
                     </button>
                 </td>
 
                 <!-- status header -->
                 <td style="width:30%">
-                    
+
                     <form editable-form name="districtNameBanglaform" onaftersave="saveColumn('DistrictNameBangla')" ng-show="districtNameBanglaform.$visible">
                         <button type="submit" ng-disabled="districtNameBanglaform.$waiting" class="btn btn-primary">
                             <i class="fa fa-save"></i> Save
@@ -123,13 +137,13 @@
                         </button>
                     </form>
                     <button class="btn btn-default btn-block" ng-show="!districtNameBanglaform.$visible" ng-click="districtNameBanglaform.$show()">
-                        <i class="fa fa-edit"></i> জেলার নাম বাংলা
+                        <i class="fa fa-edit"></i> সম্পাদন জেলার নাম বাংলা
                     </button>
                 </td>
 
                 <!-- group header -->
                 <td style="width:30%">
-                    
+
 
                     <form editable-form name="statusform" onaftersave="saveColumn('status')" ng-show="statusform.$visible">
                         <button type="submit" ng-disabled="statusform.$waiting" class="btn btn-primary">
@@ -140,7 +154,7 @@
                         </button>
                     </form>
                     <button class="btn btn-default btn-block" ng-show="!statusform.$visible" ng-click="statusform.$show()">
-                        <i class="fa fa-edit"></i> Zone Name
+                        <i class="fa fa-edit"></i> Edit Zone Name
                     </button>
                 </td>
             </tr>
@@ -167,48 +181,9 @@
             </tr>
         </table>
 
-    </div><!-- /.box-body -->
-    <div class="box-footer no-border">
-        
-        <table class="table table-bordered table-hover table-condensed">
-            <tr style="font-weight: bold" class="danger">
-                <td style="width:40%">District Name</td>
-                <td style="width:40%">জেলার নাম বাংলা</td>
-                <td style="width:20%">Action</td>
-            </tr>
 
-            <tr ng-repeat="district in districtList">
-                <td>
-                    <span editable-text="district.DistrictName" e-name="DistrictName" e-form="rowform" onbeforesave="checkName($data, district.DistrictId)" e-required>
-                        {{ district.DistrictName || 'empty' }}
-                    </span>
-                </td>
-                <td class="bangla-font">
-                    <span editable-text="district.DistrictNameBangla" e-name="DistrictNameBangla" e-form="rowform" e-required>
-                        {{ district.DistrictNameBangla || 'empty' }}
-                    </span>
-                </td>
-                <td style="white-space: nowrap">
-                    <!-- form -->
-                    <form editable-form name="rowform" onbeforesave="update($data, district.DistrictId)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == district">
-                        <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-warning">
-                            <i class="fa fa-pencil"></i> Update
-                        </button>
-                        <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
-                            <i class="fa fa-close"></i>
-                        </button>
-                    </form>
-                    <div class="buttons" ng-show="!rowform.$visible">
-                        <button class="btn btn-primary btn-sm" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>
-                        <button class="btn btn-danger btn-sm" ng-click="remove($index, district.DistrictId)"><i class="glyphicon glyphicon-trash"></i></button>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div><!-- /.box-footer -->
-
+    </div>
 </div>
-
 
 
 

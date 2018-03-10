@@ -9,7 +9,7 @@
     if (Request.IsAuthenticated)
     {
 
-        if (User.IsInRole("Show Room Manager") || User.IsInRole("Show Room Sales"))
+        if (User.IsInRole("Show Room Manager") || User.IsInRole("Show Room Sales") || User.IsInRole("Unit Manager"))
         {
             themeColor = "skin-red";
             themeCss = "skin-red.min.css";
@@ -238,7 +238,7 @@
                                     </ul>
                                 </li>
                             }
-                            else if (User.IsInRole("Show Room Manager"))
+                            else if (User.IsInRole("Unit Manager"))
                             {
                                 <li class="header">Menu</li>
                                 <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
@@ -255,7 +255,14 @@
                                         <li><a href="/SubCategory"><i class="fa fa-circle-o"></i> Sub Categories</a></li>
                                     </ul>
                                 </li>
-
+                                <li class="treeview">
+                                    <a href="#"><i class="fa fa-cog"></i> <span>SR UNIT MANAGER</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu">
+                                        <li><a href="/Products"><i class="fa fa-circle-o"></i> Products</a></li>                                        
+                                        <li><a href="/Customers"><i class="fa fa-circle-o"></i> Customers</a></li>
+                                        <li><a href="/SalesMan"><i class="fa fa-circle-o"></i> Sales Officer</a></li>
+                                    </ul>
+                                </li>
                             }
                             else if (User.IsInRole("Unit Manager"))
                             {

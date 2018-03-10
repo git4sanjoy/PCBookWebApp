@@ -339,10 +339,8 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         public IHttpActionResult GetCustomerList()
         {
             string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers
-                .Where(a => a.Id == userId)
-                .Select(a => a.ShowRoomId)
-                .FirstOrDefault();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
 
             string userName = User.Identity.GetUserName();
             DateTime ceatedAt = DateTime.Now;
@@ -359,13 +357,13 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                                     dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
                                     dbo.SalesMen ON dbo.Customers.SalesManId = dbo.SalesMen.SalesManId
                                     WHERE        
-                                    (dbo.Customers.ShowRoomId = @showRoomId)";
+                                    (dbo.Customers.UnitId = @unitId)";
 
             using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
             {
                 SqlCommand command = new SqlCommand(queryString, connection);
                 connection.Open();
-                command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                command.Parameters.Add(new SqlParameter("@unitId", unitId));
                 SqlDataReader reader = command.ExecuteReader();
                 try
                 {
@@ -462,10 +460,7 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         public IHttpActionResult GetSingleCustomer(int id)
         {
             string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers
-                .Where(a => a.Id == userId)
-                .Select(a => a.ShowRoomId)
-                .FirstOrDefault();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
 
             string userName = User.Identity.GetUserName();
             DateTime ceatedAt = DateTime.Now;
@@ -476,14 +471,14 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
             string queryString = @"SELECT        
                                     dbo.Customers.CustomerId AS id, dbo.Customers.CustomerName AS name, dbo.Customers.CustomerId AS [group], dbo.Upazilas.UpazilaName AS groupName, dbo.Customers.SalesManId AS status, 
                                     dbo.SalesMen.SalesManName AS statusName, dbo.Customers.Address, dbo.Customers.Phone, dbo.Customers.Email, dbo.Customers.ShowRoomId, dbo.Customers.CreditLimit, 
-                                    dbo.Customers.CustomerNameBangla, dbo.Customers.AddressBangla, dbo.Customers.ShopName, dbo.Customers.Image, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName
+                                    dbo.Customers.CustomerNameBangla, dbo.Customers.AddressBangla, dbo.Customers.ShopName, dbo.Customers.Image, dbo.Upazilas.DistrictId, dbo.Districts.DistrictName, dbo.Customers.UpazilaId
                                     FROM            
                                     dbo.Customers INNER JOIN
                                     dbo.Upazilas ON dbo.Customers.UpazilaId = dbo.Upazilas.UpazilaId INNER JOIN
                                     dbo.SalesMen ON dbo.Customers.SalesManId = dbo.SalesMen.SalesManId INNER JOIN
                                     dbo.Districts ON dbo.Upazilas.DistrictId = dbo.Districts.DistrictId
                                     WHERE        
-                                    (dbo.Customers.ShowRoomId = @showRoomId) AND (dbo.Customers.CustomerId=@customerId)";
+                                    (dbo.Customers.CustomerId=@customerId)";
 
             using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -498,7 +493,7 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                     {
                         int idc = (int)reader["id"];
                         string name = (string)reader["name"];
-                        int group = (int)reader["group"];
+                        int group = (int)reader["UpazilaId"];
                         string groupName = (string)reader["groupName"];
 
                         int status = (int)reader["status"];
@@ -710,7 +705,214 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
             return Ok(typeAheadList);
         }
 
+        // GET: api/Customer/ZoneCustomerList/
+        [Route("api/Customer/ZoneCustomerList")]
+        [HttpGet]
+        [ResponseType(typeof(ZoneCustomerView))]
+        public IHttpActionResult GetZoneCustomerList()
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
 
+            var linkQList = db.Customers
+                .Include(c => c.Upazila)
+                .Include(c => c.Unit)
+                .Include(c => c.SalesMan)
+                .Include(c => c.MemoMasters)
+                .Include(c=> c.Payments)
+                .Include(c => c.Upazila.District)
+                .Include(c => c.Upazila.District.SaleZone)
+                .Include(c => c.Upazila.District.SaleZone.ZoneManager)
+                .Include(c => c.Upazila.District.SaleZone.Division)
+                .Select(c=> new {
+                    UnitId = c.UnitId,
+                    CustonerId = c.CustomerId,
+                    CustomerName = c.CustomerName,
+                    SalesManName = c.SalesMan.SalesManName,
+                    ShopName = c.ShopName,
+                    Address = c.Address,
+                    Phone = c.Phone,
+                    UpazilaId = c.Upazila.UpazilaId,
+                    UpazilaName = c.Upazila.UpazilaName,
+                    DistrictId = c.Upazila.District.DistrictId,
+                    DistrictName = c.Upazila.District.DistrictName,
+                    SaleZoneId = c.Upazila.District.SaleZone.SaleZoneId,
+                    SaleZoneName = c.Upazila.District.SaleZone.SaleZoneName,
+                    ZoneManagerId = c.Upazila.District.SaleZone.ZoneManager.ZoneManagerId,
+                    ZoneManagerName = c.Upazila.District.SaleZone.ZoneManager.ZoneManagerName,
+                    DivisionId = c.Upazila.District.SaleZone.Division.DivisionId,
+                    DivisionName = c.Upazila.District.SaleZone.Division.DivisionName,
+                    MemoDiscount = c.MemoMasters.Select(a => new {a.MemoMasterId, a.CustomerId, a.MemoDiscount, a.GatOther}).Sum(s=>s.MemoDiscount) ?? 0,
+                    GatOther = c.MemoMasters.Select(a => new { a.MemoMasterId, a.CustomerId, a.MemoDiscount, a.GatOther }).Sum(s => s.GatOther) ?? 0,
+                    GrossSales = c.MemoMasters.Select(a => new { a.MemoCost }).Sum(s => (double?) s.MemoCost) ?? 0,
+                    TotalBf = c.Payments.Where(s => s.AdjustmentBf==true).Select(s => new {s.SSAmount}).Sum(s => (double?) s.SSAmount ) ?? 0,
+                    TotalPayments = c.Payments.Where(s => s.AdjustmentBf == false).Select(a => new { a.SCAmount }).Sum(s => (double?) s.SCAmount) ?? 0,
+                    TotalDiscounts = c.Payments.Select(a => new { a.SDiscount }).Sum(s => (double?)s.SDiscount) ?? 0,                    
+                })
+                .Where(c=> c.UnitId== unitId && c.CustomerName != "Cash Party")
+                .ToList().GroupBy(x => new {  x.UnitId, x.CustonerId })
+                        .Select(
+                                g => new
+                                {
+                                    Key = g.Key,
+                                    UnitId = g.First().UnitId,
+                                    CustonerId = g.First().CustonerId,
+                                    CustomerName = g.First().CustomerName,
+                                    Address = g.First().Address,
+                                    Phone = g.First().Phone,
+                                    DistrictName = g.First().DistrictName,
+                                    UpazilaName = g.First().UpazilaName,
+                                    SaleZoneName = g.First().SaleZoneName,
+                                    ZoneManagerName = g.First().ZoneManagerName,
+                                    DivisionName = g.First().DivisionName,
+                                    TotalGroupCount = g.Count(),
+                                    MemoDiscount = g.First().MemoDiscount,
+                                    GatOther = g.First().GatOther,
+                                    TotalPayments=g.First().TotalPayments,
+                                    ActualSales= g.First().GrossSales  + g.First().GatOther - g.First().MemoDiscount,
+                                    TotalBf= g.First().TotalBf,
+                                    TotalDiscounts=g.First().TotalDiscounts,
+                                    Balance = g.First().TotalBf + g.First().GrossSales + g.First().GatOther - g.First().MemoDiscount - g.First().TotalDiscounts - g.First().TotalPayments
+                                });
+
+            //var linkQZoneList = db.Customers
+            //    .Include(c => c.Upazila)
+            //    .Include(c => c.Unit)
+            //    .Include(c => c.SalesMan)
+            //    .Include(c => c.MemoMasters)
+            //    .Include(c => c.Payments)
+            //    .Include(c => c.Upazila.District)
+            //    .Include(c => c.Upazila.District.SaleZone)
+            //    .Include(c => c.Upazila.District.SaleZone.ZoneManager)
+            //    .Include(c => c.Upazila.District.SaleZone.Division)
+            //    .Select(c => new {
+            //        UnitId = c.UnitId,
+            //        SaleZoneId=c.Upazila.District.SaleZone.SaleZoneId,
+            //        SaleZoneName = c.Upazila.District.SaleZone.SaleZoneName,
+            //        ZoneManagerId = c.Upazila.District.SaleZone.ZoneManager.ZoneManagerId,
+            //        ZoneManagerName = c.Upazila.District.SaleZone.ZoneManager.ZoneManagerName,
+            //        DivisionId = c.Upazila.District.SaleZone.Division.DivisionId,
+            //        DivisionName = c.Upazila.District.SaleZone.Division.DivisionName,
+            //        MemoDiscount = c.MemoMasters.Select(a => new { a.MemoMasterId, a.CustomerId, a.MemoDiscount, a.GatOther }).Sum(s => s.MemoDiscount) ?? 0,
+            //        GatOther = c.MemoMasters.Select(a => new { a.MemoMasterId, a.CustomerId, a.MemoDiscount, a.GatOther }).Sum(s => s.GatOther) ?? 0,
+            //        GrossSales = c.MemoMasters.Select(a => new { a.MemoCost }).Sum(s => (double?)s.MemoCost) ?? 0,
+            //        TotalBf = c.Payments.Where(s => s.AdjustmentBf == true).Select(s => new { s.SSAmount }).Sum(s => (double?)s.SSAmount) ?? 0,
+            //        TotalPayments = c.Payments.Where(s => s.AdjustmentBf == false).Select(a => new { a.SCAmount }).Sum(s => (double?)s.SCAmount) ?? 0,
+            //        TotalDiscounts = c.Payments.Select(a => new { a.SDiscount }).Sum(s => (double?)s.SDiscount) ?? 0,
+            //    })
+            //    .Where(c => c.UnitId == unitId)
+            //    .ToList().GroupBy(x => new { x.UnitId, x.SaleZoneId })
+            //            .Select(
+            //                    g => new
+            //                    {
+            //                        Key = g.Key,
+            //                        UnitId = g.First().UnitId,
+            //                        SaleZoneName = g.First().SaleZoneName,
+            //                        ZoneManagerName = g.First().ZoneManagerName,
+            //                        DivisionName = g.First().DivisionName,
+            //                        TotalGroupCount = g.Count(),
+            //                        MemoDiscount = g.First().MemoDiscount,
+            //                        GatOther = g.First().GatOther,
+            //                        TotalPayments = g.First().TotalPayments,
+            //                        ActualSales = g.First().GrossSales + g.First().GatOther - g.First().MemoDiscount,
+            //                        TotalBf = g.First().TotalBf,
+            //                        TotalDiscounts = g.First().TotalDiscounts,
+            //                        Balance = g.First().TotalBf + g.First().GrossSales + g.First().GatOther - g.First().MemoDiscount - g.First().TotalDiscounts - g.First().TotalPayments
+            //                    });
+
+            //var linkQZoneManagerList = db.Customers
+            //    .Include(c => c.Upazila)
+            //    .Include(c => c.Unit)
+            //    .Include(c => c.SalesMan)
+            //    .Include(c => c.MemoMasters)
+            //    .Include(c => c.Payments)
+            //    .Include(c => c.Upazila.District)
+            //    .Include(c => c.Upazila.District.SaleZone)
+            //    .Include(c => c.Upazila.District.SaleZone.ZoneManager)
+            //    .Include(c => c.Upazila.District.SaleZone.Division)
+            //    .Select(c => new {
+            //        UnitId = c.UnitId,
+            //        ZoneManagerId = c.Upazila.District.SaleZone.ZoneManager.ZoneManagerId,
+            //        ZoneManagerName = c.Upazila.District.SaleZone.ZoneManager.ZoneManagerName,
+            //        MemoDiscount = c.MemoMasters.Select(a => new { a.MemoMasterId, a.CustomerId, a.MemoDiscount, a.GatOther }).Sum(s => s.MemoDiscount) ?? 0,
+            //        GatOther = c.MemoMasters.Select(a => new { a.MemoMasterId, a.CustomerId, a.MemoDiscount, a.GatOther }).Sum(s => s.GatOther) ?? 0,
+            //        GrossSales = c.MemoMasters.Select(a => new { a.MemoCost }).Sum(s => (double?)s.MemoCost) ?? 0,
+            //        TotalBf = c.Payments.Where(s => s.AdjustmentBf == true).Select(s => new { s.SSAmount }).Sum(s => (double?)s.SSAmount) ?? 0,
+            //        TotalPayments = c.Payments.Where(s => s.AdjustmentBf == false).Select(a => new { a.SCAmount }).Sum(s => (double?)s.SCAmount) ?? 0,
+            //        TotalDiscounts = c.Payments.Select(a => new { a.SDiscount }).Sum(s => (double?)s.SDiscount) ?? 0,
+            //    })
+            //    .Where(c => c.UnitId == unitId )
+            //    .ToList().GroupBy(x => new { x.UnitId, x.ZoneManagerId })
+            //            .Select(
+            //                    g => new
+            //                    {
+            //                        Key = g.Key,
+            //                        UnitId = g.First().UnitId,
+            //                        ZoneManagerName = g.First().ZoneManagerName,
+            //                        TotalGroupCount = g.Count(),
+            //                        MemoDiscount = g.First().MemoDiscount,
+            //                        GatOther = g.First().GatOther,
+            //                        TotalPayments = g.First().TotalPayments,
+            //                        ActualSales = g.First().GrossSales + g.First().GatOther - g.First().MemoDiscount,
+            //                        TotalBf = g.First().TotalBf,
+            //                        TotalDiscounts = g.First().TotalDiscounts,
+            //                        Balance = g.First().TotalBf + g.First().GrossSales + g.First().GatOther - g.First().MemoDiscount - g.First().TotalDiscounts - g.First().TotalPayments
+            //                    });
+
+
+            var linkQDivisionList = db.Customers
+                    .Include(c => c.Upazila)
+                    .Include(c => c.Unit)
+                    .Include(c => c.SalesMan)
+                    .Include(c => c.MemoMasters)
+                    .Include(c => c.Payments)
+                    .Include(c => c.Upazila.District)
+                    .Include(c => c.Upazila.District.SaleZone)
+                    .Include(c => c.Upazila.District.SaleZone.ZoneManager)
+                    .Include(c => c.Upazila.District.SaleZone.Division)
+                    .Select(c => new
+                    {
+                        UnitId = c.UnitId,
+                        CustomerName = c.CustomerName,
+                        DivisionId = c.Upazila.District.SaleZone.Division.DivisionId,
+                        DivisionName = c.Upazila.District.SaleZone.Division.DivisionName,
+                        MemoDiscount = c.MemoMasters.Select(a => new { a.MemoMasterId, a.CustomerId, a.MemoDiscount, a.GatOther }).Sum(s => s.MemoDiscount) ?? 0,
+                        GatOther = c.MemoMasters.Select(a => new { a.MemoMasterId, a.CustomerId, a.MemoDiscount, a.GatOther }).Sum(s => s.GatOther) ?? 0,
+                        GrossSales = c.MemoMasters.Select(a => new { a.MemoCost }).Sum(s => (double?) s.MemoCost) ?? 0,
+                        TotalBf = c.Payments.Where(s => s.AdjustmentBf == true).Select(s => new { s.SSAmount }).Sum(s => (double?)s.SSAmount) ?? 0,
+                        TotalPayments = c.Payments.Where(s => s.AdjustmentBf == false).Select(a => new { a.SCAmount }).Sum(s => (double?)s.SCAmount) ?? 0,
+                        TotalDiscounts = c.Payments.Select(a => new { a.SDiscount }).Sum(s => (double?)s.SDiscount) ?? 0,
+                    })
+                    .Where(c => c.UnitId == unitId && c.CustomerName != "Cash Party")
+                    .ToList().GroupBy(x => new { x.UnitId, x.DivisionId })
+                            .Select(
+                                    g => new
+                                    {
+                                        Key = g.Key,
+                                        UnitId = g.First().UnitId,
+                                        DivisionName = g.First().DivisionName,
+                                        TotalGroupCount = g.Count(),
+                                        MemoDiscount = g.First().MemoDiscount,
+                                        GatOther = g.First().GatOther,
+                                        TotalPayments = g.First().TotalPayments,
+                                        ActualSales = g.First().GrossSales + g.First().GatOther - g.First().MemoDiscount,
+                                        TotalBf = g.First().TotalBf,
+                                        TotalDiscounts = g.First().TotalDiscounts,
+                                        Balance = g.First().TotalBf + g.First().GrossSales + g.First().GatOther - g.First().MemoDiscount - g.First().TotalDiscounts - g.First().TotalPayments
+                                    });
+
+            //return Ok( new { customerList = linkQList,
+            //                 zoneWiseCustomerList =linkQZoneList,
+            //                 divisionWiseCustomerList = linkQDivisionList ,
+            //                 zoneManagerWiseCustomerList = linkQZoneManagerList
+            //            });
+            return Ok( new
+            {
+                customerList = linkQList,
+                divisionWiseCustomerList = linkQDivisionList,
+            });
+        }
         // GET: api/Customer
         public IQueryable<Customer> GetCustomers()
         {
@@ -739,14 +941,20 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         public async Task<IHttpActionResult> PutCustomer(int id, Customer customer)
         {
             string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers
-                .Where(a => a.Id == userId)
-                .Select(a => a.ShowRoomId)
-                .FirstOrDefault();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
 
             string userName = User.Identity.GetUserName();
             DateTime ceatedAt = DateTime.Now;
-            customer.ShowRoomId = showRoomId;
+            if (showRoomId != 0)
+            {
+                customer.ShowRoomId = showRoomId;
+            }
+            else
+            {
+                customer.ShowRoomId = null;
+            }
+            customer.UnitId = unitId;
             customer.DateCreated = ceatedAt;
             customer.DateUpdated = ceatedAt;
             customer.CreatedBy = userName;
@@ -787,14 +995,20 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         public async Task<IHttpActionResult> PostCustomer(Customer customer)
         {
             string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers
-                .Where(a => a.Id == userId)
-                .Select(a => a.ShowRoomId)
-                .FirstOrDefault();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
 
             string userName = User.Identity.GetUserName();
             DateTime ceatedAt = DateTime.Now;
-            customer.ShowRoomId = showRoomId;
+            if (showRoomId != 0)
+            {
+                customer.ShowRoomId = showRoomId;
+            }
+            else {
+                customer.ShowRoomId = null;
+            }
+            
+            customer.UnitId = unitId;
             customer.DateCreated = ceatedAt;
             customer.DateUpdated = ceatedAt;
             customer.CreatedBy = userName;

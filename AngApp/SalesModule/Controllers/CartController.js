@@ -454,20 +454,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
             });
 
     };
-    function bn2enNumber($number) {
-        $search_array = array("১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯", "০");
-        $replace_array = array("1", "2", "3", "4", "5", "6", "7", "8", "9", "0");
-        $en_number = str_replace($search_array, $replace_array, $number);
 
-        return $en_number;
-    }
-    function en2bnNumber($number) {
-        $search_array = array("1", "2", "3", "4", "5", "6", "7", "8", "9", "0");
-        $replace_array = array("১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯", "০");
-        $bn_number = str_replace($search_array, $replace_array, $number);
-
-        return $bn_number;
-    }
     $scope.printMemo = function (printSectionId) {
         var innerContents = document.getElementById(printSectionId).innerHTML;
         var popupWinindow = window.open('', '_blank', 'width=900,height=700,scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no');
@@ -497,14 +484,14 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
     $scope.GetGroupSumOfILineTotal = function (group) {
         var groupWiseSum = 0;
         for (var i in group) {
-            groupWiseSum = groupWiseSum + (Number(group[i].qty) * (Number(group[i].cost) - Number(group[i].discount)));
+            groupWiseSum = groupWiseSum + (parseFloat (group[i].qty) * (parseFloat (group[i].cost) - parseFloat (group[i].discount)));
         }
         return groupWiseSum;
     };
     $scope.GetGroupSumOfILineQu = function (group) {
         var groupWiseSum = 0;
         for (var i in group) {
-            groupWiseSum = groupWiseSum + Number(group[i].qty);
+            groupWiseSum = groupWiseSum + parseFloat (group[i].qty);
         }
         return groupWiseSum;
     };
@@ -512,7 +499,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
         //console.log(memos);
         var total = 0;
         angular.forEach(memoItems, function (item) {
-            total += item.qty * (item.cost - item.discount);
+            total += parseFloat(item.qty) * (parseFloat(item.cost) - parseFloat(item.discount));
         })
         return total;
     };

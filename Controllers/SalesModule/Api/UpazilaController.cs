@@ -83,7 +83,7 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         [ResponseType(typeof(Upazila))]
         public IHttpActionResult GetDropDownList()
         {
-            var list = db.Upazilas.Select(e => new { UpazilaId = e.UpazilaId, UpazilaName = e.UpazilaName, UpazilaNameBangla = e.UpazilaNameBangla });
+            var list = db.Upazilas.Select(e => new { UpazilaId = e.UpazilaId, UpazilaName = e.UpazilaName, UpazilaNameBangla = e.UpazilaNameBangla, group = e.UpazilaId, groupName = e.UpazilaName });
             if (list == null)
             {
                 return NotFound();

@@ -1,7 +1,7 @@
 ﻿
 <div class="box box-danger">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-users"></i> Sales Manager</h3>
+        <h3 class="box-title"><i class="fa fa-user"></i> Sales Officer</h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -37,7 +37,7 @@
                     <label>Sales Manager Name</label>
                     <div class="input-group" ng-class="{ 'has-error' : salesManForm.SalesManName.$invalid && (salesManForm.SalesManName.$dirty || submitted)}">
                         <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                        <input id="SalesManName" type="text" class="form-control" name="SalesManName" autocomplete="off" tabindex="1" autofocus
+                        <input id="SalesManName" type="text" class="form-control" name="SalesManName" autocomplete="off" tabindex="1" 
                                move-focus-by-enter-key
                                ng-model="salesMan.SalesManName"
                                ng-required="true">
@@ -48,7 +48,7 @@
                     <label>Address</label>
                     <div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-map-marker"></i></span>
-                        <input id="Address" type="text" class="form-control" name="Address" autocomplete="off" tabindex="2" autofocus
+                        <input id="Address" type="text" class="form-control" name="Address" autocomplete="off" tabindex="2" 
                                move-focus-by-enter-key
                                ng-model="salesMan.Address">
                     </div>
@@ -57,7 +57,7 @@
                     <label>Phone</label>
                     <div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-phone"></i></span>
-                        <input id="Phone" type="text" class="form-control" name="Phone" autocomplete="off" tabindex="3" autofocus
+                        <input id="Phone" type="text" class="form-control" name="Phone" autocomplete="off" tabindex="3" 
                                move-focus-by-enter-key
                                ng-model="salesMan.Phone">
                     </div>
@@ -66,7 +66,7 @@
                     <label>Email</label>
                     <div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-at"></i></span>
-                        <input id="Email" type="text" class="form-control" name="Email" autocomplete="off" tabindex="4" autofocus
+                        <input id="Email" type="text" class="form-control" name="Email" autocomplete="off" tabindex="4" 
                                move-focus-by-enter-key
                                ng-model="salesMan.Email">
                     </div>
@@ -93,7 +93,7 @@
 
 <div class="box box-danger">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-users"></i> Sales Managers <small class="label label-success">{{salesManList.length}}</small></h3>
+        <h3 class="box-title"><i class="fa fa-users"></i> Sales Officers <small class="label label-success">{{salesManList.length}}</small></h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -103,7 +103,7 @@
     <div class="box-body">
         <table class="table table-bordered table-hover table-condensed">
             <tr style="font-weight: bold" class="danger">
-                <td style="width:20%">Sales Manager Name</td>
+                <td style="width:20%">Sales Officer Name</td>
                 <td style="width:20%">Address</td>
                 <td style="width:20%">Phone</td>
                 <td style="width:20%">Email</td>

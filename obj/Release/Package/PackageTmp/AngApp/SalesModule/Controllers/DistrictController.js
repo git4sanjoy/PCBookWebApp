@@ -19,8 +19,11 @@ app.controller('DistrictController', ['$scope', '$location', '$http', '$timeout'
     var authHeaders = {};
     if (accesstoken) {
         authHeaders.Authorization = 'Bearer ' + accesstoken;
-    }
-
+    };
+    $scope.sort = function (keyname) {
+        $scope.sortKey = keyname;   //set the sortKey to the param passed
+        $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+    };
 
     // Any function returning a promise object can be used to load values asynchronously
     $scope.getLocation = function (val) {
@@ -58,49 +61,50 @@ app.controller('DistrictController', ['$scope', '$location', '$http', '$timeout'
     //$scope.checkName = function (data, DistrictId) {
     //    //alert(DistrictId);
     //};
-    //$scope.submitDistrictForm = function () {
-    //    $scope.submitted = true;
-    //    if ($scope.districtForm.$valid) {
-    //        var aUnitObj = {
-    //            DistrictName: $scope.district.DistrictName,
-    //            DistrictNameBangla: $scope.district.DistrictNameBangla,
-    //            SaleZoneId: $scope.SaleZoneName.SaleZoneId
-    //        };
-    //        $http({
-    //            url: "/api/District",
-    //            data: aUnitObj,
-    //            method: "POST",
-    //            headers: authHeaders
-    //        }).success(function (data) {
-    //            var aViewObj = {
-    //                DistrictId: data.DistrictId,
-    //                DistrictName: $scope.district.DistrictName,
-    //                DistrictNameBangla: $scope.district.DistrictNameBangla
-    //            };
-    //            $scope.districtList.push(aViewObj);
-    //            alert("Added");
-    //            $scope.district = {};
-    //            $scope.submitted = false;
-    //            $scope.districtForm.$setPristine();
-    //            $scope.districtForm.$setUntouched();
-    //            $scope.loading = true;
-    //            angular.element('#DistrictName').focus();
-    //            $scope.message = "Successfully Bank Created.";
-    //            $scope.messageType = "success";
-    //            $scope.clientMessage = false;
-    //            $timeout(function () { $scope.clientMessage = true; }, 5000);
-    //        }).error(function (error) {
-    //            $scope.message = 'Unable to save Bank' + error.message;
-    //            $scope.messageType = "warning";
-    //            $scope.clientMessage = false;
-    //            $timeout(function () { $scope.clientMessage = true; }, 5000);
-    //        });
+    $scope.submitDistrictForm = function () {
+        $scope.submitted = true;
+        if ($scope.districtForm.$valid) {
+            var aUnitObj = {
+                DistrictName: $scope.district.DistrictName,
+                DistrictNameBangla: $scope.district.DistrictNameBangla,
+                SaleZoneId: $scope.district.SaleZoneName.SaleZoneId,
+                SaleZoneName: $scope.district.SaleZoneName.SaleZoneName
+            };
+            $http({
+                url: "/api/District",
+                data: aUnitObj,
+                method: "POST",
+                headers: authHeaders
+            }).success(function (data) {
+                var aViewObj = {
+                    DistrictId: data.DistrictId,
+                    DistrictName: $scope.district.DistrictName,
+                    DistrictNameBangla: $scope.district.DistrictNameBangla
+                };
+                $scope.users.push(aViewObj);
+                alert("Added");
+                $scope.district = {};
+                $scope.submitted = false;
+                $scope.districtForm.$setPristine();
+                $scope.districtForm.$setUntouched();
+                $scope.loading = true;
+                angular.element('#DistrictName').focus();
+                $scope.message = "Successfully Bank Created.";
+                $scope.messageType = "success";
+                $scope.clientMessage = false;
+                $timeout(function () { $scope.clientMessage = true; }, 5000);
+            }).error(function (error) {
+                $scope.message = 'Unable to save Bank' + error.message;
+                $scope.messageType = "warning";
+                $scope.clientMessage = false;
+                $timeout(function () { $scope.clientMessage = true; }, 5000);
+            });
 
-    //    }
-    //    else {
-    //        alert("Please  correct form errors!");
-    //    }
-    //};
+        }
+        else {
+            alert("Please  correct form errors!");
+        }
+    };
     ////Update Unit
     //$scope.update = function (data, DistrictId) {
 

@@ -249,6 +249,7 @@
     <Compile Include="Controllers\SalesModule\Api\ZoneManagersController.cs" />
     <Compile Include="Controllers\SalesModule\DistrictController.cs" />
     <Compile Include="Controllers\SalesModule\DivisionsController.cs" />
+    <Compile Include="Controllers\SalesModule\SalesManController.cs" />
     <Compile Include="Controllers\SalesModule\SaleZoneController.cs" />
     <Compile Include="Controllers\SalesModule\UnitManagersController.cs" />
     <Compile Include="Controllers\SalesModule\ZoneManagerController.cs" />
@@ -276,6 +277,10 @@
     <Compile Include="Migrations\201803041637584_AddUnitManager.cs" />
     <Compile Include="Migrations\201803041637584_AddUnitManager.Designer.cs">
       <DependentUpon>201803041637584_AddUnitManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803071036036_AddMemoCostToMemoMaster.cs" />
+    <Compile Include="Migrations\201803071036036_AddMemoCostToMemoMaster.Designer.cs">
+      <DependentUpon>201803071036036_AddMemoCostToMemoMaster.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\MDModule\DealProduction.cs" />
     <Compile Include="Models\MDModule\DealsView.cs" />
@@ -489,6 +494,7 @@
     <Compile Include="Models\SalesModule\ViewModel\SalesView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\UnitManagerView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\UpazilaView.cs" />
+    <Compile Include="Models\SalesModule\ViewModel\ZoneCustomerView.cs" />
     <Compile Include="Models\SalesModule\ZoneManager.cs" />
     <Compile Include="Models\ShowRoom.cs" />
     <Compile Include="Models\ShowRoomUser.cs" />
@@ -945,6 +951,7 @@
     <Content Include="Views\Divisions\Index.cshtml" />
     <Content Include="Views\UnitManagers\Index.cshtml" />
     <Content Include="Views\ShowRoomUser\Index.cshtml" />
+    <Content Include="Views\SalesMan\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1037,6 +1044,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803041637584_AddUnitManager.resx">
       <DependentUpon>201803041637584_AddUnitManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803071036036_AddMemoCostToMemoMaster.resx">
+      <DependentUpon>201803071036036_AddMemoCostToMemoMaster.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

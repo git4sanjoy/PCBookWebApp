@@ -1,6 +1,7 @@
 ﻿var app = angular.module('PCBookWebApp');
-app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout', '$filter',
-    function ($scope, $location, $http, $timeout, $filter) {
+app.controller('dashboardController', ['Excel','$scope', '$location', '$http', '$timeout', '$filter',
+    function (Excel, $scope, $location, $http, $timeout, $filter) {
+
         //$scope.message = "Dashboard Angular JS";
         $scope.loading = false;
 
@@ -11,7 +12,7 @@ app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout
             else
                 $scope.class = "overlay";
         };
-        $scope.pageSize = 20;
+        $scope.pageSize = 10000;
         $scope.currentPage = 1;
         // For 3 DatePicker
         $scope.open = function ($event) {
@@ -141,7 +142,9 @@ app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout
 
             } else if ($scope.userRole == "Accounts" ) {
                 
-            }  else if ($scope.userRole == "Show Room Manager") {
+            } else if ($scope.userRole == "Unit Manager") {
+                loadUnitMagerDashbord()
+            } else if ($scope.userRole == "Show Room Manager") {
                 
             } else if ($scope.userRole == "Show Room Sales") {
                 loadShowRoomOfficerDashbord()
@@ -164,6 +167,8 @@ app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout
         // *******************************************
         $scope.loadShowRoomMagerDashbord = loadShowRoomMagerDashbord;
         $scope.loadShowRoomOfficerDashbord = loadShowRoomOfficerDashbord;
+        $scope.loadUnitMagerDashbord = loadUnitMagerDashbord;
+
 
         function loadShowRoomMagerDashbord() {
 
@@ -340,7 +345,21 @@ app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout
 
 
 
-        
+        function loadUnitMagerDashbord() {
+            $scope.zoneWiseCustomerList = [];
+            $http({
+                method: 'Get',
+                headers: authHeaders,
+                url: '/api/Customer/ZoneCustomerList'
+            }).success(function (data, status, headers, config) {
+                $scope.customerList = data.customerList;
+                $scope.zoneWiseCustomerList = data.zoneWiseCustomerList;
+                $scope.divisionWiseCustomerList = data.divisionWiseCustomerList;
+                $scope.zoneManagerWiseCustomerList = data.zoneManagerWiseCustomerList;
+            }).error(function (data, status, headers, config) {
+                $scope.message = 'Unexpected Error';
+            });
+        };
 
 
 
@@ -528,4 +547,9 @@ app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout
                 type: 'line'
             }
         ];
+
+        $scope.exportToExcel = function (tableId) { // ex: '#my-table'
+            var exportHref = Excel.tableToExcel(tableId, 'WireWorkbenchDataExport');
+            $timeout(function () { location.href = exportHref; }, 100); // trigger download
+        };
 }])

@@ -44,5 +44,9 @@ namespace PCBookWebApp.Models.SalesModule
         public virtual SalesMan SalesMan { get; set; }
         public virtual ShowRoom ShowRoom { get; set; }
         public virtual Unit Unit { get; set; }
+
+        public virtual ICollection<Payment> Payments { get; set; }
+        public virtual ICollection<MemoMaster> MemoMasters { get; set; }
+        //public virtual ICollection<MemoDetail> MemoDetails { get; set; }
     }
 }

@@ -32,23 +32,32 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         [ResponseType(typeof(ShowRoomView))]
         public IHttpActionResult GetProductsList()
         {
+            string userId = User.Identity.GetUserId();
+            var unitId = db.UnitManagers
+                .Where(a => a.Id == userId)
+                .Select(a => a.UnitId)
+                .FirstOrDefault();
+
+
             List<ShowRoomView> ImportProductList = new List<ShowRoomView>();
             ShowRoomView importProduct = new ShowRoomView();
 
             string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
             string queryString = @"SELECT        
                                     dbo.Products.ProductId AS id, dbo.Products.ProductName AS name, dbo.Products.SubCategoryId AS [group], dbo.SubCategories.SubCategoryName AS groupName, dbo.Products.MultiplyWith, dbo.Products.Rate, 
-                                    dbo.Products.Discount, dbo.Products.ProductNameBangla
+                                    dbo.Products.Discount, dbo.Products.ProductNameBangla, dbo.Products.UnitId
                                     FROM            
                                     dbo.Products 
                                     INNER JOIN
-                                    dbo.SubCategories ON dbo.Products.SubCategoryId = dbo.SubCategories.SubCategoryId";
+                                    dbo.SubCategories ON dbo.Products.SubCategoryId = dbo.SubCategories.SubCategoryId
+                                    WHERE        
+                                    (dbo.Products.UnitId = @unitId) ORDER BY groupName, name";
 
             using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
             {
                 SqlCommand command = new SqlCommand(queryString, connection);
                 connection.Open();
-
+                command.Parameters.Add(new SqlParameter("@unitId", unitId));
                 SqlDataReader reader = command.ExecuteReader();
                 try
                 {
@@ -230,12 +239,17 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         public async Task<IHttpActionResult> PutProduct(int id, Product product)
         {
             string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers
-                .Where(a => a.Id == userId)
-                .Select(a => a.ShowRoomId)
-                .FirstOrDefault();
-            product.ShowRoomId = showRoomId;
-
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
+            if (showRoomId != 0)
+            {
+                product.ShowRoomId = showRoomId;
+            }
+            else
+            {
+                product.ShowRoomId = null;
+            }
+            product.UnitId = unitId;
             string userName = User.Identity.GetUserName();
             DateTime createdAt = DateTime.Now;
             product.CreatedBy = userName;
@@ -278,12 +292,17 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         public async Task<IHttpActionResult> PostProduct(Product product)
         {
             string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers
-                .Where(a => a.Id == userId)
-                .Select(a => a.ShowRoomId)
-                .FirstOrDefault();
-            product.ShowRoomId = showRoomId;
-
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
+            if (showRoomId != 0)
+            {
+                product.ShowRoomId = showRoomId;
+            }
+            else {
+                product.ShowRoomId = null;
+            }
+            
+            product.UnitId = unitId;
             string userName = User.Identity.GetUserName();
             DateTime createdAt = DateTime.Now;
             product.CreatedBy = userName;

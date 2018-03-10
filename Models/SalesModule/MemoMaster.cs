@@ -28,6 +28,8 @@ namespace PCBookWebApp.Models.SalesModule
         public double? MemoDiscount { get; set; }
         public double? GatOther { get; set; }
         public string ExpencessRemarks { get; set; }
+        public double? MemoCost { get; set; }
+
         //Additional Property
         public bool Active { get; set; }
         public string CreatedBy { get; set; }
@@ -41,5 +43,7 @@ namespace PCBookWebApp.Models.SalesModule
         public Nullable<System.DateTime> DateUpdated { get; set; }
         public virtual ShowRoom ShowRoom { get; set; }
         public virtual Customer Customer { get; set; }
+
+        public virtual ICollection<MemoDetail> MemoDetails { get; set; }
     }
 }

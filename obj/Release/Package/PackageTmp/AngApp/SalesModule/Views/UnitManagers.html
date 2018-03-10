@@ -1,24 +1,24 @@
 ﻿<div class="box box-primary">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-cube"></i> Unit Manager </h3>
+        <h3 class="box-title"><i class="fa fa-user"></i> Unit Manager </h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
     </div>
-    <form name="unitManagerForm" novalidate role="form" class="form-horizontal" id="unitManagerForm" ng-submit="submitunitManagerForm()">
+    <form name="unitManagerForm" novalidate role="form" class="form-horizontal" id="unitManagerForm" ng-submit="submitUnitManagerForm()">
         <div class="box-body">
             <div class="row">
                 <div class="col-lg-3 col-md-6 col-sm-12">
                     <label>Manager Id</label>
                     <div class="input-group" ng-class="{ 'has-error' : unitManagerForm.userListCmb.$invalid && (unitManagerForm.userListCmb.$dirty || submitted)}">
                         <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                        <select name="userListCmb" class="form-control" id="userListCmb" tabindex="1"
+                        <select name="userCmb" class="form-control" id="userCmb" tabindex="1"
                                 ng-focus="true"
-                                ng-model="unitManager.userListCmb"
+                                ng-model="unitManager.userCmb"
                                 ng-options="s.UserName for s in usersList track by s.Id"
                                 ng-required="true">
-                            <option value="">--Select User Name--</option>
+                            <option value="">--Select Manager Name--</option>
                         </select>
                     </div>
                     <p ng-show="unitManagerForm.userListCmb.$error.required && (unitManagerForm.userListCmb.$dirty || submitted)" class="help-block">User name is required.</p>
@@ -30,9 +30,9 @@
                         <select name="unitCmb" class="form-control" id="unitCmb" tabindex="2"
                                 ng-focus="true"
                                 ng-model="unitManager.unitCmb"
-                                ng-options="s.UnitName for s in showRoomList track by s.UnitId"
+                                ng-options="s.UnitName for s in unitList track by s.UnitId"
                                 ng-required="true">
-                            <option value="">--Select Show Room No--</option>
+                            <option value="">--Select Unit Name--</option>
                         </select>
                     </div>
                     <p ng-show="unitManagerForm.unitCmb.$error.required && (unitManagerForm.unitCmb.$dirty || submitted)" class="help-block">Show Room name is required.</p>
@@ -47,7 +47,7 @@
                                ng-model="unitManager.officerName"
                                ng-required="true">
                     </div>
-                    <p ng-show="unitManagerForm.officerName.$error.required && (unitManagerForm.officerName.$dirty || submitted)" class="help-block">Officer name is required.</p>
+                    <p ng-show="unitManagerForm.officerName.$error.required && (unitManagerForm.officerName.$dirty || submitted)" class="help-block">aManager name is required.</p>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-12">
                     <label>Address</label>
@@ -83,7 +83,7 @@
         </div><!-- /.box-body -->
 
         <div class="box-footer no-border">
-            <button type="submit" class="btn btn-success" tabindex="7"
+            <button type="submit" class="btn btn-primary" tabindex="7"
                     move-focus-by-enter-key
                     ng-hide="addButton"
                     ng-disabled="unitManagerForm.$invalid">
@@ -100,7 +100,7 @@
 
 <div class="box box-primary">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-cubes"></i> Unit Manager {{officerList.length}}</h3>
+        <h3 class="box-title"><i class="fa fa-users"></i> Unit Manager {{officerList.length}}</h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -111,22 +111,20 @@
         <table class="table table-bordered table-hover table-condensed">
             <tr style="font-weight: bold" class="info">
                 <td style="width:20%;white-space: nowrap;">Unit Name</td>
-                <td style="width:15%;white-space: nowrap;">Show Room Name</td>
-                <td style="width:15%;white-space: nowrap;">User Name</td>
-                <td style="width:20%;white-space: nowrap;">Officer Name</td>
-                <td style="width:10%;white-space: nowrap;">Address</td>
+                <td style="width:20%;white-space: nowrap;">User Name</td>
+                <td style="width:20%;white-space: nowrap;">Manager Name</td>
+                <td style="width:25%;white-space: nowrap;">Address</td>
                 <td style="width:10%;white-space: nowrap;">Phone</td>
-                <td style="width:10%;white-space: nowrap;">Email</td>
+                <td style="width:5%;"></td>
             </tr>
 
-            <tr ng-repeat="officer in officerList">
-                <td>{{ officer.UnitName  }} </td>
-                <td>{{officer.ShowRoomName }}</td>
-                <td>{{officer.UserName}}</td>
-                <td>{{officer.OfficerName}}</td>
-                <td>{{officer.Address}}</td>
-                <td>{{officer.Phone}}</td>
-                <td>{{officer.Email}}</td>
+            <tr ng-repeat="aManager in unitManagerList">
+                <td>{{aManager.UnitName  }} </td>
+                <td>{{aManager.UserName}}</td>
+                <td>{{aManager.ManagerName}}</td>
+                <td>{{aManager.Address}}</td>
+                <td>{{aManager.Phone}}</td>
+                <td><button class="btn btn-danger" ng-click="delete($index, aManager)"><i class="fa fa-trash"></i></button></td>
             </tr>
         </table>
 

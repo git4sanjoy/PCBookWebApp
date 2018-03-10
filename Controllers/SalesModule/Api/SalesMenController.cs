@@ -29,7 +29,12 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         [ResponseType(typeof(SalesMan))]
         public IHttpActionResult GetDropDownList()
         {
-            var list = db.SalesMen.Select(e => new { SalesManId = e.SalesManId, SalesManName = e.SalesManName });
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
+            var list = db.SalesMen
+                .Where(e=> e.ShowRoom.UnitId== unitId)
+                .Select(e => new { SalesManId = e.SalesManId, SalesManName = e.SalesManName });
             if (list == null)
             {
                 return NotFound();
@@ -42,7 +47,10 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         [ResponseType(typeof(SalesMan))]
         public IHttpActionResult GetDropDownListXedit()
         {
-            var list = db.SalesMen.Select(e => new { id = e.SalesManId, text = e.SalesManName });
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
+            var list = db.SalesMen.Where(e => e.ShowRoom.UnitId == unitId).Select(e => new { id = e.SalesManId, text = e.SalesManName });
             if (list == null)
             {
                 return NotFound();
@@ -56,7 +64,10 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         [ResponseType(typeof(SalesMan))]
         public IHttpActionResult SalesMenList()
         {
-            var list = db.SalesMen.Select(e => new { value = e.SalesManId, text = e.SalesManName });
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
+            var list = db.SalesMen.Where(e => e.ShowRoom.UnitId == unitId).Select(e => new { value = e.SalesManId, text = e.SalesManName });
             if (list == null)
             {
                 return NotFound();
@@ -73,32 +84,26 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         public IHttpActionResult ShowRoomSalesMenList()
         {
             string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers
-                .Where(a => a.Id == userId)
-                .Select(a => a.ShowRoomId)
-                .FirstOrDefault();
-
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
             List<SalesMan> list = new List<SalesMan>();
             SalesMan aObj = new SalesMan();
 
             string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
-            //string queryString = @"SELECT GroupId, GroupName FROM dbo.Groups WHERE ShowRoomId=@showRoomId";
-            string queryString = @"SELECT [SalesManId]
-                                          ,[SalesManName]
-                                          ,[Address]
-                                          ,[Phone]
-                                          ,[Email]
-                                          ,[Active]
-                                          ,[CreatedBy]
-                                          ,[DateCreated]
-                                          ,[DateUpdated]
-                                          ,[ShowRoomId]
-                                      FROM [PCBookDB].[dbo].[SalesMen] WHERE ShowRoomId=@showRoomId";
+            string queryString = @"SELECT        
+                                    dbo.SalesMen.SalesManId, dbo.SalesMen.SalesManName, dbo.SalesMen.Address, dbo.SalesMen.Phone, dbo.SalesMen.Email, dbo.SalesMen.Active, dbo.SalesMen.CreatedBy, dbo.SalesMen.DateCreated, 
+                                    dbo.SalesMen.DateUpdated, dbo.SalesMen.ShowRoomId, dbo.ShowRooms.ShowRoomName, dbo.ShowRooms.UnitId, dbo.Units.UnitName
+                                    FROM            
+                                    dbo.SalesMen INNER JOIN
+                                    dbo.ShowRooms ON dbo.SalesMen.ShowRoomId = dbo.ShowRooms.ShowRoomId INNER JOIN
+                                    dbo.Units ON dbo.ShowRooms.UnitId = dbo.Units.UnitId
+                                    WHERE        
+                                    (dbo.ShowRooms.UnitId = @UnitId)";
             using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
             {
                 SqlCommand command = new SqlCommand(queryString, connection);
                 connection.Open();
-                command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
+                command.Parameters.Add(new SqlParameter("@UnitId", unitId));
                 SqlDataReader reader = command.ExecuteReader();
                 try
                 {
@@ -109,7 +114,8 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                         aObj = new SalesMan();
                         aObj.SalesManId = id;
                         aObj.SalesManName = name;
-                        aObj.ShowRoomId = (int)reader["ShowRoomId"]; 
+                        aObj.ShowRoomId = (int)reader["ShowRoomId"];
+                        //aObj.ShowRoomName = (string)reader["ShowRoomName"];
                         if (reader["Address"] != System.DBNull.Value) { aObj.Address = (string)reader["Address"]; }
                         if (reader["Phone"] != System.DBNull.Value) { aObj.Phone = (string)reader["Phone"]; }
                         if (reader["Email"] != System.DBNull.Value) { aObj.Email = (string)reader["Email"]; }

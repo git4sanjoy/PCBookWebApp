@@ -398,6 +398,7 @@ D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.Migrations.addTre
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.Migrations.AddDivisionToSalesModule.resources
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.Migrations.UpdateProductsAndCustomersTable.resources
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.Migrations.AddUnitManager.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.Migrations.AddMemoCostToMemoMaster.resources
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.csproj.GenerateResource.Cache
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.csproj.CoreCompileInputs.cache
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Debug\PCBookWebApp.dll

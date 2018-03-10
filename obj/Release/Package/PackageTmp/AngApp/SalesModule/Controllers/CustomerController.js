@@ -70,7 +70,9 @@ app.controller('CustomerController', ['$scope', '$location', '$http', '$timeout'
     }).success(function (data) {
         $scope.salesManList = data;
     });
-
+    $scope.customer = {
+        CreditLimit:0
+    };
     $scope.submitCustomerForm = function () {
         // Set the 'submitted' flag to true
         $scope.submitted = true;

@@ -1,98 +1,4 @@
-﻿<div class="box box-danger">
-    <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-cube"></i> Upazila</h3>
-        <div class="box-tools pull-right">
-            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-        </div>
-    </div>
-    <!--Server side error messageing------>
-    <div class="col-sm-12">
-
-        <div class="" ng-hide="serverMessage">
-            <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
-                <ul>
-                    <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <!--End Server side error messageing-->
-    <!--Client side error messageing------>
-    <div class="col-sm-12">
-        <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
-            {{message}}
-        </div>
-    </div>
-    <!--End Client side error messageing-->
-    <form name="upazilaForm" novalidate role="form" class="form-horizontal" id="upazilaForm" ng-submit="submitUpazilaForm()">
-        <div class="box-body">
-            <div class="row">
-                <div class="col-lg-4 col-md-6 col-sm-12">
-                    
-                    <div class="input-group" ng-class="{ 'has-error' : upazilaForm.UpazilaName.$invalid && (upazilaForm.UpazilaName.$dirty || submitted)}">
-                        <label>Upazila Name</label>
-                        <input type="text" placeholder="Locations via http://google.com" class="form-control" id="UpazilaName" name="UpazilaName" tabindex="1" autocomplete="off"
-                               move-focus-by-enter-key
-                               ng-attr-tabindex="2"
-                               ng-model="upazila.UpazilaName"
-                               typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations">
-                        <i ng-show="loadingLocations" class="fa fa-spin"></i>
-                    </div>
-                    <p ng-show="upazilaForm.UpazilaName.$error.required && (upazilaForm.UpazilaName.$dirty || submitted)" class="help-block">Upazila Name is required.</p>
-
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-12">
-
-                    <div class="input-group" ng-class="{ 'has-error' : upazilaForm.UpazilaNameBangla.$invalid && (upazilaForm.UpazilaNameBangla.$dirty || submitted)}">
-                        <label>উপজেলার নাম বাংলা</label>
-
-                        <input type="text" placeholder="" class="form-control" id="UpazilaNameBangla" name="UpazilaNameBangla" tabindex="2" autocomplete="off"
-                               move-focus-by-enter-key
-                               ng-attr-tabindex="3"
-                               ng-model="upazila.UpazilaNameBangla">
-                        <i ng-show="loadingLocations" class="fa fa-spin"></i>
-                    </div>
-                    <p ng-show="upazilaForm.UpazilaNameBangla.$error.required && (upazilaForm.UpazilaNameBangla.$dirty || submitted)" class="help-block">Upazila Name is required.</p>
-
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-12">
-                    <label>District</label>
-                    <div class="input-group" ng-class="{ 'has-error' : upazilaForm.UpazilaId.$invalid && (upazilaForm.UpazilaId.$dirty || submitted)}">
-                        <span class="input-group-addon"><i class="fa fa-bookmark"></i></span>
-                        <select name="DistrictId" class="form-control" tabindex="2"
-                                ng-focus="true"
-                                move-focus-by-enter-key
-                                ng-model="upazila.DistrictId"
-                                ng-options="l.DistrictName for l in districtList track by l.DistrictId"
-                                ng-required="true">
-                            <option value="">--Select District Name--</option>
-                        </select>
-                    </div>
-                    <p ng-show="upazilaForm.DistrictId.$error.required && (upazilaForm.DistrictId.$dirty || submitted)" class="help-block">Select District</p>
-                </div>
-            </div>
-        </div><!-- /.box-body -->
-        <div class="box-footer no-border">
-            <button type="submit" class="btn btn-danger" tabindex="3"
-                    move-focus-by-enter-key
-                    ng-hide="addButton"
-                    ng-disabled="upazilaForm.$invalid">
-                <i class="fa fa-pencil"></i> Save Upazilla
-            </button>
-            <button type="button" class="btn btn-default"
-                    ng-hide="cancelButton"
-                    ng-click="cancel()">
-                <span class="glyphicon glyphicon-remove"></span> Clear
-            </button>
-        </div><!-- /.box-footer -->
-    </form>
-</div>
-
+﻿
 <div class="box box-danger">
     <div class="box-header with-border">
         <h3 class="box-title"><i class="fa fa-cubes"></i> Upazilas <small class="label label-danger">{{users.length}}</small></h3>
@@ -103,6 +9,93 @@
     </div>
 
     <div class="box-body">
+        <!--Server side error messageing------>
+        <div class="col-sm-12">
+
+            <div class="" ng-hide="serverMessage">
+                <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                    <ul>
+                        <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!--End Server side error messageing-->
+        <!--Client side error messageing------>
+        <div class="col-sm-12">
+            <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+                {{message}}
+            </div>
+        </div>
+        <!--End Client side error messageing-->
+
+        <form name="upazilaForm" novalidate role="form" class="form-horizontal" id="upazilaForm" ng-submit="submitUpazilaForm()">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+
+                        <div class="input-group" ng-class="{ 'has-error' : upazilaForm.UpazilaName.$invalid && (upazilaForm.UpazilaName.$dirty || submitted)}">
+                            <label>Upazila Name</label>
+                            <input type="text" placeholder="Locations via http://google.com" class="form-control" id="UpazilaName" name="UpazilaName" tabindex="1" autocomplete="off"
+                                   move-focus-by-enter-key
+                                   ng-attr-tabindex="2"
+                                   ng-model="upazila.UpazilaName"
+                                   typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations">
+                            <i ng-show="loadingLocations" class="fa fa-spin"></i>
+                        </div>
+                        <p ng-show="upazilaForm.UpazilaName.$error.required && (upazilaForm.UpazilaName.$dirty || submitted)" class="help-block">Upazila Name is required.</p>
+
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+
+                        <div class="input-group" ng-class="{ 'has-error' : upazilaForm.UpazilaNameBangla.$invalid && (upazilaForm.UpazilaNameBangla.$dirty || submitted)}">
+                            <label>উপজেলার নাম বাংলা</label>
+
+                            <input type="text" placeholder="" class="form-control" id="UpazilaNameBangla" name="UpazilaNameBangla" tabindex="2" autocomplete="off"
+                                   move-focus-by-enter-key
+                                   ng-attr-tabindex="3"
+                                   ng-model="upazila.UpazilaNameBangla">
+                            <i ng-show="loadingLocations" class="fa fa-spin"></i>
+                        </div>
+                        <p ng-show="upazilaForm.UpazilaNameBangla.$error.required && (upazilaForm.UpazilaNameBangla.$dirty || submitted)" class="help-block">Upazila Name is required.</p>
+
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <label>District</label>
+                        <div class="input-group" ng-class="{ 'has-error' : upazilaForm.UpazilaId.$invalid && (upazilaForm.UpazilaId.$dirty || submitted)}">
+                            <span class="input-group-addon"><i class="fa fa-bookmark"></i></span>
+                            <select name="DistrictId" class="form-control" tabindex="2"
+                                    ng-focus="true"
+                                    move-focus-by-enter-key
+                                    ng-model="upazila.DistrictId"
+                                    ng-options="l.DistrictName for l in districtList track by l.DistrictId"
+                                    ng-required="true">
+                                <option value="">--Select District Name--</option>
+                            </select>
+                        </div>
+                        <p ng-show="upazilaForm.DistrictId.$error.required && (upazilaForm.DistrictId.$dirty || submitted)" class="help-block">Select District</p>
+                    </div>
+                </div>
+            </div><!-- /.box-body -->
+            <div class="box-footer no-border">
+                <button type="submit" class="btn btn-danger" tabindex="3"
+                        move-focus-by-enter-key
+                        ng-hide="addButton"
+                        ng-disabled="upazilaForm.$invalid">
+                    <i class="fa fa-pencil"></i> Save Upazilla
+                </button>
+                <button type="button" class="btn btn-default"
+                        ng-hide="cancelButton"
+                        ng-click="cancel()">
+                    <span class="glyphicon glyphicon-remove"></span> Clear
+                </button>
+            </div><!-- /.box-footer -->
+        </form>
+
         <table class="table table-bordered table-hover table-condensed">
             <tr style="font-weight: bold" class="danger">
                 <td style="width:35%">Upazilla Name</td>
@@ -142,16 +135,12 @@
                         </button>
                     </form>
                     <div class="buttons" ng-show="!rowform.$visible">
-                        <button class="btn btn-primary" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>
-                        <button class="btn btn-danger" ng-click="remove($index,district.id)"><i class="glyphicon glyphicon-trash"></i></button>
+                        <button class="btn btn-primary" ng-click="rowform.$show()" style="margin:0;padding:2px 10px"><i class="glyphicon glyphicon-edit"></i></button>
+                        <button class="btn btn-danger" ng-click="remove($index,district.id)" style="margin:0;padding:2px 10px"><i class="glyphicon glyphicon-trash"></i></button>
                     </div>
                 </td>
             </tr>
         </table>
 
     </div><!-- /.box-body -->
-    <div class="box-footer no-border">
-
-    </div><!-- /.box-footer -->
-
 </div>

@@ -19,6 +19,7 @@ app.controller('ProductController', ['$scope', '$location', '$http', '$timeout',
         }
 
         $scope.product = {
+            Rate:0,
             MultiplyWith: 1,
             Discount:0
         };

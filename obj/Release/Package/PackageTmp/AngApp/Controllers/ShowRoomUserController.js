@@ -82,7 +82,29 @@ app.controller('ShowRoomUserController', ['$scope', '$location', '$http', '$time
         }
     };
 
+    $scope.delete = function (index, aObj) {
 
+        deleteObj = confirm('Are you sure you want to delete the OU User?');
+        if (deleteObj) {
+            var Id = aObj.ShowRoomUserId;
+            $http({
+                url: "/api/ShowRoomUsers/" + Id,
+                method: "DELETE",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.officerList.splice(index, 1);
+                $scope.message = 'OU User Deleted Successfull!';
+                $scope.messageType = "danger";
+                $scope.clientMessage = false;
+                $timeout(function () { $scope.loginAlertMessage = true; }, 3000);
+                $scope.loading = false;
+                alert('OU User Deleted Successfull!');
+            }).error(function (data) {
+                $scope.error = "An Error has occured while Deleteding OU User! " + data;
+                $scope.loading = true;
+            });
+        }
+    };
 
 
     $scope.clear = function () {

@@ -51,7 +51,22 @@ app.controller('SaleZoneController', ['$scope', '$location', '$http', '$timeout'
             }
         };
 
+        $scope.statuses = [];
+        $http({
+            url: "/api/Divisions/DivisionsListXEdit",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.statuses = data;
+        });
 
+        $scope.showStatus = function (user) {
+            var selected = [];
+            if (user.status) {
+                selected = $filter('filter')($scope.statuses, { value: user.status });
+            }
+            return selected.length ? selected[0].text : 'Not set';
+        };
 
         $scope.saveOrUpdateZone = function (data, id) {
             angular.extend(data, { id: id });
@@ -60,6 +75,7 @@ app.controller('SaleZoneController', ['$scope', '$location', '$http', '$timeout'
                 SaleZoneId: id,
                 ZoneManagerId: data.group,
                 SaleZoneName: data.name,
+                DivisionId: data.status,
                 SaleZoneDescription: data.SaleZoneDescription
             };
 

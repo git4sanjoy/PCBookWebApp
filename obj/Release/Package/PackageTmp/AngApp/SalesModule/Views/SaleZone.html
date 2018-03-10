@@ -35,14 +35,15 @@
             <thead>
                 <tr style="font-weight: bold" class="danger">
                     <td style="width:20%">Zone Name</td>
-                    <td style="width:20%">Zone Manager</td>
+                    <td style="width:10%">Division</td>
+                    <td style="width:10%">Zone Manager</td>
                     <td style="width:50%">Zone Description</td>
                     <td style="width:10%"></td>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <button class="btn btn-danger" ng-click="addZone()"><i class="fa fa-pencil"></i> Add Zone</button>
                     </td>
                 </tr>
@@ -51,6 +52,11 @@
                         <!-- editable username (text with validation) -->
                         <span editable-text="productObj.name" e-name="name" e-form="rowform" onbeforesave="checkName($data, productObj.id)">
                             {{ productObj.name || 'empty' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span editable-select="productObj.status" e-name="status" e-form="rowform" e-ng-options="s.value as s.text for s in statuses">
+                            {{ showStatus(productObj) }}
                         </span>
                     </td>
                     <td>

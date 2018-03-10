@@ -139,3 +139,4 @@ D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.addT
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddDivisionToSalesModule.resources
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.UpdateProductsAndCustomersTable.resources
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddUnitManager.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddMemoCostToMemoMaster.resources

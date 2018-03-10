@@ -267,6 +267,204 @@
 </div>
 <!--End Accounts Manager-->
 
+<!-- /. Sales Unit Namager -->
+<div class="box box-warning" ng-show="userRole=='Unit Manager'">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-pie-chart"></i>  Division  Credit <em class="text-red">{{filteredDivisionList.length}}</em></h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div><!-- /.box-tools -->
+    </div><!-- /.box-header -->
+    <div class="box-body">
+        <div class="table-responsive">
+            <table id="" class="table table-bordered table-condensed table-hover table-striped" style="font-size:.9em;">
+                <tr style="font-weight: bold" class="danger">
+                    <td width="45%" style="" ng-click="sort('DivisionName')"><span class="glyphicon sort-icon" ng-show="sortKey=='DivisionName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Division</td>
+                    <td width="5%" style="" ng-click="sort('TotalGroupCount')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalGroupCount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Count</td>
+                    <td width="10%" style="" ng-click="sort('TotalBf')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalBf'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> BF</td>
+                    <td width="10%" style="" ng-click="sort('ActualSales')"><span class="glyphicon sort-icon" ng-show="sortKey=='ActualSales'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Sale</td>
+                    <td width="10%" style="" ng-click="sort('TotalPayments')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalPayments'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Payments</td>
+                    <td width="10%" style="" ng-click="sort('TotalDiscounts')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalDiscounts'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Discounts</td>
+                    <td width="10%" style="" ng-click="sort('TotalDiscounts')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalDiscounts'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Balance</td>
+                </tr>
+
+                <tr ng-repeat="user in (filteredDivisionList = (divisionWiseCustomerList | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                    <td>{{ user.DivisionName }}</td>
+                    <td style="text-align:right">{{ user.TotalGroupCount }}</td>
+                    <td style="text-align:right">{{ user.TotalBf |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.ActualSales |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalPayments |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalDiscounts |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.Balance |currency:"":"0" }}</td>
+                </tr>
+                <tr class="text-bold info">
+                    <td colspan="1" style="text-align:left">Total:</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalGroupCount' |number:"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalBf' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'ActualSales' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalPayments' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalDiscounts' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'Balance' |currency:"":"0"}}</td>
+                </tr>
+            </table>
+        </div>
+    </div><!-- /.box-body -->
+</div><!-- /.box -->
+
+<div class="box box-warning" ng-show="userRole=='Unit Manager'">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-pie-chart"></i>  Zone Managers Credit <em class="text-red">{{filteredZoneManagerList.length}}</em></h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div><!-- /.box-tools -->
+    </div><!-- /.box-header -->
+    <div class="box-body">
+        <div class="table-responsive">
+            <table id="" class="table table-bordered table-condensed table-hover table-striped" style="font-size:.9em;">
+                <tr style="font-weight: bold" class="danger">
+                    <td width="45%" style="" ng-click="sort('ZoneManagerName')"><span class="glyphicon sort-icon" ng-show="sortKey=='ZoneManagerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ZoneManager</td>
+                    <td width="5%" style="" ng-click="sort('TotalGroupCount')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalGroupCount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Count</td>
+                    <td width="10%" style="" ng-click="sort('TotalBf')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalBf'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> BF</td>
+                    <td width="10%" style="" ng-click="sort('ActualSales')"><span class="glyphicon sort-icon" ng-show="sortKey=='ActualSales'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Sale</td>
+                    <td width="10%" style="" ng-click="sort('TotalPayments')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalPayments'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Payments</td>
+                    <td width="10%" style="" ng-click="sort('TotalDiscounts')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalDiscounts'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Discounts</td>
+                    <td width="10%" style="" ng-click="sort('TotalDiscounts')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalDiscounts'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Balance</td>
+                </tr>
+
+                <tr ng-repeat="user in (filteredZoneManagerList = (zoneManagerWiseCustomerList | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                    <td>{{ user.ZoneManagerName }}</td>
+                    <td style="text-align:right">{{ user.TotalGroupCount }}</td>
+                    <td style="text-align:right">{{ user.TotalBf |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.ActualSales |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalPayments |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalDiscounts |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.Balance |currency:"":"0" }}</td>
+                </tr>
+                <tr class="text-bold info">
+                    <td colspan="1" style="text-align:left">Total:</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalGroupCount' |number:"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalBf' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'ActualSales' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalPayments' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalDiscounts' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'Balance' |currency:"":"0"}}</td>
+                </tr>
+            </table>
+        </div>
+    </div><!-- /.box-body -->
+</div><!-- /.box -->
+
+<div class="box box-warning" ng-show="userRole=='Unit Manager'">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-pie-chart"></i>  Zone  Credit <em class="text-red">{{filteredZoneList.length}}</em></h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div><!-- /.box-tools -->
+    </div><!-- /.box-header -->
+    <div class="box-body">
+        <div class="table-responsive">
+            <table id="" class="table table-bordered table-condensed table-hover table-striped" style="font-size:.9em;">
+                <tr style="font-weight: bold" class="danger">
+                    <td width="15%" style="" ng-click="sort('DivisionName')"><span class="glyphicon sort-icon" ng-show="sortKey=='DivisionName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Division</td>
+                    <td width="15%" style="" ng-click="sort('SaleZoneName')"><span class="glyphicon sort-icon" ng-show="sortKey=='SaleZoneName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleZoneName</td>
+                    <td width="15%" style="" ng-click="sort('ZoneManagerName')"><span class="glyphicon sort-icon" ng-show="sortKey=='ZoneManagerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ZoneManager</td>
+                    <td width="5%" style="" ng-click="sort('TotalGroupCount')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalGroupCount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Count</td>
+                    <td width="10%" style="" ng-click="sort('TotalBf')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalBf'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> BF</td>
+                    <td width="10%" style="" ng-click="sort('ActualSales')"><span class="glyphicon sort-icon" ng-show="sortKey=='ActualSales'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Sale</td>
+                    <td width="10%" style="" ng-click="sort('TotalPayments')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalPayments'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Payments</td>
+                    <td width="10%" style="" ng-click="sort('TotalDiscounts')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalDiscounts'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Discounts</td>
+                    <td width="10%" style="" ng-click="sort('TotalDiscounts')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalDiscounts'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Balance</td>
+                </tr>
+
+                <tr ng-repeat="user in (filteredZoneList = (zoneWiseCustomerList | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                    <td>{{ user.DivisionName }}</td>
+                    <td>{{ user.SaleZoneName }}</td>
+                    <td>{{ user.ZoneManagerName }}</td>
+                    <td style="text-align:right">{{ user.TotalGroupCount }}</td>
+                    <td style="text-align:right">{{ user.TotalBf |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.ActualSales |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalPayments |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalDiscounts |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.Balance |currency:"":"0" }}</td>
+                </tr>
+                <tr class="text-bold info">
+                    <td colspan="3" style="text-align:left">Total:</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalGroupCount' |number:"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalBf' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'ActualSales' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalPayments' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalDiscounts' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'Balance' |currency:"":"0"}}</td>
+                </tr>
+            </table>
+        </div>
+    </div><!-- /.box-body -->
+</div><!-- /.box -->
+
+<div class="box box-default collapsed-box" ng-show="userRole=='Unit Manager'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-users"></i> Customers Credit  <span class="text-red">({{filteredCustomerList.length}})</span></h3>
+            <input ng-model="searchText" class="searchTextBox" type="text" value="" placeholder="Filter" style="margin:0em 1em;">
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="table-responsive">
+            <table id="" class="table table-bordered table-condensed table-hover table-striped" style="font-size:.9em;">
+                <tr style="font-weight: bold" class="danger">
+                    <td style="" ng-click="sort('DivisionName')"><span class="glyphicon sort-icon" ng-show="sortKey=='DivisionName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Division</td>
+                    <td style="" ng-click="sort('SaleZoneName')"><span class="glyphicon sort-icon" ng-show="sortKey=='SaleZoneName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleZoneName</td>
+                    <td style="" ng-click="sort('ZoneManagerName')"><span class="glyphicon sort-icon" ng-show="sortKey=='ZoneManagerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ZoneManager</td>
+                    <td style="" ng-click="sort('DistrictName')"><span class="glyphicon sort-icon" ng-show="sortKey=='DistrictName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> District</td>
+                    <td style="" ng-click="sort('UpazilaName')"><span class="glyphicon sort-icon" ng-show="sortKey=='UpazilaName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> UpazilaName</td>
+                    <td style="" ng-click="sort('CustomerName')"><span class="glyphicon sort-icon" ng-show="sortKey=='CustomerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CustomerName</td>
+                    <td style="" ng-click="sort('TotalBf')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalBf'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> BF</td>
+                    <td style="" ng-click="sort('ActualSales')"><span class="glyphicon sort-icon" ng-show="sortKey=='ActualSales'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Sale</td>
+                    <td style="" ng-click="sort('TotalPayments')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalPayments'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Payments</td>
+                    <td style="" ng-click="sort('TotalDiscounts')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalDiscounts'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Discounts</td>
+                    <td style="" ng-click="sort('TotalDiscounts')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalDiscounts'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Balance</td>
+                </tr>
+
+                <tr ng-repeat="user in (filteredCustomerList = (customerList | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                    <td>{{ user.DivisionName }}</td>
+                    <td>{{ user.SaleZoneName }}</td>
+                    <td>{{ user.ZoneManagerName }}</td>
+                    <td>{{ user.DistrictName || 'empty' }}</td>
+                    <td>{{ user.UpazilaName }}</td>
+                    <td>{{ user.CustomerName }}</td>
+
+                    <td style="text-align:right">{{ user.TotalBf |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.ActualSales |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalPayments |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalDiscounts |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.Balance |currency:"":"0" }}</td>
+                </tr>
+                <tr class="text-bold info">
+                    <td colspan="6" style="text-align:left">Total:</td>
+
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalBf' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'ActualSales' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalPayments' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'TotalDiscounts' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredZoneList |sumByKey:'Balance' |currency:"":"0"}}</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /. Sales Unit Manager -->
+
+
+
 <!--Sales Manager Common Summary-->
 <div class="row" ng-show="userRole=='Show Room Sales'">
     <div class="col-lg-3 col-xs-6">

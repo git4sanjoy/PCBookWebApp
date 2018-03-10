@@ -10,7 +10,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   </PropertyGroup>
   <ItemGroup>
     <File Include="AngApp/app.js">
-      <publishTime>03/04/2018 23:49:50</publishTime>
+      <publishTime>03/05/2018 16:26:52</publishTime>
     </File>
     <File Include="AngApp/BankModule/Controllers/BankAccountsController.js">
       <publishTime>01/09/2018 21:41:02</publishTime>
@@ -118,7 +118,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/06/2017 11:49:14</publishTime>
     </File>
     <File Include="AngApp/Controllers/dashboardController.js">
-      <publishTime>03/01/2018 10:04:10</publishTime>
+      <publishTime>03/08/2018 13:29:11</publishTime>
     </File>
     <File Include="AngApp/Controllers/errorController.js">
       <publishTime>07/26/2017 13:27:20</publishTime>
@@ -154,7 +154,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/21/2018 21:05:36</publishTime>
     </File>
     <File Include="AngApp/Controllers/ShowRoomUserController.js">
-      <publishTime>07/26/2017 17:21:21</publishTime>
+      <publishTime>03/05/2018 16:34:39</publishTime>
     </File>
     <File Include="AngApp/Controllers/TransctionTypesController.js">
       <publishTime>07/26/2017 13:27:20</publishTime>
@@ -295,13 +295,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/26/2018 17:26:43</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/CustomerController.js">
-      <publishTime>01/30/2018 09:58:49</publishTime>
+      <publishTime>03/05/2018 23:22:45</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/DistrictController.js">
-      <publishTime>03/03/2018 13:06:24</publishTime>
+      <publishTime>03/06/2018 17:53:35</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/DivisionsController.js">
-      <publishTime>03/04/2018 22:21:32</publishTime>
+      <publishTime>03/05/2018 12:23:54</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/GoogleMapController.js">
       <publishTime>02/03/2018 09:53:48</publishTime>
@@ -313,10 +313,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/16/2018 10:06:54</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/PaymentsController.js">
-      <publishTime>03/05/2018 11:49:03</publishTime>
+      <publishTime>03/05/2018 11:49:57</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/ProductController.js">
-      <publishTime>01/30/2018 09:58:49</publishTime>
+      <publishTime>03/05/2018 22:37:25</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/SalesManController.js">
       <publishTime>01/15/2018 21:25:12</publishTime>
@@ -328,13 +328,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>03/04/2018 21:46:11</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/SaleZoneController.js">
-      <publishTime>03/02/2018 21:08:04</publishTime>
+      <publishTime>03/05/2018 14:02:56</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/SubCategoryController.js">
       <publishTime>01/16/2018 10:16:59</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/UnitManagersController.js">
-      <publishTime>03/04/2018 23:42:35</publishTime>
+      <publishTime>03/05/2018 16:25:07</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Controllers/UpazilaController.js">
       <publishTime>01/25/2018 15:08:12</publishTime>
@@ -346,10 +346,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/26/2018 17:29:35</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/Customer.html">
-      <publishTime>02/01/2018 23:55:06</publishTime>
+      <publishTime>03/05/2018 23:11:40</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/District.html">
-      <publishTime>03/03/2018 12:34:31</publishTime>
+      <publishTime>03/06/2018 17:56:31</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/Divisions.html">
       <publishTime>03/04/2018 22:22:48</publishTime>
@@ -364,10 +364,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>03/04/2018 21:04:47</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/Product.html">
-      <publishTime>02/01/2018 23:52:14</publishTime>
+      <publishTime>03/06/2018 16:24:23</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/SalesMan.html">
-      <publishTime>01/25/2018 22:38:50</publishTime>
+      <publishTime>03/06/2018 00:10:44</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/SalesReport.html">
       <publishTime>02/26/2018 13:49:39</publishTime>
@@ -376,16 +376,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>03/04/2018 21:55:57</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/SaleZone.html">
-      <publishTime>03/02/2018 21:34:12</publishTime>
+      <publishTime>03/05/2018 14:31:19</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/SubCategory.html">
       <publishTime>03/02/2018 21:31:28</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/UnitManagers.html">
-      <publishTime>03/04/2018 23:56:59</publishTime>
+      <publishTime>03/05/2018 16:16:49</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/Upazila.html">
-      <publishTime>03/02/2018 21:40:45</publishTime>
+      <publishTime>03/07/2018 10:12:51</publishTime>
     </File>
     <File Include="AngApp/SalesModule/Views/ZoneManager.html">
       <publishTime>03/02/2018 21:39:07</publishTime>
@@ -403,7 +403,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/08/2017 10:34:49</publishTime>
     </File>
     <File Include="AngApp/Views/Dashboard.html">
-      <publishTime>03/05/2018 10:27:29</publishTime>
+      <publishTime>03/08/2018 13:48:22</publishTime>
     </File>
     <File Include="AngApp/Views/Error.html">
       <publishTime>07/26/2017 13:25:02</publishTime>
@@ -436,10 +436,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/27/2018 21:32:53</publishTime>
     </File>
     <File Include="AngApp/Views/ShowRoom.html">
-      <publishTime>01/21/2018 21:22:21</publishTime>
+      <publishTime>03/05/2018 16:43:15</publishTime>
     </File>
     <File Include="AngApp/Views/ShowRoomUser.html">
-      <publishTime>07/26/2017 15:49:46</publishTime>
+      <publishTime>03/05/2018 16:40:10</publishTime>
     </File>
     <File Include="AngApp/Views/TransctionTypes.html">
       <publishTime>01/08/2017 20:59:01</publishTime>
@@ -649,10 +649,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/28/2012 03:00:52</publishTime>
     </File>
     <File Include="bin/PCBookWebApp.dll">
-      <publishTime>03/05/2018 10:21:14</publishTime>
+      <publishTime>03/08/2018 13:57:25</publishTime>
     </File>
     <File Include="bin/PCBookWebApp.pdb">
-      <publishTime>03/05/2018 10:21:14</publishTime>
+      <publishTime>03/08/2018 13:57:25</publishTime>
     </File>
     <File Include="bin/roslyn/csc.exe">
       <publishTime>06/27/2016 14:50:24</publishTime>
@@ -1560,6 +1560,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Views/Reports/Index.cshtml">
       <publishTime>08/01/2017 14:48:13</publishTime>
     </File>
+    <File Include="Views/SalesMan/Index.cshtml">
+      <publishTime>03/06/2018 00:04:19</publishTime>
+    </File>
     <File Include="Views/SalesReports/Index.cshtml">
       <publishTime>02/01/2018 09:52:10</publishTime>
     </File>
@@ -1576,7 +1579,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/26/2017 12:32:06</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>03/05/2018 00:02:21</publishTime>
+      <publishTime>03/05/2018 17:35:57</publishTime>
+    </File>
+    <File Include="Views/ShowRoomUser/Index.cshtml">
+      <publishTime>03/05/2018 16:28:08</publishTime>
     </File>
     <File Include="Views/StoreDelivery/Index.cshtml">
       <publishTime>02/15/2018 22:08:03</publishTime>
@@ -1597,7 +1603,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/26/2017 12:32:06</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>03/05/2018 10:21:15</publishTime>
+      <publishTime>03/06/2018 10:34:20</publishTime>
     </File>
     <File Include="WebForms/Import/Index.aspx">
       <publishTime>02/12/2018 13:13:53</publishTime>

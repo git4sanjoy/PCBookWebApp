@@ -9,7 +9,7 @@
     if (Request.IsAuthenticated)
     {
 
-        if (User.IsInRole("Show Room Manager") || User.IsInRole("Show Room Sales"))
+        if (User.IsInRole("Show Room Manager") || User.IsInRole("Show Room Sales") || User.IsInRole("Unit Manager"))
         {
             themeColor = "skin-red";
             themeCss = "skin-red.min.css";
@@ -238,7 +238,7 @@
                                     </ul>
                                 </li>
                             }
-                            else if (User.IsInRole("Show Room Manager"))
+                            else if (User.IsInRole("Unit Manager"))
                             {
                                 <li class="header">Menu</li>
                                 <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
@@ -255,7 +255,14 @@
                                         <li><a href="/SubCategory"><i class="fa fa-circle-o"></i> Sub Categories</a></li>
                                     </ul>
                                 </li>
-
+                                <li class="treeview">
+                                    <a href="#"><i class="fa fa-cog"></i> <span>SR UNIT MANAGER</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu">
+                                        <li><a href="/Products"><i class="fa fa-circle-o"></i> Products</a></li>                                        
+                                        <li><a href="/Customers"><i class="fa fa-circle-o"></i> Customers</a></li>
+                                        <li><a href="/SalesMan"><i class="fa fa-circle-o"></i> Sales Officer</a></li>
+                                    </ul>
+                                </li>
                             }
                             else if (User.IsInRole("Unit Manager"))
                             {
@@ -562,32 +569,6 @@
     @Scripts.Render("~/bundles/angularDirectives")
     @Scripts.Render("~/bundles/angularFactories")
     @RenderSection("scripts", required: false)
-
-    @*<script type="text/javascript">
-        $(function () {
-            
-            //$('#CustomerNameBangla').focusout(function () {
-            //    alert(0);
-            //    //Call the Google API
-            //    $.ajax({
-            //        type: "GET",
-            //        url: "https://ajax.googleapis.com/ajax/services/language/translate",
-            //        dataType: 'jsonp',
-            //        cache: false,
-            //        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-            //        data: "v=1.0&q=" + $('#CustomerNameBangla').val() + "&langpair=en|bn",
-            //        success: function (iData) {
-            //            //update the value
-            //            $('#CustomerNameBangla').val(iData["responseData"]["translatedText"]);                        
-            //        },
-            //        error: function (xhr, ajaxOptions, thrownError) { }
-            //    });
-
-            //});
-            
-        });
-
-    </script>*@
     @*<script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement
@@ -598,8 +579,6 @@
                 'google_translate_element');
         }
     </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>*@
-    
-
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>*@  
 </body>
 </html>
