@@ -18,6 +18,16 @@ app.controller('ZoneManagerController', ['$scope', '$location', '$http', '$timeo
             authHeaders.Authorization = 'Bearer ' + accesstoken;
         }
 
+        $scope.usersList = [];
+        $http({
+            url: "/api/ShowRoomUsers/GetUsersDropDownList",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.usersList = data;
+            //console.log(data);
+        });
+
         $scope.zoneManagerList = [];
         $http({
             method: 'GET',
@@ -28,6 +38,22 @@ app.controller('ZoneManagerController', ['$scope', '$location', '$http', '$timeo
         }).success(function (data) {
             $scope.zoneManagerList = data;
         });
+
+        $scope.statuses = [];
+        $http({
+            url: "/api/ZoneManagers/UserXEditList",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.statuses = data;
+        });
+        $scope.showStatus = function (user) {
+            var selected = [];
+            if (user.status) {
+                selected = $filter('filter')($scope.statuses, { value: user.status });
+            }
+            return selected.length ? selected[0].text : 'Not set';
+        };
 
         $scope.checkName = function (data, ZoneManagerId) {
             //alert(ZoneManagerId);
@@ -40,7 +66,8 @@ app.controller('ZoneManagerController', ['$scope', '$location', '$http', '$timeo
                     Address: $scope.zoneManager.Address,
                     Phone: $scope.zoneManager.Phone,
                     Email: $scope.zoneManager.Email,
-                    ShowRoomId: 0
+                    ShowRoomId: 0,
+                    Id: $scope.zoneManager.userListCmb.Id
                 };
 
                 $http({
@@ -54,7 +81,8 @@ app.controller('ZoneManagerController', ['$scope', '$location', '$http', '$timeo
                         ZoneManagerName: $scope.zoneManager.ZoneManagerName,
                         Address: $scope.zoneManager.Address,
                         Phone: $scope.zoneManager.Phone,
-                        Email: $scope.zoneManager.Email
+                        Email: $scope.zoneManager.Email,
+                        status: $scope.zoneManager.userListCmb.Id
                     };
                     $scope.zoneManagerList.push(aViewObj);
                     $scope.zoneManager = {};
@@ -80,7 +108,9 @@ app.controller('ZoneManagerController', ['$scope', '$location', '$http', '$timeo
         };
         //Update zoneManager
         $scope.update = function (data, ZoneManagerId) {
-            angular.extend(data, { ZoneManagerId: ZoneManagerId });
+            angular.extend(data, { ZoneManagerId: ZoneManagerId, Id: data.status });
+            //console.log(data);
+            //return false;
             return $http({
                 url: '/api/ZoneManagers/' + ZoneManagerId,
                 data: data,

@@ -1,0 +1,94 @@
+﻿
+<md-card md-theme="{{ showDarkTheme ? 'dark-orange' : 'default' }}" md-theme-watch>
+    <md-card-title>
+        <md-card-title-text>
+            <span class="md-headline">Sales Report</span>
+            <span class="md-subhead">
+                <span class="radio-inline" ng-repeat="print in printTypeArray">
+                    <label>
+                        <input name="printOptionRadios" type="radio"
+                               ng-change="updatePrintType()"
+                               ng-value="print"
+                               ng-model="$parent.printOptionRadios" />
+                        {{print.Text}}
+                    </label>
+                </span>
+            </span>
+        </md-card-title-text>
+    </md-card-title>
+    <md-card-content>
+
+        <div layout="row" layout-xs="column">
+            <div flex>
+                
+                <md-radio-group ng-model="data.group2" class="md-primary">
+
+                    <md-radio-button ng-repeat="d in radioData"
+                                     ng-value="d.value"
+                                     ng-disabled=" d.isDisabled "
+                                     ng-class="{'md-align-top-left': $index==1}">
+                        {{ d.label }}
+
+                    </md-radio-button>
+
+                </md-radio-group>
+            </div>
+            <div flex>
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <div class="form-group">
+                            <label for="invoiceDate">From Date</label>
+                            <input class="form-control" type="text" tabindex="" name="fromDate" id="fromDate"
+                                   move-focus-by-enter-key
+                                   ng-focus="FromDatePickerOpen()"
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="fromDatePickerIsOpen"
+                                   ng-click="FromDatePickerOpen()"
+                                   ng-model="reportOption.fromDate" />                            
+                        </div>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <div class="form-group">
+                            <label for="invoiceDate">To Date</label>
+                            <input class="form-control" type="text" tabindex="" name="toDate" id="toDate"
+                                   move-focus-by-enter-key
+                                   ng-focus="ToDatePickerOpen()"
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="toDatePickerIsOpen"
+                                   ng-click="ToDatePickerOpen()"
+                                   ng-model="reportOption.toDate" />
+                            
+                        </div>
+                    </md-input-container>
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Customer Name </label>
+                            <input id="customerAutoComplite" type="text" class="form-control" name="customerAutoComplite" autocomplete="off" tabindex="2"
+                                   ng-model="reportOption.customerAutoComplite"
+                                   move-focus-by-enter-key
+                                   ng-required="true"
+                                   ng-keyup="updatePartyTypeaheadList(invoice.customerAutoComplite)"
+                                   typeahead-on-select="changeSelectCustomerName($item)"
+                                   typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:20">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <md-card-actions layout="row" layout-align="start center">
+            <md-button class="md-raised md-primary" aria-label="Show Report" ng-click="showReport()">Show Report</md-button>
+            <md-button class="md-raised md-default" aria-label="Comment">Clear</md-button>
+        </md-card-actions>
+
+    </md-card-content>
+</md-card>
+
+
+

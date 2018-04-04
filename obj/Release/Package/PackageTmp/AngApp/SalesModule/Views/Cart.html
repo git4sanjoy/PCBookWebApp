@@ -10,39 +10,49 @@
                         <div class="col-sm-12">
                             <div class="box" style="border-top: 0px solid #fff;">
                                 <div class="box-header with-border">
-                                    <h3 class="box-title"></h3>
+                                    <span class="">
+                                        Print
+                                        <span class="radio-inline" ng-repeat="print in printTypeArray">
+                                            <label>
+                                                <input name="printOptionRadios" type="radio"
+                                                       ng-change="updatePrintType()"
+                                                       ng-value="print"
+                                                       ng-model="$parent.printOptionRadios" />
+                                                {{print.Text}}
+                                            </label>
+                                        </span>
+                                    </span>
                                     <div class="box-tools pull-right">
                                         <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                                         <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                                     </div>
                                 </div><!-- /.box-header -->
                                 <div class="box-body">
-
                                     <table class="table">
                                         <tr>
                                             <td width="30%" style="border-top: 1px solid #fff;">
-                                                <div class="info-box" style="box-shadow: 0 0px 0px rgba(0,0,0,0.1);" ng-show="invoice.customer_info.name">
+                                                <div class="info-box" style="box-shadow: 0 0px 0px rgba(0,0,0,0.1);" ng-show="invoice.customerAutoComplite">
                                                     <span class="info-box-icon bg-red"><img ng-src="{{invoice.customer_info.Image ? 'Upload/Customers/'+invoice.customer_info.Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
                                                     <div class="info-box-content">
                                                         <span class="info-box-text">Address</span>
                                                         <span class="info-box-text text-red" style="font-size:.9em;">{{invoice.customer_info.Address}}, {{invoice.customer_info.DistrictName}}</span>
-                                                        <span class="info-box-text">Credit Limit</span>
-                                                        <span class="info-box-number">{{invoice.customer_info.CreditLimit| currency:"৳":0}}</span>
+                                                        <span class="info-box-text">Credit</span>
+                                                        <span class="info-box-number">{{invoice.customer_info.ActualCredit| currency:"৳":0}}</span>
                                                     </div><!-- /.info-box-content -->
                                                 </div>
                                             </td>
                                             <td width="40%" style="border-top: 1px solid #fff;">
                                                 <center><img src="Content/images/pakiza-collection.png" /></center>
                                                 <center><h5>House 97, Road 11/A, Dhanmondi, Dhaka 1209</h5></center>
-                                                <center><strong>Showroom Name : {{invoice.showRoom.ShowRoomName}}</strong></center>
+                                                <center><strong>{{invoice.showRoom.ShowRoomName}}</strong></center>
                                             </td>
                                             <td width="30%" style="border-top: 1px solid #fff;">
 
-                                                <div class="info-box" style="box-shadow: 0 0px 0px rgba(0,0,0,0.1);" ng-show="invoice.customer_info.name">
+                                                <div class="info-box" style="box-shadow: 0 0px 0px rgba(0,0,0,0.1);" ng-show="invoice.customerAutoComplite">
                                                     <span class="info-box-icon bg-red">৳</span>
                                                     <div class="info-box-content">
-                                                        <span class="info-box-text">Credit</span>
-                                                        <span class="info-box-number">{{invoice.customer_info.ActualCredit| currency:"৳":0}}</span>
+                                                        <span class="info-box-text">Credit Limit</span>
+                                                        <span class="info-box-number">{{invoice.customer_info.CreditLimit| currency:"৳":0}}</span>
 
                                                         <span class="info-box-text">Limit Balance</span>
                                                         <span class="info-box-number">{{ invoice.customer_info.CreditLimit == 0 ? 0 : (invoice.customer_info.CreditLimit-invoice.customer_info.ActualCredit) | currency:"৳":0}}</span>
@@ -52,7 +62,6 @@
                                             </td>
                                         </tr>
                                     </table>
-
                                     <div ng-show="invoice.items.length>0" style="padding:1em;">
                                         <div class="progress-group" ng-repeat="(key, value) in invoice.items | groupBy: 'MainCategoryName'">
                                             <span class="progress-text">{{ key }} {{(GetGroupSumOfILineTotal(value)/totalSale(invoice.items)*100)|number:"0"}}%</span>
@@ -61,25 +70,12 @@
                                                 <div class="progress-bar progress-bar-red" style="width: {{(GetGroupSumOfILineTotal(value)/totalSale(invoice.items)*100)}}%;"></div>
                                             </div>
                                         </div>
-
-                                        <!--<div layout="row" layout-align="space-around">
-                                            <div style="width:50px;"></div>
-                                            <md-button ng-click="showSimpleToast()">
-                                                Show Simple
-                                            </md-button>
-                                            <md-button class="md-raised" ng-click="showActionToast()">
-                                                Show With Action
-                                            </md-button>
-                                            <div style="width:50px"></div>
-                                        </div>-->
                                     </div>
                                 </div><!-- /.box-body -->
                             </div>
                         </div>
                     </div>
                     <div class="row">
-
-
                         <div class="col-xs-12 col-md-6 col-lg-2">
                             <div class="invoice-number-container">
                                 <label for="invoice-date">Date </label>
@@ -93,23 +89,29 @@
                                        ng-model="invoice.invoiceDate" />
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-6 col-lg-4">
+                        <div class="col-xs-12 col-md-6 col-lg-5">
                             <div class="form-group">
-                                <label>Party Name </label>
-                                <input id="CustomerName" type="text" name="CustomerName" class="form-control" autocomplete="off" placeholder="Party Name " tabindex="2" 
+                                <label>Customer Name </label>
+                                <input id="customerAutoComplite" type="text" class="form-control" name="customerAutoComplite" autocomplete="off" tabindex="2"
+                                       ng-model="invoice.customerAutoComplite"
                                        move-focus-by-enter-key
-                                       ng-model="invoice.customer_info.name"
-                                       ng-minlength="1"
-                                       ng-maxlength="145"
                                        ng-required="true"
-                                       ng-change="GetNewMemoId()"
-                                       ng-keydown='$event.keyCode == 13 && GetCustomerDetailById()'
-                                       ng-keyup="updatePartyTypeaheadList(invoice.customer_info.name)"
+                                       ng-keydown='$event.keyCode == 13 && GetCustomerDetailById(invoice.customerAutoComplite)'
+                                       ng-keyup="updatePartyTypeaheadList(invoice.customerAutoComplite)"
                                        typeahead-on-select="changeSelectCustomerName($item)"
-                                       typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:20" />
+                                       typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:20">
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-6 col-lg-2">
+                        <div class="col-xs-12 col-md-6 col-lg-5">
+                            <div class="form-group">
+                                <label>Warehouse</label>
+                                <select name="wareHouse" class="form-control" id="wareHouse"
+                                        ng-model="invoice.wareHouse"
+                                        ng-options="s.WareHouseName for s in wareHouseList track by s.WareHouseId"
+                                        ng-required="true"></select>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6 col-lg-2" hidden>
                             <div class="invoice-number-container">
                                 <label for="invoice-number">Invoice </label>
                                 <input class="form-control" type="text" id="invoice-number"
@@ -118,18 +120,19 @@
                                        ng-model="invoice.number" />
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-6 col-lg-4">
+
+                        <div class="col-xs-12 col-md-6 col-lg-2" hidden>
                             <div class="form-group">
-                                <label>Show Room No</label>
+                                <label>OU</label>
                                 <select name="showRoom" class="form-control" id="showRoom"
-                                        ng-focus="true"
                                         ng-disabled="true"
                                         ng-model="invoice.showRoom"
                                         ng-options="s.ShowRoomName for s in showRoomList track by s.ShowRoomId"
-                                        ng-required="true"></select>
-
+                                        ng-required="true">
+                                </select>
                             </div>
                         </div>
+                        
                     </div>
 
                     <table class="table table-bordered table-responsive" style="" id="invoiceTable">
@@ -206,7 +209,7 @@
                             <td><input class="form-control" type="number" ng-model="item.discount" ng-required ng-disabled="true"></td>
                             <td>{{item.qty * (item.cost-item.discount) | currency}}</td>
                             <td>
-                                <a style="padding: 0px 4px;" href ng-click="removeItem($index)" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                                <a style="padding: 5px 4px;" href ng-click="removeItem($index)" class="btn btn-danger"><i class="fa fa-times"></i></a>
                             </td>
                         </tr>
 

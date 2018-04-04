@@ -31,6 +31,8 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         [HttpGet]
         public IHttpActionResult GetProductTypeList()
         {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
             var list = (from item in db.ProductTypes
                         select new
                         {
@@ -42,7 +44,8 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                             item.CreatedBy,
                             item.DateCreated,
                             item.DateUpdated
-                        }).ToList();
+                        })
+                        .ToList();
             if (list == null)
             {
                 return NotFound();
@@ -133,7 +136,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             string userName = User.Identity.GetUserName();
 
             var msg = 0;
-            var check = db.ProductTypes.FirstOrDefault(m => m.ProductTypeName == productType.ProductTypeName);
+            var check = db.ProductTypes.FirstOrDefault(m => m.ProductTypeName == productType.ProductTypeName && m.ShowRoomId==showRoomId);
 
             //if (!ModelState.IsValid)
             //{

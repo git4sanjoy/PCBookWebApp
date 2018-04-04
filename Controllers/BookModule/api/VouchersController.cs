@@ -16,6 +16,7 @@ using System.Data.SqlClient;
 using Microsoft.AspNet.Identity;
 using PCBookWebApp.Models.BookModule.BookViewModel;
 using PCBookWebApp.Models.BookModule;
+using System.Data.Entity.Migrations;
 
 namespace PCBookWebApp.Controllers.BookModule.api
 {
@@ -211,6 +212,7 @@ namespace PCBookWebApp.Controllers.BookModule.api
                         {
                             voucherObj = new VoucherView();
                             voucherObj.VoucherId = (int)reader["VoucherId"];
+                            voucherObj.VoucherDetailId = (int)reader["VoucherDetailId"];
                             voucherObj.ShowRoomName = (string)showRoom.ShowRoomName;
                             voucherObj.TransctionTypeName = (string)reader["TransctionTypeName"];
                             voucherObj.VoucherNo = (string)reader["VoucherNo"];
@@ -244,7 +246,34 @@ namespace PCBookWebApp.Controllers.BookModule.api
 
             // return Ok("No Record Found");
         }
+        [Route("api/Vouchers/RateMgrUpdateRate/{id}")]
+        [HttpPut]
+        public IHttpActionResult RateMgrUpdateRate(int id)
+        {
+            string currentUserId = User.Identity.GetUserId();
+            string currentUserName = User.Identity.GetUserName();
+            var showRoomId = db.ShowRoomUsers.Where(u => u.Id == currentUserId).Select(u => u.ShowRoomId).FirstOrDefault();
+            var unitId = db.ShowRooms .Where(u => u.ShowRoomId == showRoomId).Select(u => u.UnitId).FirstOrDefault();
 
+            var aVoucher = db.Vouchers.Where(v => v.VoucherId == id && v.ShowRoomId == showRoomId).FirstOrDefault();
+
+            if (aVoucher.IsHonored == false)
+            {
+                aVoucher.IsHonored = true;
+                aVoucher.HonoredDate = DateTime.Now.Date;
+                aVoucher.AuthorizedBy = currentUserName;
+                db.Vouchers.AddOrUpdate(aVoucher);
+                db.SaveChanges();
+            }
+            else {
+                aVoucher.IsHonored = false;
+                aVoucher.HonoredDate = DateTime.Now.Date;
+                aVoucher.AuthorizedBy = currentUserName;
+                db.Vouchers.AddOrUpdate(aVoucher);
+                db.SaveChanges();
+            }
+            return Ok();
+        }
         // PUT: api/Vouchers/5
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutVoucher(int id, Voucher voucher)

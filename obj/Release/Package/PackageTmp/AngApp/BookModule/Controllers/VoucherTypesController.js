@@ -104,7 +104,7 @@ app.controller('VoucherTypesController', ['$scope', '$location', '$http', '$time
                 $http({
                     url: "/api/VoucherTypes/" + MatricId,
                     method: "DELETE",
-                    //headers: authHeaders
+                    headers: authHeaders
                 }).success(function (data) {
                     $scope.users.splice(index, 1);
                     $scope.message = "Successfully Deleted.";

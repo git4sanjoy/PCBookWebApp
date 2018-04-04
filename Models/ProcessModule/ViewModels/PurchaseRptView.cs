@@ -11,7 +11,7 @@ namespace PCBookWebApp.Models.ProcessModule.ViewModels
 
         public DateTime PurchaseDate { get; set; }
         public string PChallanNo { get; set; }
-
+       
         public string ProcessListName { get; set; }
         public string ProcesseLocationName { get; set; }
         public string SupplierName { get; set; }

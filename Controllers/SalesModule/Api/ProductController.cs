@@ -38,84 +38,42 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                 .Select(a => a.UnitId)
                 .FirstOrDefault();
 
-
-            List<ShowRoomView> ImportProductList = new List<ShowRoomView>();
-            ShowRoomView importProduct = new ShowRoomView();
-
-            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
-            string queryString = @"SELECT        
-                                    dbo.Products.ProductId AS id, dbo.Products.ProductName AS name, dbo.Products.SubCategoryId AS [group], dbo.SubCategories.SubCategoryName AS groupName, dbo.Products.MultiplyWith, dbo.Products.Rate, 
-                                    dbo.Products.Discount, dbo.Products.ProductNameBangla, dbo.Products.UnitId
-                                    FROM            
-                                    dbo.Products 
-                                    INNER JOIN
-                                    dbo.SubCategories ON dbo.Products.SubCategoryId = dbo.SubCategories.SubCategoryId
-                                    WHERE        
-                                    (dbo.Products.UnitId = @unitId) ORDER BY groupName, name";
-
-            using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
-            {
-                SqlCommand command = new SqlCommand(queryString, connection);
-                connection.Open();
-                command.Parameters.Add(new SqlParameter("@unitId", unitId));
-                SqlDataReader reader = command.ExecuteReader();
-                try
-                {
-                    while (reader.Read())
-                    {
-                        int id = (int)reader["id"];
-                        string name = (string)reader["name"];
-                        int group = (int)reader["group"];
-                        string groupName = (string)reader["groupName"];
-                        double multiplyWith = (double)reader["MultiplyWith"];
-                        double rate = (double)reader["Rate"];
-                        double discount = (double)reader["Discount"];
-                        string productNameBangla = "";
-                        if (reader["ProductNameBangla"] != DBNull.Value)
-                        {
-                            productNameBangla = (string)reader["ProductNameBangla"];
-                        }
-                        
-                        importProduct = new ShowRoomView();
-                        importProduct.id = id;
-                        importProduct.name = name;
-                        importProduct.group = group;
-                        importProduct.groupName = groupName;
-                        importProduct.MultiplyWith = multiplyWith;
-                        importProduct.Rate = rate;
-                        importProduct.Discount = discount;
-                        importProduct.ProductNameBangla = productNameBangla;
-                        ImportProductList.Add(importProduct);
-                    }
-                }
-                finally
-                {
-                    reader.Close();
-                }
-            }
-            //ViewBag.AccountUserList = BankAccounts;
-            return Ok(ImportProductList);
+            var list = db.Products
+                            .Include(p=> p.SubCategory)
+                            .Where(p => p.UnitId == unitId)
+                            .Select(e => new {
+                                id = e.ProductId,
+                                name = e.ProductName,
+                                ProductNameBangla = e.ProductNameBangla,
+                                Rate = e.Rate,
+                                Discount = e.Discount,
+                                group = e.SubCategory.SubCategoryId,
+                                groupName = e.SubCategory.SubCategoryName,
+                                MultiplyWith=e.MultiplyWith,
+                                Active = e.Active
+                            });
+            return Ok(list);
         }
 
         // GET: api/Product/GetDropDownList/
-        [Route("api/Product/GetDropDownList")]
+        [Route("api/Product/ProductDropDownList")]
         [HttpGet]
         [ResponseType(typeof(Product))]
-        public IHttpActionResult GetDropDownList()
+        public IHttpActionResult GetProductDropDownList()
         {
             string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers
-                                .Where(a => a.Id == userId)
-                                .Select(a => a.ShowRoomId)
-                                .FirstOrDefault();
-            var unitId = db.ShowRooms
-                                .Where(a => a.ShowRoomId == showRoomId)
-                                .Select(a => a.UnitId)
-                                .FirstOrDefault();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var zoneManagerId = db.ZoneManagers.Where(a => a.Id == userId).Select(a => a.ZoneManagerId).FirstOrDefault();
+            var unitId = db.ShowRooms.Where(a => a.ShowRoomId == showRoomId).Select(a => a.UnitId).FirstOrDefault();
 
             var list = db.Products
-                .Where(p=> p.ShowRoom.UnitId== unitId)
-                .Select(e => new { ProductId = e.ProductId, ProductName = e.ProductName, ProductNameBangla = e.ProductNameBangla, Rate = e.Rate, Discount = e.Discount });
+                    .Where(p => p.UnitId == unitId)
+                    .Select(e => new { ProductId = e.ProductId,
+                        ProductName = e.ProductName,
+                        ProductNameBangla = e.ProductNameBangla,
+                        Rate = e.Rate,
+                        Discount = e.Discount
+                    });
             if (list == null)
             {
                 return NotFound();
@@ -129,59 +87,70 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         [ResponseType(typeof(ProductView))]
         public IHttpActionResult GetProductRateById(string ProductName)
         {
-            //var productRate = db.Products
-            //    .Where(e=> e.ProductName == ProductName)
-            //    .Select(e => new { ProductId = e.ProductId, ProductName = e.ProductName, Rate = e.Rate, Discount = e.Discount });
-            //if (productRate == null)
-            //{
-            //    return NotFound();
-            //}
-            //return Ok(productRate);
-
-            ProductView product = new ProductView();
-            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
-            string queryString = @"SELECT        
-                                    dbo.Products.SubCategoryId, dbo.Products.ProductId, dbo.Products.ProductName, dbo.Products.ProductNameBangla, dbo.Products.Rate, dbo.Products.Discount, dbo.Products.CreatedBy, 
-                                    dbo.SubCategories.SubCategoryName, dbo.SubCategories.MainCategoryId, dbo.MainCategories.MainCategoryName
-                                    FROM            
-                                    dbo.Products INNER JOIN
-                                    dbo.SubCategories ON dbo.Products.SubCategoryId = dbo.SubCategories.SubCategoryId INNER JOIN
-                                    dbo.MainCategories ON dbo.SubCategories.MainCategoryId = dbo.MainCategories.MainCategoryId WHERE ProductName='" + ProductName +"'";
-
-            using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
+            var productRate = db.Products
+                .Include(p => p.SubCategory )
+                .Include(p => p.SubCategory.MainCategory)
+                .Where(e => e.ProductName == ProductName)
+                .Select(e => new {
+                    ProductId = e.ProductId,
+                    ProductName = e.ProductName,
+                    Rate = e.Rate,
+                    MultiplyWith = e.MultiplyWith,
+                    Discount = e.Discount,
+                    ProductNameBangla = e.ProductNameBangla,
+                    SubCategoryId = e.SubCategoryId,
+                    MainCategoryName = e.SubCategory.MainCategory.MainCategoryName
+                }).FirstOrDefault();
+            if (productRate == null)
             {
-                SqlCommand command = new SqlCommand(queryString, connection);
-                connection.Open();
-
-                SqlDataReader reader = command.ExecuteReader();
-                try
-                {
-                    while (reader.Read())
-                    {
-                        int id = (int)reader["ProductId"];
-                        int subCategoryId = (int)reader["SubCategoryId"];
-                        int mainCategoryId = (int)reader["MainCategoryId"];
-                        string productName = (string) reader["ProductName"];
-                        string productNameBangla = (string)reader["ProductNameBangla"];
-                        double rate = (double)reader["Rate"];
-                        double discount = (double)reader["Discount"];
-                        string mainCategoryName = (string)reader["MainCategoryName"]; 
-                        product = new ProductView();
-                        product.ProductId = id;
-                        product.ProductName = productName;
-                        product.ProductNameBangla = productNameBangla;
-                        product.Rate = rate;
-                        product.Discount = discount;
-                        product.SubCategoryId = subCategoryId;
-                        product.MainCategoryName = mainCategoryName;
-                    }
-                }
-                finally
-                {
-                    reader.Close();
-                }
+                return NotFound();
             }
-            return Ok(product);
+            return Ok(productRate);
+
+            //ProductView product = new ProductView();
+            //string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+            //string queryString = @"SELECT        
+            //                        dbo.Products.SubCategoryId, dbo.Products.ProductId, dbo.Products.ProductName, dbo.Products.ProductNameBangla, dbo.Products.Rate, dbo.Products.Discount, dbo.Products.CreatedBy, 
+            //                        dbo.SubCategories.SubCategoryName, dbo.SubCategories.MainCategoryId, dbo.MainCategories.MainCategoryName
+            //                        FROM            
+            //                        dbo.Products INNER JOIN
+            //                        dbo.SubCategories ON dbo.Products.SubCategoryId = dbo.SubCategories.SubCategoryId INNER JOIN
+            //                        dbo.MainCategories ON dbo.SubCategories.MainCategoryId = dbo.MainCategories.MainCategoryId WHERE ProductName='" + ProductName +"'";
+
+            //using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
+            //{
+            //    SqlCommand command = new SqlCommand(queryString, connection);
+            //    connection.Open();
+
+            //    SqlDataReader reader = command.ExecuteReader();
+            //    try
+            //    {
+            //        while (reader.Read())
+            //        {
+            //            int id = (int)reader["ProductId"];
+            //            int subCategoryId = (int)reader["SubCategoryId"];
+            //            int mainCategoryId = (int)reader["MainCategoryId"];
+            //            string productName = (string) reader["ProductName"];
+            //            string productNameBangla = (string)reader["ProductNameBangla"];
+            //            double rate = (double)reader["Rate"];
+            //            double discount = (double)reader["Discount"];
+            //            string mainCategoryName = (string)reader["MainCategoryName"]; 
+            //            product = new ProductView();
+            //            product.ProductId = id;
+            //            product.ProductName = productName;
+            //            product.ProductNameBangla = productNameBangla;
+            //            product.Rate = rate;
+            //            product.Discount = discount;
+            //            product.SubCategoryId = subCategoryId;
+            //            product.MainCategoryName = mainCategoryName;
+            //        }
+            //    }
+            //    finally
+            //    {
+            //        reader.Close();
+            //    }
+            //}
+            //return Ok(product);
         }
 
 
@@ -238,20 +207,18 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutProduct(int id, Product product)
         {
+            string userName = User.Identity.GetUserName();
+            DateTime createdAt = DateTime.Now;
             string userId = User.Identity.GetUserId();
             var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
             var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
-            if (showRoomId != 0)
-            {
+            if (showRoomId != 0) {
                 product.ShowRoomId = showRoomId;
-            }
-            else
-            {
+            } else {
                 product.ShowRoomId = null;
             }
+            if (product.Image == ""){product.Image = null;}
             product.UnitId = unitId;
-            string userName = User.Identity.GetUserName();
-            DateTime createdAt = DateTime.Now;
             product.CreatedBy = userName;
             product.DateCreated = createdAt;
             product.DateUpdated = createdAt;
@@ -291,27 +258,24 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         [ResponseType(typeof(Product))]
         public async Task<IHttpActionResult> PostProduct(Product product)
         {
+            string userName = User.Identity.GetUserName();
+            DateTime createdAt = DateTime.Now;
             string userId = User.Identity.GetUserId();
             var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
             var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
-            if (showRoomId != 0)
+            if (product.ShowRoomId == 0)
             {
-                product.ShowRoomId = showRoomId;
-            }
-            else {
                 product.ShowRoomId = null;
             }
-            
+            if (product.Image == "") { product.Image = null; }
             product.UnitId = unitId;
-            string userName = User.Identity.GetUserName();
-            DateTime createdAt = DateTime.Now;
             product.CreatedBy = userName;
             product.DateCreated = createdAt;
             product.DateUpdated = createdAt;
             if (db.Products.Any(m => m.ProductName == product.ProductName && m.ShowRoomId == showRoomId)) {
                 ModelState.AddModelError("ProductName", "Product Name Already Exists!");
             }
-                if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }

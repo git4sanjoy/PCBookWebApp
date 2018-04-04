@@ -97,7 +97,8 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutMatric(int id, Matric matric)
         {
-           
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
             var msg = 0;
             var check = db.Matrics.FirstOrDefault(m => m.MatricName == matric.MatricName);
             //if (!ModelState.IsValid)
@@ -156,7 +157,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             //{
             //    return BadRequest(ModelState);
             //}
-            bool isTrue = db.Matrics.Any(s=>s.MatricName == matric.MatricName.Trim());
+            bool isTrue = db.Matrics.Any(s=>s.MatricName == matric.MatricName.Trim() && s.ShowRoomId==showRoomId);
             if(isTrue==false)
             {
                 matric.ShowRoomId = showRoomId;

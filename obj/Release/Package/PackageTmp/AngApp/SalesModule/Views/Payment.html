@@ -88,8 +88,6 @@
                         <input id="customerAutoComplite" type="text" class="form-control" name="customerAutoComplite" autocomplete="off" tabindex="2"
                                ng-model="payment.customerAutoComplite"
                                move-focus-by-enter-key
-                               ng-minlength="2"
-                               ng-maxlength="145"
                                ng-required="true"
                                ng-change="GetNewMemoId()"
                                ng-keydown='$event.keyCode == 13 && GetCustomerDetailById()'
@@ -372,7 +370,7 @@
                 <td style="text-align:right">{{ aCustomerLedger.SDiscount || 0  }}</td>
                 <td>{{ aCustomerLedger.PaymentType }}</td>
                 <td style="white-space: nowrap">
-                    <button class="btn btn-danger btn-block" ng-click="deletePayment(aCustomerLedger)" ng-show="aCustomerLedger.PaymentType === 'Cash'"><i class="fa fa-trash"></i></button>
+                    <button style="margin:0;padding: 1px 5px;" class="btn btn-danger btn-block" ng-click="deletePayment(aCustomerLedger)" ng-show="aCustomerLedger.PaymentType === 'Cash'"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>
 

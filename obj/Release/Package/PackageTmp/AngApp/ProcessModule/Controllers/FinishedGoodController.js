@@ -1,6 +1,8 @@
-﻿var app = angular.module('PCBookWebApp');
-app.controller('FinishedGoodController', ['$scope', '$location', '$http', '$timeout', '$filter', 'AddDealService', '$mdDialog',
-    function ($scope, $location, $http, $timeout, $filter, AddDealService, $mdDialog) {
+﻿
+var app = angular.module('PCBookWebApp');
+app.controller('FinishedGoodController', ['$scope', '$location', '$http', '$timeout', '$filter',
+    function ($scope, $location, $http, $timeout, $filter) {
+        $scope.message = "PC App. V-1.0.1";
 
         $scope.loading = true;
 
@@ -8,178 +10,153 @@ app.controller('FinishedGoodController', ['$scope', '$location', '$http', '$time
         $scope.serverMessage = true;
         $scope.messageType = "";
         $scope.message = "";
+
+        $scope.pageSize = 20;
+        $scope.currentPage = 1;
+
         var accesstoken = sessionStorage.getItem('accessToken');
         var authHeaders = {};
         if (accesstoken) {
             authHeaders.Authorization = 'Bearer ' + accesstoken;
         }
-        $scope.myInterval = 5000;
-
-        $scope.designList = [];
-        $scope.designImages = [];
-        //$http({
-        //    method: 'Get',
-        //    url: '/api/Deals/DealsLists'
-        //}).success(function (data, status, headers, config) {
-        //    $scope.designList = data;
-        //}).error(function (data, status, headers, config) {
-        //    $scope.message = 'Unexpected Error';
-        //});
-
-        //Add File start.....
-        $scope.getTheFiles = function ($files) {
-
-            $scope.imagesrc = [];
-
-            for (var i = 0; i < $files.length; i++) {
-
-                var reader = new FileReader();
-                reader.fileName = $files[i].name;
-
-                reader.onload = function (event) {
-
-                    var image = {};
-                    image.Name = event.target.fileName;
-                    image.Size = (event.total / 1024).toFixed(2);
-                    image.Src = event.target.result;
-                    $scope.imagesrc.push(image);
-                    $scope.$apply();
-                }
-                reader.readAsDataURL($files[i]);
-            }
-
-            $scope.Files = $files;
-
+        $scope.data = {
+            cb1: true
         };
-        // Add File End...
-        // Submit Forn data
-        $scope.Submit = function () {
-            //FILL FormData WITH FILE DETAILS.
-            var data = new FormData();
 
-            angular.forEach($scope.Files, function (value, key) {
-                data.append(key, value);
-            });
-
-            data.append("DealModel", angular.toJson($scope.DealDetail));
-            AddDealService.AddDeal(data).then(function (response) {
-                $scope.DealDetail.Name = '';
-                $scope.DealDetail.Description = '';
-                $scope.DealDetail.Quantity = 0;
-                $scope.imagesrc = [];
-
-                $scope.designList = [];
-                $http({
-                    method: 'Get',
-                    url: '/api/Deals/DealsLists'
-                }).success(function (data, status, headers, config) {
-                    $scope.designList = data;
-                    $scope.loading = true;
-                    $scope.message = "Successfully Gallery Created.";
-                    $scope.messageType = "success";
-                    $scope.clientMessage = false;
-                    $timeout(function () { $scope.clientMessage = true; }, 5000);
-                }).error(function (data, status, headers, config) {
-                    $scope.message = 'Unexpected Error';
-                });
-                //alert("Added Successfully");
-            }, function () {
-
-            });
+        //**Change Select Product Type**
+        $scope.changeSelectProductType = function (item) {
+            $scope.finishedGood.ProductTypeId= item;
         };
-        $scope.myInterval = 5000;
-        $scope.slides = [];
 
-        $scope.saveProduction = function () {
-            //console.log($scope.selectedDesign);
-            if ($scope.newDeal.FactoryName == '' ) {
-                alert("Please input remarks");
-                return false;
-            }
-            if ($scope.newDeal.Quantity == 0) {
-                alert("Please input quantity");
-                angular.element('#Quantity').focus();
-                return false;
-            }
-            var fd = $filter('date')($scope.newDeal.DealProductionDate, "yyyy-MM-dd");
-            var aDealObj = {
-                DealProductionDate: fd,
-                Quantity: $scope.newDeal.Quantity,
-                DealId: $scope.selectedDesign.Id,
-                FactoryName: $scope.newDeal.FactoryName
-            };
-            //console.log(aDealObj);
-            //return false;
+
+        //**Get All List**
+        $scope.GetAllList = function () {
             $http({
-                url: "/api/DealProductions",
-                data: aDealObj,
+                url: "/api/FinishedGoods/GetAllList",
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.List = data.list;
+                $scope.ProductTypeList = data.productTypeList;
+                
+            }).error(function (data) {
+                $scope.message = "Process list loading failed.";
+                $scope.messageType = "warning";
+                $scope.clientMessage = false;
+                $timeout(function () { $scope.clientMessage = true; }, 5000);
+                //toastr.warning("Supplier list loading failed.", "Failed!");
+            });
+        }
+        $scope.GetAllList();
+
+        //**Save Finished Goods**
+        $scope.Save = function (finishedGood) {
+
+            console.log(finishedGood);      
+            var finishedGoodObj = {
+                FinishedGoodName: finishedGood.FinishedGoodName,
+                DesignNo: finishedGood.DesignNo,
+                ProductTypeId: finishedGood.ProductTypeId
+                //ProductTypeId: finishedGood.ProductTypeId.ProductTypeId
+            };
+            $http({
+                url: "/api/FinishedGoods",
+                data: finishedGoodObj,
                 method: "POST",
                 headers: authHeaders
             }).success(function (data) {
-                $scope.newDeal = {
-                    DealProductionDate: fd,
-                    Quantity: 0,
-                    FactoryName: 'None'
+                $scope.Cancel();
+                $scope.GetAllList();
+                $scope.message = "Data saved successfully.";
+                $scope.messageType = "success";
+                $scope.clientMessage = false;
+                $timeout(function () { $scope.clientMessage = true; }, 5000);
+                $scope.data = {
+                    cb1: false
                 };
-                //$scope.message = "Successfully Bank Created.";
-                //$scope.messageType = "success";
-                //$scope.clientMessage = false;
-                //$timeout(function () { $scope.clientMessage = true; }, 5000);
-                angular.element('#FactoryName').focus();
-            }).error(function (error) {
-                $scope.message = 'Unable to save Bank' + error.message;
-                //$scope.messageType = "warning";
-                //$scope.clientMessage = false;
-                //$timeout(function () { $scope.clientMessage = true; }, 5000);
+            }).error(function (data) {
+                $scope.message = "Data saving attempt failed!";
+                $scope.messageType = "warning";
+                $scope.clientMessage = false;
+                $timeout(function () { $scope.clientMessage = true; }, 5000);
             });
 
         };
-        $scope.Clear = function () {
-            $scope.DealDetail = {};
-            $scope.imagesrc = [];
-            $scope.designList = [];
+
+        //**Update Finished Goods**
+        $scope.Update = function (finishedGood) {   
+            //finishedGood.ProductTypeId = $scope.finishedGood.ProductTypeId.ProductTypeId;
+            $http({
+                url: '/api/FinishedGoods/' + finishedGood.FinishedGoodId,
+                data: finishedGood,
+                method: "PUT",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.Cancel();
+                $scope.GetAllList();
+                $scope.message = "Updated successfully.";
+                $scope.messageType = "info";
+                $scope.clientMessage = false;
+                $scope.data = {
+                    cb1: false
+                };
+                $timeout(function () { $scope.clientMessage = true; }, 5000);
+            }).error(function (data) {
+                $scope.message = "Data could not be updated!";
+                $scope.messageType = "warning";
+                $scope.clientMessage = false;
+                $timeout(function () { $scope.clientMessage = true; }, 5000);                
+            });
+
         };
 
-        //$scope.status = '  ';
-        //$scope.customFullscreen = false;
+        //**Delete Finished Goods**r
+        $scope.Delete = function (item) {
+            
+            var msg = confirm("Do you want to delete this data?");
+            if (msg == true) {
+                $http({
+                    url: "/api/FinishedGoods/" + item.FinishedGoodId,
+                    method: "DELETE",
+                    headers: authHeaders
+                }).success(function (data) {
+                    $scope.message = "Data deleted successfully.";
+                    $scope.messageType = "danger";
+                    $scope.clientMessage = false;
+                    $timeout(function () { $scope.clientMessage = true; }, 5000);                    
+                    $scope.Cancel();
+                    $scope.GetAllList();
+                    $scope.data = {
+                        cb1: false
+                    };
+                }).error(function (data) {
+                    alert('error occord')
+                    $scope.message = "Data could not be deleted!";
+                    $scope.messageType = "warning";
+                    $scope.clientMessage = false;
+                    $timeout(function () { $scope.clientMessage = true; }, 5000);                   
+                });
+            };
 
-        //$scope.showTabDialog = function (ev, aDesign) {
-        //    console.log(aDesign);
-        //    $scope.aDesignObj = aDesign;
-        //    $mdDialog.show({
-        //        controller: DialogController,
-        //        templateUrl: 'AngApp/ProcessModule/Views/tabDialog.tmpl.html',
-        //        parent: angular.element(document.body),
-        //        targetEvent: ev,
-        //        clickOutsideToClose: true
-        //    })
-        //    .then(function (answer) {
-        //        $scope.status = 'You said the information was "' + answer + '".';
-        //    }, function () {
-        //        $scope.status = 'You cancelled the dialog.';
-        //    });
-        //};
+        };
 
-        //$scope.showPrerenderedDialog = function (ev) {
-        //    $mdDialog.show({
-        //        contentElement: '#myDialog',
-        //        parent: angular.element(document.body),
-        //        targetEvent: ev,
-        //        clickOutsideToClose: true
-        //    });
-        //};
+        //**Edit Button**
+        $scope.Edit = function (item) {
+            $scope.finishedGood = angular.copy(item);
+            //$scope.finishedGood.ProductTypeId = { ProductTypeId: item.ProductTypeId , ProductTypeName: item.ProductTypeName };
+            $scope.editMode = true;
+        };
 
-        //function DialogController($scope, $mdDialog) {
-        //    $scope.hide = function () {
-        //        $mdDialog.hide();
-        //    };
+        //**Cancel Button**
+        $scope.Cancel = function () {
+            $scope.finishedGood = '';           
+            $scope.entryForm.$setPristine();
+            $scope.entryForm.$setUntouched();
+            $scope.editMode = false;
+            $scope.data = {
+                cb1: false
+            };
+        };
 
-        //    $scope.cancel = function () {
-        //        $mdDialog.cancel();
-        //    };
-
-        //    $scope.answer = function (answer) {
-        //        $mdDialog.hide(answer);
-        //    };
-        //}
+       
     }])

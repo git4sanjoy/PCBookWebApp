@@ -153,7 +153,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             //{
             //    return BadRequest(ModelState);
             //}
-            bool isTrue = db.UnitRoles.Any(s => s.UnitRoleName == unitRole.UnitRoleName.Trim());
+            bool isTrue = db.UnitRoles.Any(s => s.UnitRoleName == unitRole.UnitRoleName.Trim() && s.ShowRoomId==showRoomId);
             if (isTrue == false)
             {
                 unitRole.ShowRoomId = showRoomId;

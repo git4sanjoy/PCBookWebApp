@@ -11,15 +11,16 @@ namespace PCBookWebApp.Models.ProcessModule
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int FinishedGoodStockId { get; set; }
-        [Required]
-        public int FinishedGoodId { get; set; }
-        [Required]
-        public int ProcesseLocationId { get; set; }
-        public DateTime Date { get; set; }
+        public int FinishedGoodStockId { get; set; }        
+        public int? FinishedGoodId { get; set; }        
+        public int? ProcesseLocationId { get; set; }
+        public DateTime ReceiveDate { get; set; }
+        public Nullable<System.DateTime> DeliveryDate { get; set; }
+        public string OrderNumber { get; set; }
         public double OrderQuantity { get; set; }
         public double ReceiveQuantity { get; set; }
         public double DeliveryQuantity { get; set; }
+        public string BuyerName { get; set; }
 
         public bool Active { get; set; }
         public string CreatedBy { get; set; }

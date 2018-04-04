@@ -11,17 +11,12 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using PCBookWebApp.DAL;
 using PCBookWebApp.Models.ProcessModule;
-using System.Web;
-using System.IO;
-using Newtonsoft.Json;
 
 namespace PCBookWebApp.Controllers.ProcessModule.api
 {
     public class FinishedGoodImagesController : ApiController
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
-
-
 
         // GET: api/FinishedGoodImages
         public IQueryable<FinishedGoodImage> GetFinishedGoodImages()
@@ -90,7 +85,6 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             await db.SaveChangesAsync();
 
             return CreatedAtRoute("DefaultApi", new { id = finishedGoodImage.FinishedGoodImageId }, finishedGoodImage);
-
         }
 
         // DELETE: api/FinishedGoodImages/5

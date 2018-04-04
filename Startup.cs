@@ -118,6 +118,18 @@ namespace PCBookWebApp
                 role.Name = "Unit Manager";
                 roleManager.Create(role);
             }
+            if (!roleManager.RoleExists("Zone Manager"))
+            {
+                var role = new IdentityRole();
+                role.Name = "Zone Manager";
+                roleManager.Create(role);
+            }
+            if (!roleManager.RoleExists("Cash Sale"))
+            {
+                var role = new IdentityRole();
+                role.Name = "Cash Sale";
+                roleManager.Create(role);
+            }
             if (!roleManager.RoleExists("Show Room Sales"))
             {
                 var role = new IdentityRole();

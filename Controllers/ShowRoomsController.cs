@@ -23,6 +23,33 @@ namespace PCBookWebApp.Controllers.api
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
 
+
+
+        // GET: api/ShowRoom/ShowRoomList/
+        [Route("api/ShowRooms/ShowRoomDdlList")]
+        [HttpGet]
+        [ResponseType(typeof(ShowRoom))]
+        public IHttpActionResult GetShowRoomDdlList()
+        {
+            string userId = User.Identity.GetUserId();
+            var unitId = db.UnitManagers.Where(a => a.Id == userId).Select(a => a.UnitId).FirstOrDefault();
+            if (unitId != 2)
+            {
+                var showRoomList = db.ShowRooms
+                    .Select(s => new
+                    {
+                        s.ShowRoomId,
+                        s.ShowRoomName,
+                        s.UnitId,
+                        s.Unit.UnitName,
+                    })
+                    .Where(s => s.UnitId == unitId)
+                    .ToList();
+                return Ok(showRoomList);
+            }
+            return Ok();
+        }
+
         // GET: api/ShowRoom/GetDropDownList/
         [Route("api/ShowRooms/GetDropDownList")]
         [HttpGet]
@@ -82,17 +109,17 @@ namespace PCBookWebApp.Controllers.api
             return Ok(userShowRoomList);
         }
 
-        [Route("api/ShowRooms/GetImportProductsList")]
+        [Route("api/ShowRooms/ShowRoomList")]
         [HttpGet]
         [ResponseType(typeof(ShowRoomView))]
-        public IHttpActionResult GetImportProductsList()
+        public IHttpActionResult GetShowRoomList()
         {
             List<ShowRoomView> ImportProductList = new List<ShowRoomView>();
             ShowRoomView importProduct = new ShowRoomView();
 
             string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
             string queryString = @"SELECT        
-                                        dbo.ShowRooms.ShowRoomId AS id, dbo.ShowRooms.ShowRoomName AS name, dbo.ShowRooms.UnitId AS [group], dbo.Units.UnitName AS groupName, dbo.ShowRooms.ShowRoomNameBangla
+                                        dbo.ShowRooms.ShowRoomId AS id, dbo.ShowRooms.ShowRoomName AS name, dbo.ShowRooms.UnitId AS [group], dbo.Units.UnitName AS groupName, dbo.ShowRooms.ShowRoomNameBangla, dbo.ShowRooms.ZoneName
                                     FROM            
                                         dbo.ShowRooms 
                                     INNER JOIN
@@ -112,8 +139,6 @@ namespace PCBookWebApp.Controllers.api
                         string name = (string)reader["name"];
                         int group = (int)reader["group"];
                         string groupName = (string)reader["groupName"];
-
-
                         importProduct = new ShowRoomView();
                         importProduct.id = id;
                         importProduct.name = name;
@@ -122,7 +147,10 @@ namespace PCBookWebApp.Controllers.api
                         if (reader["ShowRoomNameBangla"] != DBNull.Value) {
                             importProduct.ShowRoomNameBangla = (string)reader["ShowRoomNameBangla"];
                         }
-                         
+                        if (reader["ZoneName"] != DBNull.Value)
+                        {
+                            importProduct.ZoneName = (string)reader["ZoneName"];
+                        }
                         ImportProductList.Add(importProduct);
                     }
                 }

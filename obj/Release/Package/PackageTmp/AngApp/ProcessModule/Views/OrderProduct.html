@@ -1,0 +1,194 @@
+﻿<div class="row">
+    <!--Server side error messageing------>
+    <div class="col-sm-12">
+        <div class="" ng-hide="serverMessage">
+            <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                <ul>
+                    <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--End Server side error messageing-->
+    <!--Client side error messageing------>
+    <div class="col-sm-12">
+        <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+            {{message}}
+        </div>
+    </div>
+    <!--End Client side error messageing-->
+</div>
+
+<div class="box box-primary">
+    <div class="box-header with-border">
+        <md-switch ng-model="data.cb1" aria-label="Preview and Search Hide" style="margin:0;padding:0;">
+            <span ng-class="data.cb1 == true ? 'box-title text-red' : 'box-title text-black'">Ordered List</span>
+        </md-switch>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline"><i class="fa fa-cart-arrow-down"></i> Add Order</span>                  
+                </md-card-title-text>
+            </md-card-title>
+            <md-card-content>
+                <div class="row" id="row1" style="margin-bottom:1em;">
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <label>Order No.</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><span class="fa fa-sticky-note"></span></span>
+                            <input id="OrderNumber" type="text" class="form-control" name="OrderNumber" placeholder="Order No." autocomplete="off" tabindex="1"
+                                   move-focus-by-enter-key
+                                   ng-model="orderedProduct.OrderNumber"
+                                   ng-required="false">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <label>Order Date</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                            <input name="ProcessDate" type="text" id="ReceiveDate" class="form-control" placeholder="Order Date" autocomplete="off" dateformat="dd/MM/yyyy" tabindex="2"
+                                   ng-focus="OrderDatePickerOpen()"
+                                   move-focus-by-enter-key
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="OrderDatePickerIsOpen"
+                                   ng-click="OrderDatePickerOpen()"
+                                   ng-model="orderedProduct.ReceiveDate"
+                                   ng-required="false" />
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <label>Buyer Name</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><span class="fa fa-user"></span></span>
+                            <input id="BuyerName" type="text" class="form-control" name="BuyerName" placeholder="Buyer Name" autocomplete="off" tabindex="3"
+                                   move-focus-by-enter-key
+                                   ng-model="orderedProduct.BuyerName">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" id="row2">
+                    <div class="col-sm-12">
+                        <table class="table table-bordered table-responsive">
+                            <tr class="">
+                                <td colspan="2">                                    
+                                    <label>Finished Goods Name</label>
+                                    <div class="input-group" ng-class="{ 'has-error' : entryForm.FinishedGoodId.$invalid && (entryForm.FinishedGoodId.$dirty || submitted)}" style="width:100%">
+                                        <span class="input-group-addon"><i class="fa fa-apple"></i></span>
+                                        <select class="form-control" tabindex="4" style="width:100%"
+                                                move-focus-by-enter-key
+                                                data-val="true"
+                                                data-ng-options="item as item.FinishedGoodName for item in FinishedGoodList"
+                                                id="FinishedGoodId" name="FinishedGoodId"
+                                                ng-model="orderedProduct.FinishedGood"
+                                                ng-required="true">
+                                            <option value="">--Select Finished Good Name--</option>
+                                        </select>
+                                    </div>
+                                    
+                                </td>
+                                <td>
+                                    
+                                        <label>Quantity</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><span class="fa fa-cubes"></span></span>
+                                            <input id="OrderQuantity" type="number" class="form-control" name="OrderQuantity" placeholder="0" autocomplete="off" tabindex="5"
+                                                   move-focus-by-enter-key
+                                                   ng-model="orderedProduct.OrderQuantity">
+                                        </div>
+                                    
+                                </td>
+
+                                <td>
+                                    <md-button ng-hide="editMode" aria-label="Add Item" class="md-raised btn-block" ng-click="addItem()" tabindex="7">
+                                        <i class="fa fa-plus"></i> Add
+                                    </md-button>
+                                    <md-button ng-show="editMode" aria-label="Save" class="md-raised md-warn btn-block" ng-click="saveNewItem()" tabindex="8">
+                                        <i class="fa fa-save"></i> Save
+                                    </md-button>
+                                </td>
+                            </tr>
+                            <tr class="">
+                                <th width="5%" style="text-align:center">SL</th>
+                                <th width="50%">Finished Goods Name</th>
+                                <th width="20%">Quantity</th>                               
+                                <th width="15%"></th>
+                            </tr>
+                            <tr ng-repeat="item in orderedProductItems">
+                                <td width="5%" style="text-align:center">{{$index+1}}</td>
+                                <td width="50%">{{ item.FinishedGoodName}}</td>
+                                <td width="20%">
+                                    <input class="form-control" type="text" ng-model="item.OrderQuantity" ng-required>
+                                </td>                               
+                                <td width="15%" style="white-space: nowrap">
+                                    <button ng-hide="editMode" type="button" ng-click="removeItem($index)" class="btn btn-danger btn-block"
+                                            data-toggle="tooltip" data-placement="right" title="Cancel">
+                                        <i class="fa fa-close"></i>
+                                    </button>
+                                    <div class="btn-group" role="group" aria-label="" ng-show="editMode">
+                                        <button type="button" class="btn btn-info" ng-click="UpdateItem(item)"><i class="fa fa-edit"></i></button>
+                                        <button type="button" class="btn btn-danger" ng-click="DeleteItem(item, $index)"><i class="fa fa-times"></i></button>
+                                    </div>
+
+                                </td>
+                            </tr>
+                            <tr class="text-bold">
+                                <td colspan="2" align="right">Total</td>
+                                <td>{{totalQuantity()}}</td>
+                                <td>
+                                    <md-button ng-hide="editMode" aria-label="Save" class="md-raised md-primary btn-block" ng-click="Save(orderedProduct)" tabindex="6"><i class="fa fa-save"></i> Save</md-button>
+                                    <md-button ng-show="editMode" aria-label="Clear" class="md-raised btn-block" ng-click="clear()" tabindex="8"><i class="fa fa-refresh"></i> Clear</md-button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            </md-card-content>
+        </md-card>
+
+        <div ng-hide="data.cb1">
+            <md-card-title style="margin:0;padding: 0;padding-left:20px;">
+                <md-card-title-text>
+                    <span class="md-headline text-bold">Order List</span>
+                </md-card-title-text>
+            </md-card-title>
+            <md-card-content>
+                <table class="table table-bordered table-hover table-condensed" style="margin-top:1em;">
+                    <thead>
+                        <tr style="font-weight: bold" class="info">
+                            <td style="width:10%">Order Date</td>                           
+                            <td style="width:15%">Order No</td>
+                            <!--<td style="width:20%">Quantity</td>-->
+                            <td style="width:20%">Buyer Name</td>
+                            <td colspan="2" style="width:5%">Action</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in List">
+                            <td>{{item.ReceiveDate | date: 'dd/MM/yyyy'}}</td>                           
+                            <td>{{item.OrderNumber}}</td>
+                            <!--<td>{{item.OrderQuantity}}</td>-->
+                            <td>{{item.BuyerName}}</td>
+                            <td class="text-center"><i class="fa fa-edit" ng-click="Edit(item)" data-toggle="tooltip" data-placement="left" title="Edit"></i></td>
+                            <td class="text-center"><i class="fa fa-trash-o" ng-click="Delete(item)" data-toggle="tooltip" data-placement="right" title="Delete"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </md-card-content>
+        </div>        
+    </div><!-- /.box-body -->
+</div>
+

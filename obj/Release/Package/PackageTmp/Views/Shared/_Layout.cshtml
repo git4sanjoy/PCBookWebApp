@@ -9,7 +9,7 @@
     if (Request.IsAuthenticated)
     {
 
-        if (User.IsInRole("Show Room Manager") || User.IsInRole("Show Room Sales") || User.IsInRole("Unit Manager"))
+        if (User.IsInRole("Show Room Manager") || User.IsInRole("Show Room Sales") || User.IsInRole("Unit Manager") || User.IsInRole("Zone Manager") || User.IsInRole("Cash Sale"))
         {
             themeColor = "skin-red";
             themeCss = "skin-red.min.css";
@@ -149,33 +149,21 @@
                             if (User.IsInRole("Admin"))
                             {
                                 <li class="header">ADMIN MENU</li>
-                                <li class="treeview active">
-                                    <a href="#">
-                                        <i class="fa  fa-clone"></i> <span>APP CUSTOMIZATION</span>
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </a>
+                                <li class="">
+                                    <a href="#"><i class="fa fa-cube"></i> Project Management <i class="fa fa-angle-left pull-right"></i></a>
                                     <ul class="treeview-menu" style="display: none;">
-
-
-                                        <li class="">
-                                            <a href="#"><i class="fa fa-cube"></i> Project Management <i class="fa fa-angle-left pull-right"></i></a>
-                                            <ul class="treeview-menu" style="display: none;">
-
-                                                <li><a href="/Projects"><i class="fa fa-cube"></i> Projects</a></li>
-                                                <li><a href="/Units"><i class="fa fa-cubes"></i> Units</a></li>
-                                                <li><a href="/UnitManagers"><i class="fa fa-users"></i> Unit Manager</a></li>
-                                            </ul>
-                                        </li>
-                                        <li class="">
-                                            <a href="#"><i class="fa fa-cubes"></i> OU Management <i class="fa fa-angle-left pull-right"></i></a>
-                                            <ul class="treeview-menu" style="display: none;">
-                                                <li><a href="/ShowRoom"><i class="fa fa-cube"></i> Organizational Units</a></li>
-                                                <li><a href="/Register"><i class="fa fa-user"></i> Register</a></li>
-                                                <li><a href="/ShowRoomUser"><i class="fa fa-users"></i> OU User</a></li>
-                                                <li><a href="/Roles"><i class="fa fa-link"></i> Roles</a></li>
-                                            </ul>
-                                        </li>
-
+                                        <li><a href="/Projects"><i class="fa fa-cube"></i> Projects</a></li>
+                                        <li><a href="/Units"><i class="fa fa-cubes"></i> Units</a></li>
+                                        <li><a href="/UnitManagers"><i class="fa fa-users"></i> Unit Manager</a></li>
+                                    </ul>
+                                </li>
+                                <li class="">
+                                    <a href="#"><i class="fa fa-cubes"></i> OU Management <i class="fa fa-angle-left pull-right"></i></a>
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <li><a href="/Register"><i class="fa fa-user-plus"></i> Register</a></li>
+                                        <li><a href="/ShowRoom"><i class="fa fa-cube"></i> Organizational Units</a></li>
+                                        <li><a href="/ShowRoomUser"><i class="fa fa-users"></i> OU User</a></li>
+                                        <li><a href="/Roles"><i class="fa fa-umbrella"></i> Roles</a></li>
                                     </ul>
                                 </li>
                                 <li class="header">NEXT MENU</li>
@@ -203,7 +191,6 @@
                                         <li><a href="/CheckBooks"><i class="fa fa-plus"></i> Check Books</a></li>
                                     </ul>
                                 </li>
-
                             }
                             else if (User.IsInRole("Accounts Manager"))
                             {
@@ -242,12 +229,13 @@
                             {
                                 <li class="header">Menu</li>
                                 <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
-
+                                <li><a href="/SalesReports"><i class="fa fa-print text-green"></i> <span>Reports</span></a></li>
+                                <li><a href="/ZoneManager"><i class="fa fa-pie-chart"></i> <span>Zone Manager</span></a></li>
                                 <li class="treeview">
                                     <a href="#"><i class="fa fa-cog"></i> <span>SR CONFIG</span> <i class="fa fa-angle-left pull-right"></i></a>
                                     <ul class="treeview-menu">
+                                        <li><a href="/WareHouse"><i class="fa fa-circle-o"></i> Ware House</a></li>
                                         <li><a href="/Divisions"><i class="fa fa-circle-o"></i> Divisions</a></li>
-                                        <li><a href="/ZoneManager"><i class="fa fa-circle-o"></i> Zone Manager</a></li>
                                         <li><a href="/SaleZone"><i class="fa fa-circle-o"></i> Sale Zone</a></li>
                                         <li><a href="/District"><i class="fa fa-circle-o"></i> District</a></li>
                                         <li><a href="/Upazila"><i class="fa fa-circle-o"></i> Upazilla</a></li>
@@ -264,19 +252,23 @@
                                     </ul>
                                 </li>
                             }
-                            else if (User.IsInRole("Unit Manager"))
+                            else if (User.IsInRole("Zone Manager"))
                             {
                                 <li class="header">Menu</li>
                                 <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
-                                <li class="treeview">
-                                    <a href="#"><i class="fa fa-cog"></i> <span>SR UNIT MANAGER</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                    <ul class="treeview-menu">
-                                        <li><a href="/Products"><i class="fa fa-circle-o"></i> Products</a></li>
-                                        <li><a href="/SalesMan"><i class="fa fa-circle-o"></i> Sales Manager</a></li>
-                                        <li><a href="/Customers"><i class="fa fa-circle-o"></i> Customers</a></li>
-                                    </ul>
-                                </li>
-
+                                <li><a href="/Invoice"><i class="fa fa-shopping-cart text-red"></i> <span>Invoice</span></a></li>
+                                <li><a href="/Payment"><i class="fa fa-cc-mastercard text-purple"></i> <span>Collection</span></a></li>
+                                <li><a href="/SalesEdit"><i class="fa fa-edit text-blue"></i> <span>Sales Edit</span></a></li>
+                                <li><a href="/SalesSearch"><i class="fa fa-search text-blue"></i> <span>Search</span></a></li>
+                                <li><a href="/SalesReports"><i class="fa fa-print text-green"></i> <span>Reports</span></a></li>
+                            }
+                            else if (User.IsInRole("Cash Sale"))
+                            {
+                                <li class="header">Menu</li>
+                                <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
+                                <li><a href="/Invoice"><i class="fa fa-shopping-cart text-red"></i> <span>Invoice</span></a></li>
+                                <li><a href="/SalesEdit"><i class="fa fa-edit text-blue"></i> <span>Sales Edit</span></a></li>
+                                <li><a href="/SalesSearch"><i class="fa fa-search text-blue"></i> <span>Search</span></a></li>
                             }
                             else if (User.IsInRole("Show Room Sales"))
                             {
@@ -284,6 +276,7 @@
                                 <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
                                 <li><a href="/Invoice"><i class="fa fa-shopping-cart text-red"></i> <span>Invoice</span></a></li>
                                 <li><a href="/Payment"><i class="fa fa-cc-mastercard text-purple"></i> <span>Collection</span></a></li>
+                                <li><a href="/SalesEdit"><i class="fa fa-edit text-blue"></i> <span>Sales Edit</span></a></li>
                                 <li><a href="/SalesSearch"><i class="fa fa-search text-blue"></i> <span>Search</span></a></li>
                                 <li><a href="/SalesReports"><i class="fa fa-print text-green"></i> <span>Reports</span></a></li>
                             }
@@ -295,12 +288,13 @@
                                 string UnitRole = db.UnitRoles.Where(r => r.ShowRoomId == showRoomId).Select(r => r.UnitRoleName).FirstOrDefault();
                                 <li class="header">Menu</li>
                                 <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
+                                <li><a href="/OrderProduct"><i class="fa fa-cart-plus text-purple"></i> <span>Add Order</span></a></li>
                                 <li><a href="/Purchase"><i class="fa fa-database text-green"></i> <span>Store Receive</span></a></li>
                                 <li><a href="/StoreDelivery"><i class="fa fa-truck text-blue"></i> <span>Store Delivery</span></a></li>
                                 <li><a href="/Process"><i class="fa fa-recycle text-red"></i> <span>Process</span></a></li>
                                 <li><a href="/ProcessReport"><i class="fa fa-print text-purple"></i> <span>Process Report</span></a></li>
                                 <li class="treeview ">
-                                    <a href="#"><i class="fa fa-cog"></i> PROCESS MANAGER <i class="fa fa-angle-left pull-right"></i></a>
+                                    <a href="#"><i class="fa fa-cogs"></i> PROCESS CONFIG <i class="fa fa-angle-left pull-right"></i></a>
                                     <ul class="treeview-menu" style="display: none;">
                                         <li><a href="/UnitRole"><i class="fa fa-plus text-purple"></i> <span>Unit Role</span></a></li>
                                         <li><a href="/ProductTypes"><i class="fa fa-plus text-purple"></i> <span>Product Types</span></a></li>
@@ -309,13 +303,13 @@
                                     </ul>
                                 </li>
                                 <li class="treeview ">
-                                    <a href="#"><i class="fa fa-cog"></i> PROCESS OFFICER <i class="fa fa-angle-left pull-right"></i></a>
+                                    <a href="#"><i class="fa fa-cog"></i> APP CONFIG <i class="fa fa-angle-left pull-right"></i></a>
                                     <ul class="treeview-menu" style="display: none;">
                                         <li><a href="/PurchasedProducts"><i class="fa fa-plus text-purple"></i> <span>Products</span></a></li>
                                         <li><a href="/Suppliers"><i class="fa fa-plus text-purple"></i> <span>Suppliers</span></a></li>
                                         <li><a href="/ProcesseLocations"><i class="fa fa-plus text-purple"></i> <span>Factories</span></a></li>
                                         <li><a href="/FinishedGood"><i class="fa fa-plus text-purple"></i> <span>Finished Goods</span></a></li>
-                                        @if (UnitRole == "Industry")
+                                        @if (UnitRole == "Industrial")
                                         {
                                             <li><a href="/Conversion"><i class="fa fa-plus text-purple"></i> <span>Conversion</span></a></li>
                                             <li><a href="/ConversionDetail"><i class="fa fa-plus text-purple"></i> <span>Conversion Detail</span></a></li>
@@ -359,7 +353,7 @@
                                 <li class="header">Menu</li>
                                 <li><a href="/Dashboard"><i class="fa fa-dashboard text-yellow"></i> <span>Dashboard</span></a></li>
                                 <li><a href="/DesignGallery"><i class="fa fa-image text-green"></i> <span>Design Gallery</span></a></li>
-                                <li><a href="/FinishedGood"><i class="fa fa-plus text-purple"></i> <span>Add Design</span></a></li>
+                                <li><a href="/AddDesign"><i class="fa fa-plus text-purple"></i> <span>Add Design</span></a></li>
                             }
                         }
                     </ul><!-- /.sidebar-menu -->
@@ -568,6 +562,7 @@
     @Scripts.Render("~/bundles/angularProcessControllers")
     @Scripts.Render("~/bundles/angularDirectives")
     @Scripts.Render("~/bundles/angularFactories")
+
     @RenderSection("scripts", required: false)
     @*<script type="text/javascript">
         function googleTranslateElementInit() {

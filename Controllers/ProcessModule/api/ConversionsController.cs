@@ -24,11 +24,10 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
 
-
+        
         [Route("api/Conversions/ConversionsList")]
         [HttpGet]
-        [ResponseType(typeof(Conversion))]
-        public IHttpActionResult GetProcesseLocationsList()
+        public IHttpActionResult ConversionsList()
         {
             string userId = User.Identity.GetUserId();
             var showRoomId = db.ShowRoomUsers
@@ -36,121 +35,108 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                 .Select(a => a.ShowRoomId)
                 .FirstOrDefault();
 
-            List<Conversion> list = new List<Conversion>();
-            Conversion aObj = new Conversion();
+            var list = db.Conversions
+                            .Where(d => d.ShowRoomId == showRoomId)
+                            .OrderBy(d => d.ConversionId)
+                            .Select(e => new
+                            {
+                                id = e.ConversionId,
+                                ConversionName = e.ConversionName,
+                                MatricId1 = e.MatricId1,
+                                MatricId2 = e.MatricId2,
+                                createDate = e.DateCreated
+                            });
 
-            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
-            string queryString = @"SELECT        
-                                    ConversionId, ConversionName, ShowRoomId
-                                    FROM            
-                                    dbo.Conversions
-                                    WHERE (ShowRoomId = @showRoomId)";
+            //var list = (from conv in db.Conversions
+            //            join m1 in db.Matrics on conv.MatricId1 equals m1.MatricId
+            //            join m2 in db.Matrics on conv.MatricId2 equals m2.MatricId
+            //            select new
+            //            {
+            //               id= conv.ConversionId,
+            //               name= conv.ConversionName,
+            //                status = m1.MatricName
+            //               //mat2= m2.MatricName
+            //            }).ToList();
 
-            using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
+
+            //var list = db.Conversions
+            //                .Include(a => a.MatricId1)
+            //                .Include(a => a.MatricId2)
+            //                .Where(d => d.ShowRoomId == showRoomId)
+            //                .Select(e => new {
+            //                    id = e.ConversionId,
+            //                    name = e.ConversionName,
+            //                    group = e.MatricId1,
+            //                    groupName = e.MatricId1
+            //                });
+            if (list == null)
             {
-                SqlCommand command = new SqlCommand(queryString, connection);
-                connection.Open();
-                command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
-                SqlDataReader reader = command.ExecuteReader();
-                try
-                {
-                    while (reader.Read())
-                    {
-                        int id = (int)reader["ConversionId"];
-                        string name = (string)reader["ConversionName"];
-                        aObj = new Conversion();
-                        aObj.ConversionId = id;
-                        aObj.ConversionName = name;
-                        list.Add(aObj);
-                    }
-                }
-                finally
-                {
-                    reader.Close();
-                }
+                return NotFound();
             }
             return Ok(list);
         }
 
-        // GET: api/Conversions
+        [Route("api/Conversions/MatricsListXEdit")]
         [HttpGet]
-        public IQueryable<Conversion> GetConversions()
+        [ResponseType(typeof(Matric))]
+        public IHttpActionResult GetMatricsListXEdit()
         {
             string userId = User.Identity.GetUserId();
             var showRoomId = db.ShowRoomUsers
                 .Where(a => a.Id == userId)
                 .Select(a => a.ShowRoomId)
                 .FirstOrDefault();
-
-            return db.Conversions.Where(c => c.ShowRoomId == showRoomId);
-        }
-
-
-        // GET: api/Conversions/5
-        [ResponseType(typeof(Conversion))]
-        public IHttpActionResult GetConversion(int id)
-        {
-            Conversion conversion = db.Conversions.Find(id);
-            if (conversion == null)
+            var list = db.Matrics
+                            .Where(m => m.ShowRoomId == showRoomId)
+                            .Select(e => new { value = e.MatricId, text = e.MatricName });
+            if (list == null)
             {
                 return NotFound();
             }
-
-            return Ok(conversion);
+            return Ok(list);
         }
 
-        // PUT: api/Conversions/5
-        [ResponseType(typeof(Conversion))]
         
-        public async Task<IHttpActionResult> PutConversion(int id, Conversion conversion)
+        // PUT: api/PurchasedProducts/5
+        [ResponseType(typeof(void))]
+        public async Task<IHttpActionResult> PutUpdateConversion(int id, Conversion conversion)
         {
             var msg = 0;
-            var check = db.Conversions.FirstOrDefault(m => m.ConversionName == conversion.ConversionName);
-
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
-
+            
             if (id != conversion.ConversionId)
             {
                 return BadRequest();
             }
-            //db.Entry(supplier).State = EntityState.Modified;
-            if (check == null)
+            try
             {
-                try
-                {
-                    var obj = db.Conversions.FirstOrDefault(m => m.ConversionId == conversion.ConversionId);
-                    conversion.DateCreated = obj.DateCreated;
-                    conversion.CreatedBy= obj.CreatedBy;
-                    conversion.DateUpdated = DateTime.Now;
-                    conversion.ShowRoomId = obj.ShowRoomId;
-                    conversion.Active = true;
+                var obj = db.Conversions.FirstOrDefault(m => m.ConversionId == conversion.ConversionId);
+                conversion.DateCreated = obj.DateCreated;
+                conversion.CreatedBy = obj.CreatedBy;
+                conversion.DateUpdated = DateTime.Now;
+                conversion.ShowRoomId = obj.ShowRoomId;
+                conversion.Active = true;
 
-                    db.Conversions.AddOrUpdate(conversion);
-                    await db.SaveChangesAsync();
-                    msg = 1;
-                }
-                catch (DbUpdateConcurrencyException)
+                db.Conversions.AddOrUpdate(conversion);
+                await db.SaveChangesAsync();
+                msg = 1;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ConversionExists(id))
                 {
-                    if (!ConversionExists(id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
                 }
             }
             return Ok(msg);
-            //return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Conversions
-        [ResponseType(typeof(Conversion))]
-        public async Task<IHttpActionResult> PostConversion(Conversion conversion)
+        // POST: api/PurchasedProducts
+        [ResponseType(typeof(PurchasedProduct))]
+        public async Task<IHttpActionResult> PostSaveConversion(Conversion conversion)
         {
             string userId = User.Identity.GetUserId();
             var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
@@ -164,21 +150,20 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             await db.SaveChangesAsync();
 
             return CreatedAtRoute("DefaultApi", new { id = conversion.ConversionId }, conversion);
-            
         }
 
-        // DELETE: api/Conversions/5
-        [ResponseType(typeof(Conversion))]
-        public IHttpActionResult DeleteConversion(int id)
+        // DELETE: api/PurchasedProducts/5
+        [ResponseType(typeof(PurchasedProduct))]
+        public async Task<IHttpActionResult> DeletePurchasedProduct(int id)
         {
-            Conversion conversion = db.Conversions.Find(id);
+            Conversion conversion = await db.Conversions.FindAsync(id);
             if (conversion == null)
             {
                 return NotFound();
             }
 
             db.Conversions.Remove(conversion);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
             return Ok(conversion);
         }

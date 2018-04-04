@@ -36,6 +36,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                             item.PChallanNo,
                             item.Quantity,
                             item.SE,
+                            item.OrderNo,
                             item.Amount,
                             item.Discount,
                             item.Active,
@@ -59,9 +60,10 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                                     item.SupplierName
                                 }).ToList();
             var purchasedProductList = (from item in db.PurchasedProducts
-                                        where item.ShowRoomId == showRoomId
+                                        where item.ShowRoomId == showRoomId && item.ProductTypeId==1
                                         select new
                                         {
+                                            item.ProductTypeId,
                                             item.PurchasedProductId,
                                             item.PurchasedProductName
                                         }).ToList();
@@ -85,13 +87,60 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                                     item.ProcessListId,
                                     item.ProcessListName
                                 }).ToList();
+            var orderNumber = (from item in db.FinishedGoodStocks
+                                      where item.ShowRoomId == showRoomId
+                                       select new
+                                       {                                           
+                                           item.OrderNumber
+                                       })
+                                       //.Distinct()
+                                       .ToList();
 
             if (list == null)
             {
                 return NotFound();
             }
 
-            return Ok(new { list, supplierList, purchasedProductList, processlocationList, processList });
+            return Ok(new { list, supplierList, purchasedProductList, processlocationList, processList, orderNumber });
+        }
+
+        [Route("api/Purchases/GetPurchasesListShow")]
+        [HttpGet]
+        public IHttpActionResult GetPurchasesListShow()
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var list = (from item in db.Purchases
+                        where item.ShowRoomId == showRoomId && item.ProcesseLocation == null
+                        select new
+                        {
+                            item.PurchaseId,
+                            item.PurchaseDate,
+                            item.PChallanNo,
+                            item.Quantity,
+                            item.SE,
+                            item.OrderNo,
+                            item.Amount,
+                            item.Discount,
+                            item.Active,
+                            item.CreatedBy,
+                            item.DateCreated,
+                            item.DateUpdated,
+                            item.ShowRoomId,
+                            item.ShowRoom.ShowRoomName,
+                            item.PurchasedProductId,
+                            item.PurchasedProduct.PurchasedProductName,
+                            item.SupplierId,
+                            item.Supplier.SupplierName
+                        }).ToList().OrderByDescending(x => x.DateCreated);
+
+
+            if (list == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new { list });
         }
 
         [Route("api/Purchases/GetSearch/{fromdate}/{todate}/{supplierId}/{productId}")]
@@ -99,6 +148,9 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         //[ResponseType(typeof(Purchase))]
         public IHttpActionResult GetSearch(DateTime? fromdate, DateTime? todate, int? supplierId, int? productId)
         {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+
             object list = new List<object>();
 
             if (fromdate != null && todate != null && supplierId == null && productId == null)
@@ -106,7 +158,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                 list = (from item in db.Purchases
                         join prod in db.PurchasedProducts on item.PurchasedProductId equals prod.PurchasedProductId
                         join s in db.Suppliers on item.SupplierId equals s.SupplierId
-                        where item.PurchaseDate >= fromdate && item.PurchaseDate <= todate
+                        where item.PurchaseDate >= fromdate && item.PurchaseDate <= todate && item.ShowRoomId==showRoomId
                         select new
                         {
                             item.PurchaseId,
@@ -117,6 +169,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                             item.Amount,
                             item.Quantity,
                             item.SE,
+                            item.OrderNo,
                             item.Discount,
                             item.DeliveryQuantity,
                             prod.PurchasedProductName,
@@ -131,7 +184,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                         join prod in db.PurchasedProducts on item.PurchasedProductId equals prod.PurchasedProductId
                         join s in db.Suppliers on item.SupplierId equals s.SupplierId
                         where (item.PurchaseDate >= fromdate && item.PurchaseDate <= todate)
-                        && item.SupplierId == supplierId
+                        && item.SupplierId == supplierId && item.ShowRoomId == showRoomId
                         select new
                         {
                             item.PurchaseId,
@@ -142,6 +195,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                             item.Amount,
                             item.Quantity,
                             item.SE,
+                            item.OrderNo,
                             item.Discount,
                             item.DeliveryQuantity,
                             prod.PurchasedProductName,
@@ -156,7 +210,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                         join prod in db.PurchasedProducts on item.PurchasedProductId equals prod.PurchasedProductId
                         join s in db.Suppliers on item.SupplierId equals s.SupplierId
                         where (item.PurchaseDate >= fromdate && item.PurchaseDate <= todate)
-                        && item.PurchasedProductId == productId
+                        && item.PurchasedProductId == productId && item.ShowRoomId == showRoomId
                         select new
                         {
                             item.PurchaseId,
@@ -167,6 +221,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                             item.Amount,
                             item.Quantity,
                             item.SE,
+                            item.OrderNo,
                             item.Discount,
                             item.DeliveryQuantity,
                             prod.PurchasedProductName,
@@ -182,7 +237,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                         join s in db.Suppliers on item.SupplierId equals s.SupplierId
                         where (item.PurchaseDate >= fromdate && item.PurchaseDate <= todate)
                         && item.SupplierId == supplierId
-                        && item.PurchasedProductId == productId
+                        && item.PurchasedProductId == productId && item.ShowRoomId == showRoomId
                         select new
                         {
                             item.PurchaseId,
@@ -193,6 +248,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                             item.Amount,
                             item.Quantity,
                             item.SE,
+                            item.OrderNo,
                             item.Discount,
                             item.DeliveryQuantity,
                             prod.PurchasedProductName,
@@ -230,6 +286,14 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         //public IHttpActionResult PutPurchase(int id, Purchase purchase)
 
         {
+            string userId = User.Identity.GetUserId();
+            string userName = User.Identity.GetUserName();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            purchase.ShowRoomId = showRoomId;
+            purchase.CreatedBy = userName;
+            purchase.DateCreated = DateTime.Now;
+            purchase.DateUpdated = DateTime.Now;
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -274,20 +338,81 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
             string userName = User.Identity.GetUserName();
 
+            var FinishedGoodStockId = db.FinishedGoodStocks.Where(fs => fs.OrderNumber == purchase.OrderNo).Select(fs => fs.FinishedGoodStockId).FirstOrDefault();
+            var itemRateObj = db.PurchasedProductRates
+                .Where(r => r.PurchasedProductId==purchase.PurchasedProductId && r.FinishedGoodStockId == FinishedGoodStockId)
+                .ToArray();
+
+            double stockQuantity = 0;
+            double avgRate = 0;
+
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             try
             {
-                
+                if (purchase.Quantity > 0 && purchase.DeliveryQuantity == 0)
+                {
+                    if (itemRateObj.Length > 0)
+                    {
+                        stockQuantity = itemRateObj[0].Quantity;
+                        avgRate = itemRateObj[0].AvgRate;
+                        int purchasedProductId = itemRateObj[0].PurchasedProductId;
+                        int finishedGoodStockId = itemRateObj[0].FinishedGoodStockId;
+                        double balanceQuantityAmount = stockQuantity * avgRate;
+
+                        double totalTk = balanceQuantityAmount + ((double)purchase.Amount - (double)purchase.Discount);
+                        double totalQuantity = stockQuantity + ((double)purchase.Quantity - (double)purchase.SE);
+                        double newAvgRate = Math.Round(totalTk / totalQuantity, 2);
+
+                        var aRateObj = db.PurchasedProductRates
+                            .Where(x => x.PurchasedProductId == purchasedProductId && x.FinishedGoodStockId == finishedGoodStockId)
+                            .FirstOrDefault();
+
+                        aRateObj.Quantity = Math.Round(stockQuantity + purchase.Quantity, 2);
+                        aRateObj.AvgRate = newAvgRate;
+                        db.PurchasedProductRates.AddOrUpdate(aRateObj);
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        PurchasedProductRate aRateObj = new PurchasedProductRate();
+                        aRateObj.PurchasedProductId = purchase.PurchasedProductId;
+                        aRateObj.FinishedGoodStockId = FinishedGoodStockId;
+                        aRateObj.Quantity = purchase.Quantity;
+                        aRateObj.AvgRate = Math.Round( ((double)purchase.Amount - (double)purchase.Discount) / (double)purchase.Quantity, 2);
+                        aRateObj.ShowRoomId = showRoomId;
+                        db.PurchasedProductRates.Add(aRateObj);
+                        await db.SaveChangesAsync();
+                    }
+                }
+                else {
+                    stockQuantity = itemRateObj[0].Quantity;
+                    //avgRate = itemRateObj[0].AvgRate;
+                    int purchasedProductId = itemRateObj[0].PurchasedProductId;
+                    int finishedGoodStockId = itemRateObj[0].FinishedGoodStockId;
+
+                    var aRateObj = db.PurchasedProductRates
+                        .Where(x => x.PurchasedProductId == purchasedProductId && x.FinishedGoodStockId == finishedGoodStockId)
+                        .FirstOrDefault();
+
+                    aRateObj.Quantity = Math.Round(stockQuantity - purchase.DeliveryQuantity, 2);
+                    //aRateObj.AvgRate = avgRate;
+                    db.PurchasedProductRates.AddOrUpdate(aRateObj);
+                    db.SaveChanges();
+                }
+
+
                 purchase.ShowRoomId = showRoomId;
                 purchase.CreatedBy = userName;
                 purchase.DateCreated = DateTime.Now;
                 purchase.DateUpdated = purchase.DateCreated;
-                purchase.Active = true;
+                purchase.Active = true;                
                 db.Purchases.Add(purchase);
                 await db.SaveChangesAsync();
+
 
             }
             catch (Exception)
@@ -303,6 +428,40 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         [ResponseType(typeof(Purchase))]
         public IHttpActionResult DeletePurchase(int id)
         {
+
+            var aPurchasesObj = db.Purchases
+                .Where(r => r.PurchaseId == id)
+                .ToArray();
+            double purchaseAmount = aPurchasesObj[0].Amount;
+            double purchaseQuantity = aPurchasesObj[0].Quantity;
+            string orderNo = aPurchasesObj[0].OrderNo;
+            int purchasedProductId = aPurchasesObj[0].PurchasedProductId;
+
+            var FinishedGoodStockId = db.FinishedGoodStocks.Where(fs => fs.OrderNumber == orderNo).Select(fs => fs.FinishedGoodStockId).FirstOrDefault();
+            var aRateObj = db.PurchasedProductRates
+                        .Select(x => new {
+                            x.PurchasedProductId,
+                            x.FinishedGoodStockId,
+                            x.Quantity,
+                            x.AvgRate,
+                        })
+                        .Where(x => x.PurchasedProductId == purchasedProductId && x.FinishedGoodStockId == FinishedGoodStockId)
+                        .FirstOrDefault();
+            double presentTotalQuantity = aRateObj.Quantity;
+            double presentTotalPrice = aRateObj.Quantity * aRateObj.AvgRate;
+            double nextQuantity = presentTotalQuantity - purchaseQuantity;
+            double nextAvegRate = Math.Round((presentTotalPrice - purchaseAmount) / (presentTotalQuantity- purchaseQuantity), 2);
+
+
+            var aUpdateRateObj = db.PurchasedProductRates
+                        .Where(x => x.PurchasedProductId == purchasedProductId && x.FinishedGoodStockId == FinishedGoodStockId)
+                        .FirstOrDefault();
+
+            aUpdateRateObj.Quantity = Math.Round(nextQuantity, 0);
+            aUpdateRateObj.AvgRate = Math.Round(nextAvegRate, 0);
+            db.PurchasedProductRates.AddOrUpdate(aUpdateRateObj);
+            db.SaveChanges();
+
             Purchase purchase = db.Purchases.Find(id);
             if (purchase == null)
             {

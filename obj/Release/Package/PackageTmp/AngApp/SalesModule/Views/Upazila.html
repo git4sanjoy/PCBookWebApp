@@ -103,7 +103,14 @@
                 <td style="width:20%">District</td>
                 <td style="width:10%">Action</td>
             </tr>
-            <tr ng-repeat="district in users">
+            <tr>
+                <td colspan="3">
+                    <input class="form-control" ng-model="searchText" />
+                </td>
+                <td></td>
+            </tr>
+            <tr ng-repeat="district in (filteredList = (users | filter: searchText)) | orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                
                 <td>
                     <!-- editable username (text with validation) -->
                     <span editable-text="district.name" e-name="name" e-form="rowform" onbeforesave="checkName($data, district.id)" e-required>

@@ -37,7 +37,26 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
             }
             return Ok(unitList);
         }
+        [Route("api/District/DistrictReportList/{ZoneIds}")]
+        [HttpGet]
+        //[ResponseType(typeof(District))]
+        public IHttpActionResult GetDistrictReportList(int[] ZoneIds)
+        {
+            var districts = (from p in db.Districts
+                             where ZoneIds.Contains((int)p.SaleZoneId)
+                             select p)
+                .Select(d => new {
+                    id = d.DistrictId,
+                    label = d.DistrictName
+                })
+                .ToList();
 
+            if (districts == null)
+            {
+                return NotFound();
+            }
+            return Ok(new { listDistricts = districts });
+        }
         // GET: api/District/GetDropDownList/
         [Route("api/District/GetDropDownList")]
         [HttpGet]

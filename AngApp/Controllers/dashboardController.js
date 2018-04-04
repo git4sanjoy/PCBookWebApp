@@ -1,6 +1,6 @@
 ﻿var app = angular.module('PCBookWebApp');
-app.controller('dashboardController', ['Excel','$scope', '$location', '$http', '$timeout', '$filter',
-    function (Excel, $scope, $location, $http, $timeout, $filter) {
+app.controller('dashboardController', ['$scope', '$location', '$http', '$timeout', '$filter',
+    function ( $scope, $location, $http, $timeout, $filter) {
 
         //$scope.message = "Dashboard Angular JS";
         $scope.loading = false;
@@ -12,27 +12,39 @@ app.controller('dashboardController', ['Excel','$scope', '$location', '$http', '
             else
                 $scope.class = "overlay";
         };
-        $scope.pageSize = 10000;
+        $scope.pageSize = 200;
         $scope.currentPage = 1;
+        $scope.searchCustomerLedger = {};
         // For 3 DatePicker
         $scope.open = function ($event) {
             $event.preventDefault();
             $event.stopPropagation();
             $scope.opened = true;
         };
-
         $scope.fromDatePickerIsOpen = false;
         $scope.FromDatePickerOpen = function () {
             this.fromDatePickerIsOpen = true;
             $scope.toDatePickerIsOpenPickerIsOpen = false;
         };
+
         $scope.toDatePickerIsOpen = false;
         $scope.ToDatePickerOpen = function () {
             this.toDatePickerIsOpen = true;
             $scope.fromDatePickerIsOpen = false;
         };
         $scope.saleDate = new Date();
-        //$scope.searchPayment.ToDate = new Date();
+        //$scope.searchCustomerLedger.ToDate = new Date();
+        $scope.invoiceDatePickerIsOpen = false;
+        $scope.InvoiceDatePickerOpen = function () {
+            this.invoiceDatePickerIsOpen = true;
+        };
+        $scope.honourDatePickerIsOpen = false;
+        $scope.HonourDatePickerOpen = function () {
+            this.honourDatePickerIsOpen = true;
+        };
+
+
+
         // End DatePicker
         $scope.userName = sessionStorage.getItem('userName');
         var inputYears = [];
@@ -116,8 +128,6 @@ app.controller('dashboardController', ['Excel','$scope', '$location', '$http', '
             $scope.reverse = !$scope.reverse; //if true make it false and vice versa
         }
 
-
-
         $http({
             url: "/api/Projects/AppDetails",
             method: "GET",
@@ -125,53 +135,42 @@ app.controller('dashboardController', ['Excel','$scope', '$location', '$http', '
         }).success(function (data) {
             $scope.appDetails = data;
             //console.log(data);
-        });
+            });
 
-        // Loged in user detail
-        $scope.userRole = "";
-        $scope.userDetails = [];
-        $http({
-            url: "/api/Projects/LogedInUserRole",
-            method: "GET",
-            headers: authHeaders
-        }).success(function (data) {
-            $scope.userDetails = data;
-            $scope.userRole = data.role[0];
+        //$scope.customerList = {};
 
-            if ($scope.userRole == "Accounts Manager") {
 
-            } else if ($scope.userRole == "Accounts" ) {
-                
-            } else if ($scope.userRole == "Unit Manager") {
-                loadUnitMagerDashbord()
-            } else if ($scope.userRole == "Show Room Manager") {
-                
-            } else if ($scope.userRole == "Show Room Sales") {
-                loadShowRoomOfficerDashbord()
-            } else if ($scope.userRole == "Process Manager") {
 
-            } else if ($scope.userRole == "Process Officer") {
-
-            } else if ($scope.userRole == "Design Manager") {
-                loadDesignManagerDashbord()
-            } else if ($scope.userRole == "Admin") {
-
-            } else if ($scope.userRole == "GM") {
-
-            } else if ($scope.userRole == "MD") {
-
-            }
-
-        });
 
         // *******************************************
-        $scope.loadShowRoomMagerDashbord = loadShowRoomMagerDashbord;
+        $scope.loadShowRoomManagerDashbord = loadShowRoomManagerDashbord;
         $scope.loadShowRoomOfficerDashbord = loadShowRoomOfficerDashbord;
         $scope.loadUnitMagerDashbord = loadUnitMagerDashbord;
+        $scope.loadZoneManagerDashbord = loadZoneManagerDashbord;
+        $scope.loadAccOfficerDashbord = loadAccOfficerDashbord;
 
+        function loadShowRoomManagerDashbord() {
 
-        function loadShowRoomMagerDashbord() {
-
+        };
+        function loadZoneManagerDashbord() {
+            $http({
+                url: "/api/MemoMasters/GetDateSalesInMap/" + $filter('date')(current_date, "yyyy-MM-dd") + "/" + 0,
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.dateSalesinMapList = data;
+                //console.log(data);
+            });
+            $scope.zoneWiseCustomerListForZoneManager = [];
+            $http({
+                method: 'Get',
+                headers: authHeaders,
+                url: '/api/Customer/ZoneWiseCustomerClosingBalanceList'
+            }).success(function (data, status, headers, config) {
+                $scope.zoneWiseCustomerListForZoneManager = data;
+            }).error(function (data, status, headers, config) {
+                $scope.message = 'Unexpected Error';
+            });
         };
         function loadShowRoomOfficerDashbord() {
             
@@ -184,17 +183,7 @@ app.controller('dashboardController', ['Excel','$scope', '$location', '$http', '
                 $scope.dateSalesinMapList = data;
                 //console.log(data);
             });
-            $scope.dateSaleInGoogleMap = function () {
-                var fd = $filter('date')($scope.saleDate, "yyyy-MM-dd");
-                $http({
-                    url: "/api/MemoMasters/GetDateSalesInMap/" + fd + "/" + 0,
-                    method: "GET",
-                    headers: authHeaders
-                }).success(function (data) {
-                    $scope.dateSalesinMapList = data;
-                    //console.log(data);
-                });
-            };
+
             //// Sales Managers Chart View 
             $http({
                 url: "/api/MemoMasters/GetSalesManWiseMonthlySale/" + endYear + '/' + month + '/' + 0,
@@ -284,7 +273,7 @@ app.controller('dashboardController', ['Excel','$scope', '$location', '$http', '
                 $scope.dataProductBar = [
                     expectedProductionList
                 ];
-                });
+            });
             $http({
                 url: "/api/MemoMasters/GetProductsWiseYearlySale/" + endYear + '/' + 0,
                 method: "GET",
@@ -317,6 +306,7 @@ app.controller('dashboardController', ['Excel','$scope', '$location', '$http', '
                 //console.log(data);
             });
         };
+
         function loadGmDashbord() {
 
         };
@@ -346,6 +336,14 @@ app.controller('dashboardController', ['Excel','$scope', '$location', '$http', '
 
 
         function loadUnitMagerDashbord() {
+            $http({
+                url: "/api/MemoMasters/GetDateSalesInMap/" + $filter('date')(current_date, "yyyy-MM-dd") + "/" + 0,
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.dateSalesinMapList = data;
+                //console.log(data);
+            });
             $scope.zoneWiseCustomerList = [];
             $http({
                 method: 'Get',
@@ -353,17 +351,43 @@ app.controller('dashboardController', ['Excel','$scope', '$location', '$http', '
                 url: '/api/Customer/ZoneCustomerList'
             }).success(function (data, status, headers, config) {
                 $scope.customerList = data.customerList;
-                $scope.zoneWiseCustomerList = data.zoneWiseCustomerList;
-                $scope.divisionWiseCustomerList = data.divisionWiseCustomerList;
-                $scope.zoneManagerWiseCustomerList = data.zoneManagerWiseCustomerList;
+                //$scope.linkQListDateBeteen = data.linkQListDateBeteen;
+                //$scope.zoneWiseCustomerList = data.zoneWiseCustomerList;
+                //$scope.divisionWiseCustomerList = data.divisionWiseCustomerList;
+                //$scope.zoneManagerWiseCustomerList = data.zoneManagerWiseCustomerList;
             }).error(function (data, status, headers, config) {
                 $scope.message = 'Unexpected Error';
             });
         };
 
+        function loadAccOfficerDashbord() {
+            $scope.pendingCheckList = [];
+            $http({
+                method: 'Get',
+                headers: authHeaders,
+                url: '/api/Check/PendingCheckList'
+            }).success(function (data, status, headers, config) {
+                $scope.pendingCheckList = data;
+            }).error(function (data, status, headers, config) {
+                $scope.message = 'Unexpected Error';
+            });
+        };
 
+        $scope.checkHonour = function (index, aCheck) {
+            //console.log(aCheck)
+            confirmPrompt = confirm('Are you sure you want to Honour the check: ' + aCheck.CheckNumber +' ?');
+            if (confirmPrompt) {
+                $http({                    
+                    url: '/api/Vouchers/RateMgrUpdateRate/' + aCheck.VoucherId,
+                    method: "PUT",
+                    headers: authHeaders
+                }).success(function (data) {
+                    $scope.pendingCheckList.splice(index, 1);
+                }).error(function (error) {
 
-
+                });
+            }
+        };
 
 
         ///******************************************
@@ -518,6 +542,17 @@ app.controller('dashboardController', ['Excel','$scope', '$location', '$http', '
             });
 
         };
+        $scope.dateSaleInGoogleMap = function () {
+            var fd = $filter('date')($scope.saleDate, "yyyy-MM-dd");
+            $http({
+                url: "/api/MemoMasters/GetDateSalesInMap//" + fd + "/" + 0,
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.dateSalesinMapList = data;
+                //console.log(data);
+            });
+        };
         ///***************************************
 
         $scope.printToCart = function (printSectionId) {
@@ -547,9 +582,249 @@ app.controller('dashboardController', ['Excel','$scope', '$location', '$http', '
                 type: 'line'
             }
         ];
+        $scope.changeSelectCustomerName = function (item) {
+            $scope.searchCustomerLedger.customerAutoComplite = item;
+        };
+        $scope.GetCustomerDetailById = function (customer) {
+            var customerId = 0;
+            $scope.Address = "";
+            if (customer) {
+                $http({
+                    url: "/api/Customer/GetSingleCustomer/" + customer.CustomerId,
+                    method: "GET",
+                    headers: authHeaders
+                }).success(function (data) {
+                    $scope.Address = data[0].Address;
+                    $scope.DistrictName = data[0].DistrictName;
+                    $scope.Image = data[0].Image;
+                    $scope.BfAmount = data[0].TotalBf;
+                    //$scope.BFDate = data[0].BFDate;
+                    $scope.CreditLimit = data[0].CreditLimit;
+                    $scope.ActualCredit = parseFloat(data[0].TotalBf) + (parseFloat(data[0].GrossSales) - parseFloat(data[0].MemoDiscount) + parseFloat(data[0].GatOther)) - parseFloat(data[0].TotalPayments) - parseFloat(data[0].TotalDiscounts);
+                    $scope.TotalSale = data[0].GrossSales;
+                    $scope.TotalCollection = data[0].TotalPayments;
+                    $scope.TotalDiscount = data[0].TotalDiscounts;
+                }).error(function (error) {
+                    $scope.Address = '';
+                    $scope.DistrictName = '';
+                    $scope.Image = '';
+                    $scope.BfAmount = 0;
+                    $scope.BFDate = 0;
+                    $scope.CreditLimit = 0;
+                    $scope.ActualCredit = 0;
+                    $scope.TotalSale = 0;
+                    $scope.TotalCollection = 0;
+                    $scope.TotalDiscount = 0;
+                    $scope.message = 'Unable to get party info' + error.message;
+                    $scope.messageType = "warning";
+                    $scope.clientMessage = false;
+                    $timeout(function () { $scope.clientMessage = true; }, 5000);
+                });
+            }
+        };
 
+        $scope.submitSearchCustomerLedgerForm = function () {
+            var customerId = 0;
+            var customerName = "";
+            var fd = null;
+            var td = null;
+            //$scope.customersLedger = [];
+            $scope.submitted = true;
+            if ($scope.searchCustomerLedgerForm.$valid) {
+
+                fd = $filter('date')($scope.searchCustomerLedger.fromDate, "yyyy-MM-dd");
+                td = $filter('date')($scope.searchCustomerLedger.toDate, "yyyy-MM-dd");
+                if ($scope.searchCustomerLedger.customerAutoComplite) {
+                    customerId = $scope.searchCustomerLedger.customerAutoComplite.CustomerId;
+                    customerName = $scope.searchCustomerLedger.customerAutoComplite.CustomerName;
+                }
+
+                $http({
+                    url: '/api/Customer/PartyLedger/' + fd + '/' + td + '/' + customerId,
+                    method: "GET",
+                    headers: authHeaders
+                }).success(function (data) {
+                    $scope.customerLedgers = data.paymentsList;
+                    $scope.customerSaleLedgers = data.saleList;
+                    $scope.categoryWiseGroupingSaleList = data.categoryGroupingList;
+                    $scope.bfList = data.bfList;
+                    $scope.opening = parseFloat(data.bfList[0].TotalBf) + (parseFloat(data.bfList[0].GrossSales) + parseFloat(data.bfList[0].GatOther) - parseFloat(data.bfList[0].MemoDiscount)) - parseFloat(data.bfList[0].TotalPayments) - parseFloat(data.bfList[0].TotalDiscounts);
+
+                    
+
+                }).error(function (error) {
+
+                });
+
+                ////if ($scope.data.PartyAccount == true) {
+                //    $http({
+                //        url: '/api/MemoMasters/GetMemoMastersSummary/' + fd + '/' + td + '/' + customerId,
+                //        method: "GET",
+                //        headers: authHeaders
+                //    }).success(function (data) {
+                //        if (data.length > 0) {
+                //            $scope.customerSaleLedgers = data;
+                //        }
+                //    }).error(function (error) {
+                //        $scope.message = 'Unable to get Payments info' + error.message;
+                //        $scope.messageType = "warning";
+                //        $scope.clientMessage = false;
+                //        $timeout(function () { $scope.clientMessage = true; }, 5000);
+                //    });
+                ////} else {
+                ////    $scope.customerSaleLedgers = {};
+                ////}
+
+                ////Get Memo DateBetween Category Wise Grouping List Data
+                //$http({
+                //    url: "/api/MemoMasters/GetMemoByDateBetweenForCategoryWiseGrouping/" + fd + '/' + td + '/' + customerId,
+                //    method: "GET",
+                //    headers: authHeaders
+                //}).success(function (data) {
+                //    if (data.length > 0) {
+                //        $scope.categoryWiseGroupingSaleList = data;
+                //        //console.log(data);
+                //    }
+                //});
+
+                //$scope.searchPayment = {};
+                $scope.submitted = false;
+                //$scope.searchPayment.CreditLimit = 0;
+                //$scope.searchPayment.TotalCredit = 0;
+                //$scope.searchPayment.Address = "";
+                $scope.searchCustomerLedgerForm.$setPristine();
+                $scope.searchCustomerLedgerForm.$setUntouched();
+                $scope.loading = false;
+            } else {
+                alert("Please  correct form errors!");
+            }
+        };
+        $scope.totalSale = function (memos) {
+            var total = 0;
+            angular.forEach(memos, function (items) {
+                //total += item.MemoDetailViews[i].Quantity * (item.MemoDetailViews[i].Rate - item.MemoDetailViews[i].Discount);
+                angular.forEach(items.MemoDetailViews, function (item) {
+                    total += parseFloat(item.Quantity) * (parseFloat(item.Rate) - parseFloat(item.Discount));
+                })
+            })
+            return total;
+        };
+        $scope.GetGroupSumOfILineTotal = function (group) {
+            var groupWiseSum = 0;
+            for (var i in group) {
+                groupWiseSum = groupWiseSum + (parseFloat(group[i].Quantity) * (parseFloat(group[i].Rate) - parseFloat(group[i].Discount)));
+            }
+            return groupWiseSum;
+        };
+        $scope.GetGroupSumOfILineQu = function (group) {
+            var groupWiseSum = 0;
+            for (var i in group) {
+                groupWiseSum = groupWiseSum + parseFloat(group[i].Quantity);
+            }
+            return groupWiseSum;
+        };
+        $scope.showMemo = function (aMemo) {
+            
+            console.log(aMemo);
+            $http({
+                url: "/api/MemoMasters/" + aMemo.MemoMasterId ,
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                if (data.length > 0) {
+                    $scope.memos = data;
+                    //console.log(data);
+                    $scope.showModal = true;
+                }
+            });
+            
+        };
+        $scope.clear = function () {
+            $scope.searchCustomerLedger = '';
+            $scope.Address = '';
+            $scope.customerLedgers = '';
+            $scope.categoryWiseGroupingSaleList = '';
+            $scope.searchCustomerLedger = {};
+            $scope.searchCustomerLedgerForm.$setPristine();
+            $scope.searchCustomerLedgerForm.$setUntouched();
+        };
         $scope.exportToExcel = function (tableId) { // ex: '#my-table'
             var exportHref = Excel.tableToExcel(tableId, 'WireWorkbenchDataExport');
             $timeout(function () { location.href = exportHref; }, 100); // trigger download
         };
+
+        //Date between NetBalance
+        $scope.DateBetweenNetBalance = function (recordsArray) {
+            var total = 0;
+            angular.forEach(recordsArray, function (item) {
+                total += parseFloat(item.Opening) + parseFloat(item.TotalBf) + parseFloat(item.ActualSales) - parseFloat(item.TotalPayments) - parseFloat(item.TotalDiscounts);
+
+            })
+            return total;
+        };
+        $scope.customerNetBalance = function ( memos, collections) {
+            var open = 0;
+            if ($scope.opening) {
+                open = $scope.opening;
+            }
+            var totalSale = 0;
+            var totalSaleCol = 0;
+            var totalDis = 0;
+            angular.forEach(memos, function (item) {
+                totalSale += parseFloat(item.NetMemoAmount);
+            })
+            angular.forEach(collections, function (i) {
+                totalSaleCol += parseFloat(i.SCAmount);
+                totalDis += parseFloat(i.SDiscount);
+            })
+            return parseFloat(open + totalSale - totalSaleCol - totalDis);
+        };
+
+
+        $http({
+            url: "/api/Customer/CustomerDropDownList",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.customerList = data;
+            //console.log(data);
+        });
+        // Loged in user detail
+        $scope.userRole = "";
+        $scope.userDetails = [];
+        $http({
+            url: "/api/Projects/LogedInUserRole",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.userDetails = data;
+            $scope.userRole = data.role[0];
+
+            if ($scope.userRole == "Accounts Manager") {
+
+            } else if ($scope.userRole == "Accounts") {
+                loadAccOfficerDashbord()
+            } else if ($scope.userRole == "Unit Manager") {
+                loadUnitMagerDashbord()
+            } else if ($scope.userRole == "Show Room Manager") {
+
+            } else if ($scope.userRole == "Zone Manager") {
+                loadZoneManagerDashbord()
+            } else if ($scope.userRole == "Show Room Sales") {
+                loadShowRoomOfficerDashbord()
+            } else if ($scope.userRole == "Process Manager") {
+
+            } else if ($scope.userRole == "Process Officer") {
+
+            } else if ($scope.userRole == "Design Manager") {
+                loadDesignManagerDashbord()
+            } else if ($scope.userRole == "Admin") {
+
+            } else if ($scope.userRole == "GM") {
+
+            } else if ($scope.userRole == "MD") {
+
+            }
+
+        });
 }])

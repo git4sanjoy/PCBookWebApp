@@ -26,7 +26,7 @@
 <div class="box box-primary">
     <div class="box-header with-border">
         <md-switch ng-model="data.cb1" aria-label="Preview and Search Hide" style="margin:0;padding:0;">
-            <span ng-class="data.cb1 == true ? 'box-title text-red' : 'box-title text-black'">Purchase Preview and Search Hide : {{data.cb1}}</span>
+            <span ng-class="data.cb1 == true ? 'box-title text-red' : 'box-title text-black'">Purchase</span>
         </md-switch>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -71,10 +71,47 @@
                                        ng-model="purchase.PChallanNo" tabindex="2">
                             </md-input-container>
                         </div>
-                        <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="col-lg-3 col-md-6 col-sm-12">
                             <md-input-container style="width:100%!important">
-                                <label>Supplier Name</label>
-                                <md-autocomplete tabindex="3" name="supplierFormAutocomplite"
+                                <label>Order No</label>
+                                <md-autocomplete tabindex="4" name="orderNumberFormAutocomplite"
+                                                 move-focus-by-enter-key
+                                                 placeholder="Order No."
+                                                 ng-disabled="isDisabled"
+                                                 md-no-cache="noCache"
+                                                 md-selected-item="orderNumberSelectedItem"
+                                                 md-search-text-change="orderNumberTextChange(orderNumberSearchText)"
+                                                 md-selected-item-change="orderNumberSelectedItemChange(item)"
+                                                 md-search-text="orderNumberSearchText"
+                                                 md-items="item in getOrderNumbers(orderNumberSearchText)"
+                                                 md-item-text="item.OrderNumber"
+                                                 md-min-length="0"
+                                                 ng-model="purchase.OrderNo">
+                                    <span class="input-group-addon"><i class="fa fa-codepen"></i></span>
+                                    <md-item-template>
+                                        <span md-highlight-text="orderNumberSearchText" md-highlight-flags="^i">{{item.OrderNumber}}</span>
+                                    </md-item-template>
+                                    <md-not-found>
+                                        No Supplier List matching "{{orderNumberSearchText}}" were found.
+                                        <a ng-click="addNewOrderNumber(orderNumberSearchText)">Create a new one!</a>
+                                    </md-not-found>
+                                   
+                                </md-autocomplete>
+                            </md-input-container>
+                        </div>
+                        <!--<div class="col-lg-3 col-md-6 col-sm-12">
+                            <md-input-container>
+                                <label>Lot No</label>
+                                <input id="PChallanNo" autocomplete="off"
+                                       ng-required="true"
+                                       move-focus-by-enter-key
+                                       ng-model="purchase.LotNo" tabindex="3">
+                            </md-input-container>
+                        </div>-->
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <md-input-container style="width:100%!important">
+                                <label>Supplier Name *</label>
+                                <md-autocomplete tabindex="4" name="supplierFormAutocomplite"
                                                  move-focus-by-enter-key
                                                  placeholder="Supplier"
                                                  ng-disabled="isDisabled"
@@ -86,7 +123,7 @@
                                                  md-items="item in getSuppliers(supplierSearchText)"
                                                  md-item-text="item.SupplierName"
                                                  md-min-length="0"
-                                                  ng-model="purchase.SupplierId">
+                                                 ng-model="purchase.SupplierId">
                                     <span class="input-group-addon"><i class="fa fa-codepen"></i></span>
                                     <md-item-template>
                                         <span md-highlight-text="supplierSearchText" md-highlight-flags="^i">{{item.SupplierName}}</span>
@@ -103,10 +140,10 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12 col-md-6 col-lg-6">
+                        <div class="col-sm-8 col-md-3 col-lg-3">
                             <md-input-container style="width:100%!important">
-                                <label>Product Name</label>
-                                <md-autocomplete tabindex="4"
+                                <label>Product Name *</label>
+                                <md-autocomplete tabindex="5"
                                                  move-focus-by-enter-key
                                                  placeholder="Select your Products"
                                                  ng-disabled="isDisabled"
@@ -136,7 +173,7 @@
                                 <div style="width:50%;float:left">
                                     <md-input-container>
                                         <label>Quantity</label>
-                                        <input tabindex="5"
+                                        <input tabindex="6"
                                                ng-required="true"
                                                move-focus-by-enter-key
                                                ng-model="purchase.Quantity">
@@ -145,18 +182,18 @@
                                 <div style="width:50%;float:left">
                                     <md-input-container>
                                         <label>SE</label>
-                                        <input tabindex="6" move-focus-by-enter-key
+                                        <input tabindex="7" move-focus-by-enter-key
                                                ng-model="purchase.SE">
                                     </md-input-container>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
                             <div style="width:100%">
                                 <div style="width:50%;float:left">
                                     <md-input-container>
                                         <label>Amount</label>
-                                        <input tabindex="7"
+                                        <input tabindex="8"
                                                ng-required="true"
                                                move-focus-by-enter-key
                                                ng-model="purchase.Amount">
@@ -168,38 +205,66 @@
                                         <input tabindex="8" move-focus-by-enter-key
                                                ng-model="purchase.Discount">
                                     </md-input-container>
-                                </div>
+                                </div>                                
                             </div>
-
                         </div>
-
-
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
-                            <md-button 
-                                       ng-click="Save(purchase)" 
-                                       ng-disabled="entryForm.$invalid" 
-                                       ng-hide="editMode" class="md-raised md-primary"><i class="fa fa-save"></i> Save</md-button>
-                            <md-button 
-                                       ng-click="Update(purchase)" 
-                                       ng-disabled="entryForm.$invalid" 
-                                       ng-show="editMode" class="md-raised md-warn"><i class="fa fa-edit"></i> Update</md-button>
-                            <md-button 
-                                       ng-click="Cancel()" class="md-raised"
-                                       ><i class="fa fa-refresh"></i> Clear
+                            <md-button ng-click="Save(purchase)"
+                                       ng-disabled="entryForm.$invalid"
+                                       ng-hide="editMode" class="md-raised md-primary"><i class="fa fa-save"></i>Save</md-button>
+                            <md-button ng-click="Update(purchase)"
+                                       ng-disabled="entryForm.$invalid"
+                                       ng-show="editMode" class="md-raised md-warn"><i class="fa fa-edit"></i>Update</md-button>
+                            <md-button ng-click="Cancel()" class="md-raised">
+                                <i class="fa fa-refresh"></i> Clear
                             </md-button>
                         </div>
                     </div>
                 </form>
             </md-card-content>
-            <md-card ng-hide="data.cb1">
-                <md-card-title>
-                    <md-card-title-text>
-                        <span class="md-headline"><i class="fa fa-search"></i> Preview and Search</span>
-                    </md-card-title-text>
-                </md-card-title>
 
+            <div ng-hide="data.cb1">
+                <!--<md-card-title>
+                    <md-card-title-text>
+                        <span class="md-headline"><i class="fa fa-search"></i> Search</span>
+                    </md-card-title-text>
+                </md-card-title>-->
+                <md-card-content>
+                    <table class="table table-bordered table-hover table-condensed" style="margin-top:1em;">
+                        <thead>
+                            <tr style="font-weight: bold" class="info">
+                                <td style="width:10%">Date</td>
+                                <td style="width:10%">Challan No</td>
+                                <td style="width:10%">Lot No</td>
+                                <td style="width:20%">Supplier</td>
+                                <td style="width:20%">Product Name</td>
+                                <td style="width:10%">Quantity</td>
+                                <td style="width:5%">S/E</td>
+                                <td style="width:10%">Amount</td>
+                                <td style="width:5%">Discount</td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in List">
+                                <td>{{item.PurchaseDate |  date: 'dd/MM/yyyy'}}</td>
+                                <td>{{item.PChallanNo}}</td>
+                                <td>{{item.OrderNo}}</td>
+                                <td>{{item.SupplierName}}</td>
+                                <td>{{item.PurchasedProductName}}</td>
+                                <td>{{item.Quantity}}</td>
+                                <td>{{item.SE}}</td>
+                                <td>{{item.Amount | currency : "":0}}</td>
+                                <td>{{item.Discount | currency : "":0}}</td>
+                                <!--<td> <button class="btn btn-primary btn-sm" ng-click="Edit(item)" data-toggle="tooltip"><i class="glyphicon glyphicon-edit"></i></button></td>-->
+                                <td> <button class="btn btn-danger btn-sm" ng-click="Delete(item)" data-toggle="tooltip"><i class="glyphicon glyphicon-trash"></i></button></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-card-content>
                 <md-card-content>
                     <form ng-submit="submitSearchForm()" name="searchForm" novalidate role="form" class="form-horizontal" id="searchForm">
                         <div class="row">
@@ -313,43 +378,9 @@
                         </div>
                     </form>
                 </md-card-content>
-                <md-card-content>
 
-                    <table class="table table-bordered table-hover table-condensed" style="margin-top:1em;">
-                        <thead>
-                            <tr style="font-weight: bold" class="info">
-                                <td style="width:10%">Date</td>
-                                <td style="width:10%">Challan No</td>
-                                <td style="width:20%">Supplier</td>
-                                <td style="width:20%">Product Name</td>
-                                <td style="width:10%">Quantity</td>
-                                <td style="width:5%">S/E</td>
-                                <td style="width:10%">Amount</td>
-                                <td style="width:5%">Discount</td>
-                                <td colspan="2"></td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="item in List">
-                                <td>{{item.PurchaseDate |  date: 'dd/MM/yyyy'}}</td>
-                                <td>{{item.PChallanNo}}</td>
-                                <td>{{item.SupplierName}}</td>
-                                <td>{{item.PurchasedProductName}}</td>
-                                <td>{{item.Quantity}}</td>
-                                <td>{{item.SE}}</td>
-                                <td>{{item.Amount | currency : "":0}}</td>
-                                <td>{{item.Discount | currency : "":0}}</td>
-                                <td> <button class="btn btn-primary btn-sm" ng-click="Edit(item)" data-toggle="tooltip"><i class="glyphicon glyphicon-edit"></i></button></td>
-                                <td> <button class="btn btn-danger btn-sm" ng-click="Delete(item)" data-toggle="tooltip"><i class="glyphicon glyphicon-trash"></i></button></td>
-
-                            </tr>
-                        </tbody>
-                    </table>
-                </md-card-content>
-            </md-card>
+            </div>
         </md-card>
-
-
 
     </div><!-- /.box-body -->
 </div>

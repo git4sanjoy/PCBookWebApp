@@ -651,7 +651,7 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                         CostCenterId: item.CostCenterId
                     });
                 })
-                
+                //var fd = $filter('date')(item.honourDate, "yyyy-MM-dd");
                 $http({
                     url: "/api/VoucherDetails/PostVoucherDetail",
                     data: voucherItems,
@@ -666,7 +666,7 @@ app.controller('BookkeepingController', ['$scope', '$location', '$http', '$timeo
                                 VoucherId: voucherId,
                                 BankOrPartyName: item.bankAccountNo,
                                 CheckOrMoneyReceiptNo: item.checkOrMReceiptNo,
-                                HonourDate: item.honourDate,
+                                HonourDate: $filter('date')(item.honourDate, "yyyy-MM-dd"),
                                 Amount: item.amount,
                                 ShowRoomId: 0
                             });

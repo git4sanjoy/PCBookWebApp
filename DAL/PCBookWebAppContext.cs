@@ -123,5 +123,11 @@ namespace PCBookWebApp.DAL
         public System.Data.Entity.DbSet<PCBookWebApp.Models.SalesModule.Division> Divisions { get; set; }
 
         public System.Data.Entity.DbSet<PCBookWebApp.Models.SalesModule.UnitManager> UnitManagers { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.SalesModule.WareHouse> WareHouses { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.PurchasedProductRate> PurchasedProductRates { get; set; }
+
+        public System.Data.Entity.DbSet<PCBookWebApp.Models.ProcessModule.FinishedGoodStockDetails> FinishedGoodStockDetails { get; set; }
     }
 }

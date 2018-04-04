@@ -19,6 +19,7 @@ namespace PCBookWebApp.Models.ProcessModule
         public string PChallanNo { get; set; }
         public double Quantity { get; set; }
         public double? SE { get; set; }
+        public string OrderNo { get; set; }
         public double Amount { get; set; }
         public double? Discount { get; set; }
         public int? ProcesseLocationId { get; set; }

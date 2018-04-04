@@ -1,0 +1,86 @@
+﻿<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cubes"></i> Total Primaries : {{users.length}}</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <div class="row">
+            <!--Server side error messageing------>
+            <div class="col-sm-12">
+                <div class="" ng-hide="serverMessage">
+                    <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                        <ul>
+                            <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--End Server side error messageing-->
+            <!--Client side error messageing------>
+            <div class="col-sm-12">
+                <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+                    {{message}}
+                </div>
+            </div>
+            <!--End Client side error messageing-->
+        </div>
+        <table class="table table-bordered table-hover table-condensed table-striped">
+            <thead>
+                <tr style="font-weight: bold" class="info">
+                    <td style="width:25%">Primary Name</td>
+                    <td style="width:15%">Action</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="productObj in users">
+                    <td>
+                        <!-- editable username (text with validation) -->
+                        <span editable-text="productObj.name" e-name="name" e-form="rowform" onbeforesave="checkName($data, productObj.id)">
+                            {{ productObj.name || 'empty' }}
+                        </span>
+                    </td>
+
+                    <td style="white-space: nowrap">
+                        <!-- form -->
+                        <form editable-form name="rowform" onbeforesave="saveUser($data, productObj.id)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == productObj">
+                            <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+                                save
+                            </button>
+                            <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                                cancel
+                            </button>
+                        </form>
+                        <div class="buttons" ng-show="!rowform.$visible">
+                            <button class="btn btn-primary" ng-click="rowform.$show()"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-danger" ng-click="remove($index, productObj.id)"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2">
+                        <button class="btn btn-success" ng-click="addUser()"><i class="fa fa-plus"></i> Add Primary</button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>
+
+
+
+

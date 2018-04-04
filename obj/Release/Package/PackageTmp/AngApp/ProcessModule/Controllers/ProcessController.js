@@ -20,7 +20,7 @@ app.controller('ProcessController', ['$scope', '$location', '$http', '$timeout',
             authHeaders.Authorization = 'Bearer ' + accesstoken;
         }
         $scope.data = {
-            cb1: false
+            cb1: true
         };
 
 
@@ -64,10 +64,12 @@ app.controller('ProcessController', ['$scope', '$location', '$http', '$timeout',
                 $scope.List = data.list;
                 $scope.ProsessList = data.prosessList;
                 $scope.prosessListAll = data.prosessListAll;
-                //$scope.PurchasedProductList = data.purchasedProductList;
+                $scope.PurchasedProductList = data.purchasedProductList;
                 $scope.ProcesseLocationList = data.processeLocationList;
                 $scope.ConversionList = data.conversionList;
                 $scope.ShowRoomList = data.showRoomList;
+                $scope.FinishedGoodsList = data.finishedGoodsList;
+                $scope.UnitRole = data.unitRole;
             }).error(function (data) {
                 $scope.message = "Process list loading failed.";
                 $scope.messageType = "warning";
@@ -77,9 +79,9 @@ app.controller('ProcessController', ['$scope', '$location', '$http', '$timeout',
             });
         }
         $scope.GetAllList();
-
+        
         //**Save Process**
-        $scope.Save = function (process, newID) {
+        $scope.Save = function (process, newID) {            
 
             if (newID != null && process.ProcessListId == newID.ProcessListId) {
 
@@ -87,10 +89,7 @@ app.controller('ProcessController', ['$scope', '$location', '$http', '$timeout',
 
             } else {
 
-                var date = $filter('date')($scope.process.ProcessDate, "yyyy-MM-dd");
-
-                //console.log(process);
-                //return false;
+                var date = $filter('date')($scope.process.ProcessDate, "yyyy-MM-dd");                
 
                 var obj1 = {
                     PurchasedProductId: $scope.process.PurchasedProductId.PurchasedProductId,
@@ -98,12 +97,12 @@ app.controller('ProcessController', ['$scope', '$location', '$http', '$timeout',
                     ProcessDate: date,
                     ProcesseLocationId: process.ProcesseLocationId,
                     ProcessListId: process.ProcessListId,
-                    LotNo: process.LotNo,
+                    LotNo: process.LotNo.LotNo,
                     DeliveryQuantity: process.DeliveryQuantity,
-                    ReceiveQuantity: 0,
-                    SE: 0,
+                    ReceiveQuantity: 0, 
+                    SE: !process.SE ? 0 : process.SE,
                     Rate: 0,
-                    Amount: 0,
+                    Amount: !process.Amount ? 0 : process.Amount,
                     Discount: 0
                 };               
                 var obj2 = {
@@ -112,45 +111,76 @@ app.controller('ProcessController', ['$scope', '$location', '$http', '$timeout',
                     ProcessDate: date,
                     ProcesseLocationId: process.ProcesseLocationId,
                     ProcessListId: newID.ProcessListId,
-                    LotNo: process.LotNo,
+                    LotNo: process.LotNo.LotNo,
                     ReceiveQuantity: process.DeliveryQuantity,
                     DeliveryQuantity: 0,
                     SE: 0,
                     Rate: 0,
                     Amount: 0,
                     Discount: 0
-                };
+                }; 
+                if (newID.ProcessListName == 'Finished') {
+                    var finishedGoodsObj = {
+                        FinishedGoodId: process.FinishedGoodId,
+                        ProcesseLocationId: process.ProcesseLocationId,
+                        ReceiveDate: date,
+                        OrderQuantity: 0,
+                        ReceiveQuantity: process.DeliveryQuantity,
+                        DeliveryQuantity: 0
+                    }
+                };            
 
-                if (newID.ProcessListName == 'Short/Excess') {
+                if (newID.ProcessListName == 'Short/Excess' && $scope.UnitRole == 'Trading') {
                     process.ProcessDate = date;
                     process.PurchasedProductId = process.PurchasedProductId.PurchasedProductId;
-                    process.LotNo = process.LotNo;
+                    process.LotNo = process.LotNo.LotNo;
                     process.SE = process.DeliveryQuantity;
                     process.DeliveryQuantity = 0;
                     process.ReceiveQuantity = 0;
                     process.Rate = 0;
                     process.Amount = 0;
                     process.Discount = 0;
-                };
-                if (newID.ProcessListName == 'Finished') {
-                    process.ProcessDate = date;
-                    process.PurchasedProductId = process.PurchasedProductId.PurchasedProductId;
-                    process.LotNo = process.LotNo;
-                    process.DeliveryQuantity = process.DeliveryQuantity;
-                    process.SE = 0;
-                    process.ReceiveQuantity = 0;
-                    process.Rate = 0;
-                    process.Amount = 0;
-                    process.Discount = 0;
-                };
+                };              
 
-                if (newID.ProcessListName == 'Short/Excess' || newID.ProcessListName == 'Finished') {
+                if (newID.ProcessListName == 'Short/Excess' && $scope.UnitRole == 'Trading') {
+                    
                     $http({
                         url: '/api/Processes/PostProcess',
                         data: process,
                         method: "POST",
                         headers: authHeaders
                     }).success(function (data) {
+                        $scope.message = "Process data saved successfully.";
+                        $scope.messageType = "success";
+                        $scope.clientMessage = false;
+                        $timeout(function () { $scope.clientMessage = true; }, 5000);
+                        $scope.GetAllList();
+                        $scope.Cancel();
+                    }).error(function (data) {
+                        $scope.message = "Process data saving attempt failed!";
+                        $scope.messageType = "warning";
+                        $scope.clientMessage = false;
+                        $timeout(function () { $scope.clientMessage = true; }, 5000);
+                        //toastr.error("Supplier data saving attempt failed!", "Error");
+                    });
+                }
+                else if (newID.ProcessListName == 'Finished') {
+                   
+                    $http({
+                        url: '/api/Processes/PostProcess',
+                        data: obj1,
+                        method: "POST",
+                        headers: authHeaders
+                    }).success(function (data) {                        
+                        $http({
+                            url: '/api/FinishedGoodStocks/PostFinishedGoodStock',
+                            data: finishedGoodsObj,
+                            method: "POST",
+                            headers: authHeaders
+                        }).success(function (data) {                           
+                            }).error(function (data) {                              
+                        });
+
                         $scope.message = "Process data saved successfully.";
                         $scope.messageType = "success";
                         $scope.clientMessage = false;
@@ -346,11 +376,12 @@ app.controller('ProcessController', ['$scope', '$location', '$http', '$timeout',
                     if (data.length > 0) {
                         $scope.PurchasedProductList = data;
                         if (data.length == 1) {                          
-                            $scope.process = angular.copy(data[0]);
-                            //$scope.process.PurchasedProductId.PurchasedProductId = data[0].PurchasedProductId;
-                            $scope.process.PurchasedProductId = { PurchasedProductId: data[0].PurchasedProductId, PurchasedProductName: data[0].PurchasedProductName };
-                            $scope.process.DeliveryQuantity = angular.copy(data[0].ReceiveQuantity);
-                            $scope.ProcessList = '';
+                            //$scope.process = angular.copy(data[0]);
+                            ////$scope.process.PurchasedProductId.PurchasedProductId = data[0].PurchasedProductId;
+                            //$scope.process.PurchasedProductId = { PurchasedProductId: data[0].PurchasedProductId, PurchasedProductName: data[0].PurchasedProductName };
+                            //$scope.process.DeliveryQuantity = angular.copy(data[0].ReceiveQuantity);
+                            //$scope.ProcessList = '';
+                            $scope.ProcessList = data;
                         } else {                          
                             $scope.ProcessList = data;
                             $scope.getTotal = function () {

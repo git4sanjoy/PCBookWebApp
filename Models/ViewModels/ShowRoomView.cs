@@ -32,5 +32,6 @@ namespace PCBookWebApp.Models.ViewModels
         public string ShowRoomNameBangla { get; set; }
         public double ActualCredit { get; set; }
         public string ShopName { get; set; }
+        public string ZoneName { get; set; }
     }
 }

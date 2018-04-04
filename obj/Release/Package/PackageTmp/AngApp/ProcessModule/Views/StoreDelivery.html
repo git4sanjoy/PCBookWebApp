@@ -26,7 +26,7 @@
 <div class="box box-primary">
     <div class="box-header with-border">
         <md-switch ng-model="data.cb1" aria-label="Preview and Search Hide" style="margin:0;padding:0;">
-            <span ng-class="data.cb1 == true ? 'box-title text-red' : 'box-title text-black'">Store Delivery Preview and Search Hide : {{data.cb1}}</span>
+            <span ng-class="data.cb1 == true ? 'box-title text-red' : 'box-title text-black'">Store Delivery</span>
         </md-switch>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -38,16 +38,28 @@
         <md-card>
             <md-card-title>
                 <md-card-title-text>
-                    <span class="md-headline"><i class="fa fa-cart-arrow-down"></i> Add Store Delivery</span>
+                    <span class="md-headline"><i class="fa fa-cart-arrow-down"></i> Store Delivery</span>
+                    <span class="md-subhead" ng-show="true"><span class="text-red">Stock : {{AvailableData|number}} Rate: {{AvgRate|number}}</span></span>
                 </md-card-title-text>
             </md-card-title>
             <md-card-content>
                 <div class="row">
                     <div class="col-lg-2 col-md-6 col-sm-12">
+                        <div class="invoice-number-container">
+                            <label for="invoice-number">Order No </label>
+                            <input id="PChallanNo" type="text" class="form-control" tabindex="1"
+                                   name="PChallanNo" placeholder="Order No." autocomplete="off"
+                                   move-focus-by-enter-key
+                                   ng-model="challan.PChallanNo"
+                                   typeahead-on-select="changeSelectOrderNo($item)"
+                                   typeahead="p.OrderNumber for p in orderNoList | filter:$viewValue | limitTo:20">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12">
                         <label>Date</label>
                         <div class="input-group">
                             <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-                            <input name="PurchaseDate" id="PurchaseDate" type="text" class="form-control" placeholder="Date" autocomplete="off" dateformat="dd/MM/yyyy" tabindex="1"
+                            <input name="PurchaseDate" id="PurchaseDate" type="text" class="form-control" placeholder="Date" autocomplete="off" dateformat="dd/MM/yyyy" tabindex="2"
                                    ng-focus="PurchaseDatePickerOpen()"
                                    move-focus-by-enter-key
                                    datepicker-localdate
@@ -64,26 +76,24 @@
                             <label>Factory Location</label>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-industry"></i></span>
-                                <select class="form-control" data-val="true" tabindex="2"
+                                <select class="form-control" data-val="true" tabindex="3"
                                         move-focus-by-enter-key
                                         ng-disabled="editMode"
                                         data-ng-options="item.ProcesseLocationId as item.ProcesseLocationName for item in ProcesslocationList"
                                         id="ProcesseLocationDdl" name="ProcesseLocationDdl"
                                         ng-model="challan.ProcesseLocationDdl"
-                                        ng-keyup="$event.keyCode == 13 && GetNewLotNo()"
-                                        ng-change="GetNewLotNo()"
                                         ng-required="true">
                                     <option value="">Select Factory</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="col-lg-3 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label>Process</label>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-recycle"></i></span>
-                                <select class="form-control" data-val="true" tabindex="3"
+                                <select class="form-control" data-val="true" tabindex="4"
                                         move-focus-by-enter-key
                                         ng-disabled="editMode"
                                         data-ng-options="item.ProcessListId as item.ProcessListName for item in ProcessList"
@@ -97,16 +107,7 @@
 
                     </div>
 
-                    <div class="col-xs-12 col-md-6 col-lg-2">
-                        <div class="invoice-number-container">
-                            <label for="invoice-number">Lot No </label>
-                            <input id="PChallanNo" type="text" class="form-control"
-                                   name="PChallanNo" placeholder="Lot No." autocomplete="off"
-                                   move-focus-by-enter-key
-                                   ng-disabled="true"
-                                   ng-model="challan.PChallanNo">
-                        </div>
-                    </div>
+
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
@@ -115,47 +116,55 @@
                                 <td colspan="2">
                                     <div class="input-group" style="width:100% !important;">
                                         <span class="input-group-addon"><i class="fa fa-apple"></i></span>
-                                        <input class="form-control" name="PurchasedProductDdl" id="PurchasedProductDdl" type="text" tabindex="3" placeholder="Product Name"
+                                        <input class="form-control" name="PurchasedProductDdl" id="PurchasedProductDdl" type="text" tabindex="5" autocomplete="off"
+                                               placeholder="Product Name"
                                                ng-model="challan.PurchasedProductDdl"
                                                move-focus-by-enter-key
                                                typeahead-on-select="changeSelectProductName($item)"
-                                               typeahead="p.PurchasedProductName for p in PurchasedProductList | filter:$viewValue | limitTo:8" />
+                                               typeahead="p.PurchasedProductName for p in PurchasedProductList | filter:$viewValue | limitTo:20" />
                                     </div>
                                 </td>
-                                <td>
+
+                                <td colspan="2">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-cube"></i></span>
                                         <input class="form-control" id="DeliveryQuantity" type="text" name="DeliveryQuantity"
-                                               placeholder="Quantity" autocomplete="off" tabindex="4"
+                                               placeholder="Quantity" autocomplete="off" tabindex="6"
                                                onfocus="javascript: if(this.value == '0'){ this.value = ''; }"
                                                onblur="javascript: if(this.value==''){this.value='0';}"
                                                move-focus-by-enter-key
                                                ng-model="challan.DeliveryQuantity">
                                     </div>
                                 </td>
+
                                 <td colspan="2">
-                                    <md-button ng-hide="editMode" aria-label="Add Item" class="md-raised btn-block" ng-click="addItem()" tabindex="5">
-                                    <i class="fa fa-plus"></i> Add Item
+                                    <md-button ng-hide="editMode" aria-label="Add Item" class="md-raised btn-block" ng-click="addItem()" tabindex="7">
+                                    <i class="fa fa-plus"></i> Add
                                     </md-button>
-                                    <md-button ng-show="editMode" aria-label="Save" class="md-raised md-warn btn-block" ng-click="saveNewItem()" tabindex="7">
+                                    <md-button ng-show="editMode" aria-label="Save" class="md-raised md-warn btn-block" ng-click="saveNewItem()" tabindex="8">
                                     <i class="fa fa-save"></i> Save
                                     </md-button>
                                 </td>
                             </tr>
                             <tr class="">
                                 <th width="5%" style="text-align:center">SL</th>
-                                <th width="60%">Product Name</th>
-                                <th width="20%">Delivery Quantity</th>
+                                <th width="50%">Product Name</th>
+                                <th width="20%">Quantity</th>
+                                <th width="10%">Rate</th>
                                 <th width="15%"></th>
                             </tr>
                             <tr ng-repeat="item in challan.items">
                                 <td width="5%" style="text-align:center">{{$index+1}}</td>
-                                <td width="60%">{{ item.PurchasedProductName}}</td>
+                                <td width="50%">{{ item.PurchasedProductName}}</td>
                                 <td width="20%">
                                     <input class="form-control" type="text" ng-model="item.DeliveryQuantity" ng-required>
                                 </td>
+                                <td>
+                                    {{item.AvgRate}}
+                                </td>
                                 <td width="15%" style="white-space: nowrap">
-                                    <button ng-hide="editMode" type="button" ng-click="removeItem($index)" class="btn btn-danger" data-toggle="tooltip" data-placement="right" title="Cancel">
+                                    <button ng-hide="editMode" type="button" ng-click="removeItem($index)" class="btn btn-danger btn-block" 
+                                            data-toggle="tooltip" data-placement="right" title="Cancel">
                                         <i class="fa fa-close"></i>
                                     </button>
                                     <div class="btn-group" role="group" aria-label="" ng-show="editMode">
@@ -168,6 +177,7 @@
                             <tr class="text-bold">
                                 <td colspan="2" align="right">Total</td>
                                 <td>{{totalQuantity()}}</td>
+                                <td></td>
                                 <td>
                                     <md-button ng-hide="editMode" aria-label="Save" class="md-raised md-primary btn-block" ng-click="SaveStoreDelivery()" tabindex="6"><i class="fa fa-save"></i> Save</md-button>
                                     <md-button ng-show="editMode" aria-label="Clear" class="md-raised btn-block" ng-click="clear()" tabindex="8"><i class="fa fa-refresh"></i> Clear</md-button>
@@ -181,43 +191,104 @@
         </md-card>
 
         <md-card ng-hide="data.cb1">
-            <md-card-title>
+            <!--<md-card-title>
                 <md-card-title-text>
-                    <span class="md-headline"><i class="fa fa-search"></i> Search and Preview Store Delivery</span>
+                    <span class="md-headline"><i class="fa fa-search"></i> Store Delivery</span>
                 </md-card-title-text>
-            </md-card-title>
+            </md-card-title>-->
             <md-card-content>
+                <form ng-submit="submitSearchForm()" name="searchForm" novalidate role="form" class="form-horizontal" id="searchForm">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6 col-lg-3">
+                            <md-input-container>
+                                <label>From Date</label>
+                                <input class="form-control" type="text" id="FromDate" name="FromDate" tabindex="10" autocomplete="off"
+                                       move-focus-by-enter-key
+                                       ng-focus="FromDatePickerOpen()"
+                                       datepicker-localdate
+                                       datepicker-popup="dd/MM/yyyy"
+                                       is-open="fromDatePickerIsOpen"
+                                       ng-click="FromDatePickerOpen()"
+                                       ng-required="true"
+                                       ng-model="purchaseSearch.FromDate">
+                            </md-input-container>
 
-                <table class="table table-bordered table-hover table-condensed">
-                    <thead>
-                        <tr style="font-weight: bold" class="info">
-                            <td style="width:5%">SL</td>
-                            <td style="width:10%">Date</td>
-                            <td style="width:10%">LotNo</td>
-                            <td style="width:35%">Factory</td>
-                            <td style="width:20%">Process</td>
-                            <td style="width:10%">Quantity</td>
-                            <td colspan="2" style="width:10%"></td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="item in ProcessDetailList">
-                            <td>{{$index+1}}</td>
-                            <td>{{item.PurchaseDate |  date: 'dd/MM/yyyy'}}</td>
-                            <td>{{item.PChallanNo}}</td>
-                            <td>{{item.ProcesseLocationName}}</td>
-                            <td>{{item.ProcessListName}}</td>
-                            <td>{{item.DeliveryQuantity}}</td>
-                            <td class="text-center">
-                                <i class="fa fa-edit" ng-click="FindLotNo(item.PChallanNo)" data-toggle="tooltip" data-placement="left" title="Edit"></i>
-                            </td>
-                            <td class="text-center">
-                                <i class="fa fa-trash-o" ng-click="DeleteByLotNo(item)" data-toggle="tooltip" data-placement="right" title="Delete"></i>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            <p ng-show="searchForm.FromDate.$error.required && (searchForm.FromDate.$dirty || submitted)" class="help-block">Date is required.</p>
+                        </div>
+
+                        <div class="col-sm-12 col-md-6 col-lg-3">
+                            <md-input-container>
+                                <label>To Date</label>
+                                <input class="form-control" type="text" id="ToDate" name="ToDate" tabindex="11" autocomplete="off"
+                                       move-focus-by-enter-key
+                                       ng-focus="ToDatePickerOpen()"
+                                       datepicker-localdate
+                                       datepicker-popup="dd/MM/yyyy"
+                                       is-open="toDatePickerIsOpen"
+                                       ng-click="ToDatePickerOpen()"
+                                       ng-required="true"
+                                       ng-model="purchaseSearch.ToDate">
+                            </md-input-container>
+                            <p ng-show="searchForm.ToDate.$error.required && (searchForm.ToDate.$dirty || submitted)" class="help-block">To Date is required.</p>
+                        </div>
+                        <div style="display:none" class="col-sm-12 col-md-6 col-lg-3">
+                            <md-input-container>
+                                <label>Lot No</label>
+                                <input class="form-control" type="text" id="ToDate1" name="ToDate1" tabindex="11" autocomplete="off"
+                                       move-focus-by-enter-key
+                                       ng-model="purchaseSearch.PChallanNo">
+                            </md-input-container>
+                            
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-6">
+                            <md-button class="md-raised md-primary" style="margin-left:0;" type="submit" tabindex="14"
+                                       ng-click="submitSearchForm()"
+                                       ng-disabled="searchForm.$invalid">
+                                <i class="fa fa-search"></i> Search
+                            </md-button>
+                            <md-button class="md-raised" style="margin-left:0;"
+                                       ng-click="searchFormClear()">
+                                <i class="fa fa-refresh"></i> Clear
+                            </md-button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="table table-bordered table-hover table-condensed">
+                                <thead>
+                                    <tr style="font-weight: bold" class="info">
+                                        <td style="width:5%">SL</td>
+                                        <td style="width:10%">Date</td>
+                                        <td style="width:10%">LotNo</td>
+                                        <td style="width:35%">Factory</td>
+                                        <td style="width:20%">Process</td>
+                                        <td style="width:10%">Quantity</td>
+                                        <td colspan="2" style="width:10%"></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="item in ProcessDetailList">
+                                        <td>{{$index+1}}</td>
+                                        <td>{{item.PurchaseDate |  date: 'dd/MM/yyyy'}}</td>
+                                        <td>{{item.PChallanNo}}</td>
+                                        <td>{{item.ProcesseLocationName}}</td>
+                                        <td>{{item.ProcessListName}}</td>
+                                        <td>{{item.DeliveryQuantity}}</td>
+                                        <td class="text-center">
+                                            <i class="fa fa-edit" ng-click="FindLotNo(item.PChallanNo)" data-toggle="tooltip" data-placement="left" title="Edit"></i>
+                                        </td>
+                                        <td class="text-center">
+                                            <i class="fa fa-trash-o" ng-click="DeleteByLotNo(item)" data-toggle="tooltip" data-placement="right" title="Delete"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                    </div>
+                </form>
             </md-card-content>
+
         </md-card>
     </div><!-- /.box-body -->
 </div>

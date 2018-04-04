@@ -21,7 +21,8 @@ namespace PCBookWebApp.Models.ProcessModule
         public virtual ICollection<ConversionDetail> ConversionDetails { get; set; }
         public virtual PurchasedProduct PurchaseProduct { get; set; }
 
-
+        public int? MatricId1 { get; set; }
+        public int? MatricId2 { get; set; }
 
         public bool Active { get; set; }
         public string CreatedBy { get; set; }

@@ -49,15 +49,27 @@ namespace PCBookWebApp.Controllers.BankModule.Api
         }
         // GET: api/CheckReceives/5
         [ResponseType(typeof(CheckReceive))]
-        public async Task<IHttpActionResult> GetCheckReceive(int id)
+        public IHttpActionResult GetCheckReceive(int id)
         {
-            CheckReceive checkReceive = await db.CheckReceives.FindAsync(id);
+            //CheckReceive checkReceive = await db.CheckReceives.FindAsync(id);
+            //if (checkReceive == null)
+            //{
+            //    return NotFound();
+            //}
+            //return Ok(checkReceive);
+            var checkReceive =  db.CheckReceives
+                                    .Where(cr => cr.VoucherDetailId == id)
+                                    .Select(c => new {
+                                        c.HonourDate,
+                                        CheckNumber = c.CheckOrMoneyReceiptNo,
+                                        c.Amount
+                                    })
+                                    .ToList();
             if (checkReceive == null)
             {
                 return NotFound();
             }
-
-            return Ok(checkReceive);
+            return Ok(new { checkReceive });
         }
 
         // PUT: api/CheckReceives/5

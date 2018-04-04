@@ -36,5 +36,6 @@ namespace PCBookWebApp.Models.SalesModule
         public Nullable<System.DateTime> DateUpdated { get; set; }
 
         public virtual MemoMaster MemoMaster { get; set; }
+        public virtual Product Product { get; set; }
     }
 }

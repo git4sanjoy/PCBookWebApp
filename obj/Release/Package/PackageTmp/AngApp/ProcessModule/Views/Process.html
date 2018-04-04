@@ -26,7 +26,7 @@
 <div class="box box-primary">
     <div class="box-header with-border">
         <md-switch ng-model="data.cb1" aria-label="Preview and Search Hide" style="margin:0;padding:0;">
-            <span ng-class="data.cb1 == true ? 'box-title text-red' : 'box-title text-black'">Processes Preview and Search Hide : {{data.cb1}}</span>
+            <span ng-class="data.cb1 == true ? 'box-title text-red' : 'box-title text-black'">Processes Delivery</span>
         </md-switch>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -71,7 +71,7 @@
                 <form name="entryForm" novalidate role="form" class="form-horizontal" id="entryForm">
                     <div class="row" id="row1">
                         <div class="col-lg-4 col-md-6 col-sm-12">
-                            <label>Process Date</label>
+                            <label>Delivery Date</label>
                             <div class="input-group" ng-class="{ 'has-error' : entryForm.ProcessDate.$invalid && (entryForm.ProcessDate.$dirty || submitted)}">
                                 <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                                 <input name="ProcessDate" type="text" class="form-control" placeholder="Delivery Date" autocomplete="off" dateformat="dd/MM/yyyy" tabindex="1"
@@ -123,10 +123,10 @@
                     </div>
                     <div class="row" id="row2">
                         <div class="col-lg-4 col-md-6 col-sm-12">
-                            <label>Lot No.</label>
+                            <label>Order No.</label>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-sticky-note"></i></span>
-                                <input id="LotNo" type="text" class="form-control" name="LotNo" placeholder="Lot No." autocomplete="off" tabindex="4"
+                                <input id="LotNo" type="text" class="form-control" name="LotNo" placeholder="Order No." autocomplete="off" tabindex="4"
                                        move-focus-by-enter-key
                                        ng-model="process.LotNo"
                                        ng-keydown='$event.keyCode == 13 && GetProcessData(process.ProcesseLocationId, process.ProcessListId, process.LotNo)'
@@ -135,10 +135,10 @@
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-6 col-sm-12">
-                            <label>Product Name</label>
+                            <label>Processed Product Name</label>
                             <div class="input-group" ng-class="{ 'has-error' : entryForm.PurchasedProductId.$invalid && (entryForm.PurchasedProductId.$dirty || submitted)}">
-                                <span class="input-group-addon"><i class="fa fa-apple"></i></span>
-                                <input class="form-control" name="PurchasedProductDdl" id="PurchasedProductDdl" type="text" tabindex="5" placeholder="Product Name"
+                                <span class="input-group-addon"><i class="fa fa-refresh"></i></span>
+                                <input class="form-control" name="PurchasedProductDdl" id="PurchasedProductDdl" type="text" tabindex="5" placeholder="Product Name" autocomplete="off"
                                        ng-model="process.PurchasedProductId"
                                        move-focus-by-enter-key
                                        typeahead-on-select="changeSelectProductName($item)"
@@ -146,35 +146,36 @@
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-6 col-sm-12">
-                            <label>Delivery Quantity</label>
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-paste"></i></span>
-                                <input id="DeliveryQuantity" type="number" class="form-control" name="DeliveryQuantity" placeholder="Ex. 100" autocomplete="off" tabindex="6"
-                                       move-focus-by-enter-key
-                                       ng-model="process.DeliveryQuantity">
+                            
+                            <div style="width:100%">
+                                <div style="width:50%;float:left">
+                                    <label>Delivery Quantity</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-oil"></i></span>
+                                        <input id="DeliveryQuantity" type="number" class="form-control" name="DeliveryQuantity" placeholder="0" autocomplete="off" tabindex="6"
+                                               move-focus-by-enter-key
+                                               ng-model="process.DeliveryQuantity">
+                                    </div>
+                                </div>
+                                <div style="width:50%;float:left">
+                                    <label>S/E Quantity</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-equalizer"></i></span>
+                                        <input id="SE" type="number" class="form-control" name="SE" placeholder="0" autocomplete="off" tabindex="9"
+                                               move-focus-by-enter-key
+                                               ng-model="process.SE">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="row" id="row3">
-                        <div class="col-lg-4 col-md-6 col-sm-12">
-                            <label>Conversion Name</label>
-                            <div class="input-group" ng-class="{ 'has-error' : entryForm.ConversionId.$invalid && (entryForm.ConversionId.$dirty || submitted)}">
-                                <span class="input-group-addon"><i class="fa fa-clone"></i></span>
-                                <select class="form-control" tabindex="7"
-                                        data-val="true"
-                                        data-ng-options="item.ConversionId as item.ConversionName for item in ConversionList"
-                                        id="ConversionId" name="ConversionId"
-                                        ng-model="process.ConversionId"
-                                        ng-required="true">
-                                    <option value="">Select Conversion Name</option>
-                                </select>
-                            </div>
-                        </div>
+                        
                         <div class="col-lg-4 col-md-6 col-sm-12">
                             <label>Next Process</label>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-recycle"></i></span>
-                                <select class="form-control" tabindex="8"
+                                <select class="form-control" tabindex="9"
                                         move-focus-by-enter-key
                                         data-ng-options="item as item.ProcessListName for item in prosessListAll"
                                         id="NewProcessListId"
@@ -185,17 +186,46 @@
                             </div>
 
                         </div>
-                        <div class="col-lg-4 col-md-6 col-sm-12" hidden>
-                            <label>S/E Quantity</label>
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-paste"></i></span>
-                                <input id="SE" type="number" class="form-control" name="SE" placeholder="Ex. 50" autocomplete="off" tabindex="9"
-                                       move-focus-by-enter-key
-                                       ng-model="process.SE">
+                        <div class="col-lg-4 col-md-6 col-sm-12" ng-if="UnitRole === 'Industrial' && newID.ProcessListName !== 'Finished'">
+                            <label>Conversion Name</label>
+                            <div class="input-group" ng-class="{ 'has-error' : entryForm.ConversionId.$invalid && (entryForm.ConversionId.$dirty || submitted)}">
+                                <span class="input-group-addon"><i class="fa fa-clone"></i></span>
+                                <select class="form-control" tabindex="8"
+                                        data-val="true"
+                                        data-ng-options="item.ConversionId as item.ConversionName for item in ConversionList"
+                                        id="ConversionId" name="ConversionId"
+                                        ng-model="process.ConversionId"
+                                        ng-required="true">
+                                    <option value="">Select Conversion Name</option>
+                                </select>
                             </div>
                         </div>
+                        <div class="col-lg-4 col-md-6 col-sm-12" ng-if="newID.ProcessListName === 'Finished'">
+                            <label>Finished Goods Name</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-apple"></i></span>
+                                <select class="form-control" tabindex="10"
+                                        move-focus-by-enter-key
+                                        data-ng-options="item.FinishedGoodId as item.FinishedGoodName for item in FinishedGoodsList"
+                                        id="FinishedGoodsId"
+                                        name="FinishedGoodsId"
+                                        ng-model="process.FinishedGoodId">
+                                    <option value="">Select Finished Goods Name</option>
+                                </select>
+                            </div>
 
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <label>Bill Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-money"></i></span>
+                                <input id="Amount" type="text" class="form-control" name="Amount" autocomplete="off" tabindex="11"
+                                       move-focus-by-enter-key
+                                       ng-model="process.Amount">
+                            </div>
+                        </div>
                     </div>
+                    <!-- Hidden Row -->
                     <div class="row" id="row4" hidden>
                         <div class="col-lg-4 col-md-6 col-sm-12">
                             <label>Rate</label>
@@ -206,15 +236,7 @@
                                        ng-model="process.Rate">
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-6 col-sm-12">
-                            <label>Amount</label>
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-money"></i></span>
-                                <input id="Amount" type="text" class="form-control" name="Amount" autocomplete="off" tabindex="11"
-                                       move-focus-by-enter-key
-                                       ng-model="process.Amount">
-                            </div>
-                        </div>
+
                         <div class="col-lg-4 col-md-6 col-sm-12">
                             <label>Discount</label>
                             <div class="input-group">
@@ -225,6 +247,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-sm-12" style="margin-top: 1em;">
                             <md-button class="md-raised md-primary" tabindex="13" aria-label="Save"
@@ -278,7 +301,7 @@
         <md-card ng-hide="data.cb1">
             <md-card-title>
                 <md-card-title-text>
-                    <span class="md-headline"><i class="fa fa-search"></i> Pending Processes Preview and Search</span>
+                    <span class="md-headline"><i class="fa fa-search"></i> Processes Search</span>
                 </md-card-title-text>
             </md-card-title>
             <md-card-content>                

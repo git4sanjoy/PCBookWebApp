@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using PCBookWebApp.DAL;
 using PCBookWebApp.Models.ProcessModule;
+using PCBookWebApp.Models.ProcessModule.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -23,6 +24,81 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
         Process process;
+
+        [Route("api/StoreDelivery/GetAvailableData/{purchasedProductId}")]
+        [HttpGet]
+        //[ResponseType(typeof(Purchase))]
+        public IHttpActionResult GetAvailableData(int purchasedProductId)
+        {
+            int recordCount = 0;
+            List<ProductWiseStoreBalanceRptView> inventoryList = new List<ProductWiseStoreBalanceRptView>();
+            SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString);
+            connection.Open();
+            try
+            {
+                SqlDataReader reader = null;
+                string sql = "";
+                
+                    sql = @"SELECT 
+                              Rec.PurchasedProductId, 
+                              Rec.PurchasedProductName, 
+                              ISNULL(Rec.PurchaseQuantity, 0) AS PurchaseQuantity, 
+                              ISNULL(Del.DeliveryQuantity, 0) AS DeliveryQuantity, 
+                              Rec.ShowRoomName 
+                            FROM (SELECT 
+                              prod.PurchasedProductId, 
+                              prod.PurchasedProductName, 
+                              SUM(pur.Quantity) AS PurchaseQuantity, 
+                              sm.ShowRoomName 
+                            FROM Purchases pur 
+                            LEFT JOIN PurchasedProducts prod 
+                              ON prod.PurchasedProductId = pur.PurchasedProductId 
+                            JOIN ShowRooms sm 
+                              ON sm.ShowRoomId = pur.ShowRoomId 
+                            GROUP BY prod.PurchasedProductId, prod.PurchasedProductName, 
+                                     sm.ShowRoomName) Rec 
+                            LEFT JOIN (SELECT 
+                              prod.PurchasedProductName, 
+                              SUM(pur.DeliveryQuantity) AS DeliveryQuantity 
+                            FROM Purchases pur 
+                            JOIN PurchasedProducts prod 
+                              ON prod.PurchasedProductId = pur.PurchasedProductId 
+                            WHERE ProcesseLocationId IS NOT NULL 
+                            GROUP BY prod.PurchasedProductName) Del 
+                              ON Del.PurchasedProductName = Rec.PurchasedProductName 
+                              WHERE Rec.PurchasedProductId='"+ purchasedProductId + "'";
+               
+                SqlCommand command = new SqlCommand(sql, connection);
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ProductWiseStoreBalanceRptView aLedger = new ProductWiseStoreBalanceRptView();
+
+                    //aLedger.LotNo = (string)reader["LotNo"];
+                    aLedger.PurchaseQuantity = (double)reader["PurchaseQuantity"];
+                    aLedger.DeliveryQuantity = (double)reader["DeliveryQuantity"];
+
+                    
+                    aLedger.PurchasedProductName = (string)reader["PurchasedProductName"];
+                    //aLedger.ProcessListName = (string)reader["ProcessListName"];
+                    //aLedger.ProcesseLocationName = (string)reader["ProcesseLocationName"];
+                    aLedger.ShowRoomName = (string)reader["ShowRoomName"];
+
+
+                    inventoryList.Add(aLedger);
+                    recordCount++;
+                }
+                reader.Close();
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return Ok(inventoryList);
+        }
+
         [Route("api/StoreDelivery/GetDetailhData")]
         [HttpGet]
         //[ResponseType(typeof(Purchase))]
@@ -84,6 +160,90 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             return Ok(new { list });
         }
 
+        [Route("api/StoreDelivery/GetSearch/{fromdate}/{todate}/{lotNO}")]
+        [HttpGet]
+        //[ResponseType(typeof(Purchase))]
+        public IHttpActionResult GetSearch(DateTime? fromdate, DateTime? todate, string lotNO=null)
+        {
+            object list = new List<object>();
+            // pq.PChallanNo.Contains("2018") &&
+            //if (lotNO==null)
+            //{
+                 list = (from item in db.Purchases
+                             join prod in db.PurchasedProducts on item.PurchasedProductId equals prod.PurchasedProductId
+                             select new
+                             {
+                                 item.PurchaseId,
+                                 item.ProcesseLocationId,
+                                 item.ProcesseLocation.ProcesseLocationName,
+                                 item.ProcessListId,
+                                 item.ProcessList.ProcessListName,
+                                 item.PurchaseDate,
+                                 item.PChallanNo,
+                                 item.DeliveryQuantity,
+                                 prod.PurchasedProductName,
+                                 prod.PurchasedProductId
+                             }).ToList()
+                         .Where(pq => pq.ProcesseLocationId != null
+                                      && pq.PurchaseDate >= fromdate && pq.PurchaseDate <= todate)
+                            .GroupBy(dq => dq.PChallanNo)
+                            .Select(
+                                g => new
+                                {
+                                    Key = g.Key,
+                                    DeliveryQuantity = g.Sum(s => s.DeliveryQuantity),
+                                    PurchaseId = g.First().PurchaseId,
+                                    ProcessListName = g.First().ProcessListName,
+                                    ProcesseLocationId = g.First().ProcesseLocationId,
+                                    ProcesseLocationName = g.First().ProcesseLocationName,
+                                    ProcessListId = g.First().ProcessListId,
+                                    PurchaseDate = g.First().PurchaseDate,
+                                    PChallanNo = g.First().PChallanNo,
+                                    PurchasedProductName = g.First().PurchasedProductName,
+                                    PurchasedProductId = g.First().PurchasedProductId
+                                });
+            //}
+            //else
+            //{
+            //     list2 = (from item in db.Purchases
+            //                 join prod in db.PurchasedProducts on item.PurchasedProductId equals prod.PurchasedProductId
+            //                 select new
+            //                 {
+            //                     item.PurchaseId,
+            //                     item.ProcesseLocationId,
+            //                     item.ProcesseLocation.ProcesseLocationName,
+            //                     item.ProcessListId,
+            //                     item.ProcessList.ProcessListName,
+            //                     item.PurchaseDate,
+            //                     item.PChallanNo,
+            //                     item.DeliveryQuantity,
+            //                     prod.PurchasedProductName,
+            //                     prod.PurchasedProductId
+            //                 }).ToList()
+            //             .Where(pq => pq.ProcesseLocationId != null
+            //                          && pq.PurchaseDate >= fromdate && pq.PurchaseDate <= todate
+            //                          && pq.PChallanNo.Contains(lotNO))
+            //                .GroupBy(dq => dq.PChallanNo)
+            //                .Select(
+            //                    g => new
+            //                    {
+            //                        Key = g.Key,
+            //                        DeliveryQuantity = g.Sum(s => s.DeliveryQuantity),
+            //                        PurchaseId = g.First().PurchaseId,
+            //                        ProcessListName = g.First().ProcessListName,
+            //                        ProcesseLocationId = g.First().ProcesseLocationId,
+            //                        ProcesseLocationName = g.First().ProcesseLocationName,
+            //                        ProcessListId = g.First().ProcessListId,
+            //                        PurchaseDate = g.First().PurchaseDate,
+            //                        PChallanNo = g.First().PChallanNo,
+            //                        PurchasedProductName = g.First().PurchasedProductName,
+            //                        PurchasedProductId = g.First().PurchasedProductId
+            //                    });
+            //}
+            
+            
+            return Ok(new { list });
+        }
         // GET: api/Purchases
         public IQueryable<Purchase> GetPurchases()
         {
@@ -224,23 +384,30 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
 
             // db.Entry(purchase).State = EntityState.Modified;
 
-            var chalanNoObj = purchase.PChallanNo;
+            //var chalanNoObj = purchase.PChallanNo;
 
             try
             {              
 
                 var obj = db.Purchases.FirstOrDefault(m => m.PurchaseId == purchase.PurchaseId);
 
-                purchase.DateCreated = obj.DateCreated;
-                purchase.DateUpdated = DateTime.Now;
-                purchase.CreatedBy = obj.CreatedBy;
-                purchase.ShowRoomId = 1;
-                purchase.Active = true;
-                purchase.SupplierId = 2;
-                purchase.Amount = 0;                
-                db.Purchases.AddOrUpdate(purchase);
+                //purchase.DateCreated = obj.DateCreated;
+                //purchase.DateUpdated = DateTime.Now;
+                //purchase.CreatedBy = obj.CreatedBy;
+                //purchase.ShowRoomId = 1;
+                //purchase.Active = true;
+                //purchase.SupplierId = 2;
+                //purchase.Amount = 0;  
+
+                obj.DeliveryQuantity = purchase.DeliveryQuantity;
+                db.Purchases.AddOrUpdate(obj);
                 db.SaveChanges();
 
+
+                var objPro = db.Processes.FirstOrDefault(p => p.PurchaseId == purchase.PurchaseId);
+                obj.Quantity = purchase.Quantity;
+                db.Processes.AddOrUpdate(objPro);
+                db.SaveChanges();
                 //var process = (from item in db.Processes
                 //           where item.ProcesseLocationId == purchase.ProcesseLocationId &&
                 //           item.ProcessListId == purchase.ProcessListId &&
@@ -248,7 +415,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                 //           item.PurchasedProductId == purchase.PurchasedProductId &&
                 //           item.ReceiveQuantity == obj.DeliveryQuantity
                 //           select item).FirstOrDefault();
-              
+
                 //process.ReceiveQuantity = purchase.DeliveryQuantity;               
                 //db.Processes.AddOrUpdate(process);
                 //db.SaveChanges();
@@ -265,7 +432,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                 }
             }
 
-            return Ok(chalanNoObj);
+            return Ok();
             //return StatusCode(HttpStatusCode.NoContent);
         }
 

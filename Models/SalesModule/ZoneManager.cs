@@ -13,6 +13,12 @@ namespace PCBookWebApp.Models.SalesModule
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int ZoneManagerId { get; set; }
 
+        public int? ZoneManagerIdAlias { get; set; }
+        public int? WareHouseId { get; set; }
+
+        [Display(Name = "User Name")]
+        public string Id { get; set; }
+
         [Required]
         [StringLength(145)]
         public string ZoneManagerName { get; set; }

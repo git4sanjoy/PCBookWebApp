@@ -9,7 +9,7 @@ app.controller('ProductController', ['$scope', '$location', '$http', '$timeout',
         $scope.messageType = "";
         $scope.message = "";
 
-        $scope.pageSize = 20;
+        $scope.pageSize = 100;
         $scope.currentPage = 1;
 
         var accesstoken = sessionStorage.getItem('accessToken');
@@ -28,107 +28,121 @@ app.controller('ProductController', ['$scope', '$location', '$http', '$timeout',
             $scope.reverse = !$scope.reverse; //if true make it false and vice versa
         }
 
-    $scope.subCategories = [];
-    $http({
-        url: "/api/SubCategory/GetDropDownList",
-        method: "GET",
-        headers: authHeaders
-    }).success(function (data) {
-        $scope.subCategories = data;
-        //console.log(data);
-    });
-    $scope.submitProductForm = function () {
-            // Set the 'submitted' flag to true
-            $scope.submitted = true;
-            if ($scope.productForm.$valid) {
-                
-                var aCountryObj = {
-                    SubCategoryId: $scope.product.SubCategoryId.SubCategoryId,
-                    ProductName: $scope.product.ProductName,
-                    MultiplyWith: $scope.product.MultiplyWith,
-                    Rate: $scope.product.Rate,
-                    Discount: $scope.product.Discount,
-                    ShowRoomId: 0,
-                    ProductNameBangla: $scope.product.ProductNameBangla,
-                    Image: ""
-                };
+        $scope.subCategories = [];
+        $http({
+            url: "/api/SubCategory/GetDropDownList",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.subCategories = data;
+            //console.log(data);
+        });
 
-                $http({
-                    url: "/api/Product",
-                    data: aCountryObj,
-                    method: "POST",
-                    headers: authHeaders
-                }).success(function (data) {
-                    var file = $scope.myFile;
-                    var fileName = "";
-                    if (file) {
-                        fileName = data.ProductId + '.jpg';
-                    }
-                    if (fileName) {
-                        upload({
-                            url: 'Home/UploadProductImage',
-                            method: 'POST',
-                            data: {
-                                aFile: $scope.myFile,
-                                ProductId: data.ProductId
-                            }
-                        })
-                        .then(
-                        function (response) {
-                            console.log(response.data);
-                        },
-                        function (response) {
-                            console.error(response);
-                        });
-                        //Update Image Name
-                        $http({
-                            url: '/api/Product/UpdateImageNameToProducts/' + data.ProductId,
-                            method: "PUT",
-                            headers: authHeaders
-                        }).success(function (data) {
-                            $('.image-preview').attr("data-content", "").popover('hide');
-                            $('.image-preview-filename').val("");
-                            $('.image-preview-clear').hide();
-                            $('.image-preview-input input:file').val("");
-                            $(".image-preview-input-title").text("Browse");
-                        }).error(function (error) {
+        $scope.showRoomList = [];
+        $http({
+            url: "/api/ShowRooms/ShowRoomDdlList",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.showRoomList = data;
+            //console.log(data);
+        });
 
-                        });
-                        //End Update Image Name
+        $scope.submitProductForm = function () {
+                // Set the 'submitted' flag to true
+                $scope.submitted = true;
+                if ($scope.productForm.$valid) {
+                    var showRoomId = 0;
+                    if ($scope.product.ShowRoomId){
+                        showRoomId = $scope.product.ShowRoomId.ShowRoomId;
                     }
-                    var aViewObj = {
-                        id: data.ProductId,
-                        name: $scope.product.ProductName,
-                        group: $scope.product.SubCategoryId.SubCategoryId,
-                        groupName: $scope.product.SubCategoryId.SubCategoryName,
+                    var aCountryObj = {
+                        SubCategoryId: $scope.product.SubCategoryId.SubCategoryId,
+                        ProductName: $scope.product.ProductName,
                         MultiplyWith: $scope.product.MultiplyWith,
                         Rate: $scope.product.Rate,
                         Discount: $scope.product.Discount,
-                        ProductNameBangla: $scope.product.ProductNameBangla
+                        ShowRoomId: showRoomId,
+                        ProductNameBangla: $scope.product.ProductNameBangla,
+                        Image: ""
                     };
-                    $scope.productList.push(aViewObj);
-                    $scope.product = {};
-                    $scope.submitted = false;
-                    $scope.productForm.$setPristine();
-                    $scope.productForm.$setUntouched();
-                    angular.element('#ProductName').focus();
-                    $scope.loading = true;
-                    $scope.message = "Successfully Product Created.";
-                    $scope.messageType = "success";
-                    $scope.clientMessage = false;
-                    $timeout(function () { $scope.clientMessage = true; }, 5000);
-                }).error(function (error) {
-                    $scope.message = 'Unable to save Product' + error.message;
-                    $scope.messageType = "warning";
-                    $scope.clientMessage = false;
-                    $timeout(function () { $scope.clientMessage = true; }, 5000);
-                });
 
-            }
-            else {
-                alert("Please  correct form errors!");
-            }
-        };
+                    $http({
+                        url: "/api/Product",
+                        data: aCountryObj,
+                        method: "POST",
+                        headers: authHeaders
+                    }).success(function (data) {
+                        var file = $scope.myFile;
+                        var fileName = "";
+                        if (file) {
+                            fileName = data.ProductId + '.jpg';
+                        }
+                        if (fileName) {
+                            upload({
+                                url: 'Home/UploadProductImage',
+                                method: 'POST',
+                                data: {
+                                    aFile: $scope.myFile,
+                                    ProductId: data.ProductId
+                                }
+                            })
+                            .then(
+                            function (response) {
+                                console.log(response.data);
+                            },
+                            function (response) {
+                                console.error(response);
+                            });
+                            //Update Image Name
+                            $http({
+                                url: '/api/Product/UpdateImageNameToProducts/' + data.ProductId,
+                                method: "PUT",
+                                headers: authHeaders
+                            }).success(function (data) {
+                                $('.image-preview').attr("data-content", "").popover('hide');
+                                $('.image-preview-filename').val("");
+                                $('.image-preview-clear').hide();
+                                $('.image-preview-input input:file').val("");
+                                $(".image-preview-input-title").text("Browse");
+                            }).error(function (error) {
+
+                            });
+                            //End Update Image Name
+                        }
+                        var aViewObj = {
+                            id: data.ProductId,
+                            name: $scope.product.ProductName,
+                            group: $scope.product.SubCategoryId.SubCategoryId,
+                            groupName: $scope.product.SubCategoryId.SubCategoryName,
+                            MultiplyWith: $scope.product.MultiplyWith,
+                            Rate: $scope.product.Rate,
+                            Discount: $scope.product.Discount,
+                            ProductNameBangla: $scope.product.ProductNameBangla
+                        };
+                        $scope.productList.push(aViewObj);
+                        $scope.product = {};
+                        $scope.submitted = false;
+                        $scope.productForm.$setPristine();
+                        $scope.productForm.$setUntouched();
+                        angular.element('#ProductName').focus();
+                        $scope.loading = true;
+                        $scope.message = "Successfully Product Created.";
+                        $scope.messageType = "success";
+                        $scope.clientMessage = false;
+                        $timeout(function () { $scope.clientMessage = true; }, 5000);
+                    }).error(function (error) {
+                        $scope.message = 'Unable to save Product' + error.message;
+                        $scope.messageType = "warning";
+                        $scope.clientMessage = false;
+                        $timeout(function () { $scope.clientMessage = true; }, 5000);
+                    });
+
+                }
+                else {
+                    alert("Please  correct form errors!");
+                }
+            };
 
         // remove product
         $scope.remove = function (index, ProductId) {
@@ -181,6 +195,18 @@ app.controller('ProductController', ['$scope', '$location', '$http', '$timeout',
         };
 
 
+        //$scope.statuses = [
+        //    { value: 0, text: 'false' },
+        //    { value: 1, text: 'true' }
+        //];
+
+        //$scope.showStatus = function (user) {
+        //    var selected = [];
+        //    if (user.status) {
+        //        selected = $filter('filter')($scope.statuses, { value: user.status });
+        //    }
+        //    return selected.length ? selected[0].text : 'Not set';
+        //};
         //$scope.checkName = function (data, id) {
         //    if (id === 2 && data !== 'awesome') {
         //        return "Username 2 should be `awesome`";
@@ -203,7 +229,8 @@ app.controller('ProductController', ['$scope', '$location', '$http', '$timeout',
                 Discount: data.Discount,
                 ShowRoomId: 0,
                 ProductNameBangla: data.ProductNameBangla,
-                Image: fileName
+                Image: fileName,
+                Active: data.Active
             };
 
             angular.extend(data, { ProductId: id });

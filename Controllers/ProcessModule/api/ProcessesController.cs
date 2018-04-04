@@ -25,8 +25,12 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         [HttpGet]
         public IHttpActionResult GetAllList()
         {
-            string userId = User.Identity.GetUserId();
+            string userId = User.Identity.GetUserId();            
             var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var UnitRole = db.UnitRoles.Where(r => r.ShowRoomId == showRoomId).FirstOrDefault();
+            var unitRole = UnitRole.UnitRoleName;
+            object prosessListAll = new List<object>();
+
             var list = (from item in db.Processes
                         where item.ShowRoomId == showRoomId
                         select new
@@ -80,23 +84,44 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                                 }).Where(q => q.ReceiveQuantity != (q.DeliveryQuantity + q.SE));
 
             var prosessList = (from item in db.ProcessLists
-                               where item.ShowRoomId == showRoomId && item.ProcessListName != "Short/Excess" && item.ProcessListName != "Finished"
+                               where item.ShowRoomId == showRoomId
+                               && item.UnitRoleId == UnitRole.UnitRoleId
+                               && item.ProcessListName != "Short/Excess"
+                               && item.ProcessListName != "Finished"
                                select new
                                {
                                    item.ProcessListId,
                                    item.ProcessListName
                                }).ToList();
-            var prosessListAll = (from item in db.ProcessLists
+            if (unitRole == "Industrial")
+            {
+                prosessListAll = (from item in db.ProcessLists
+                                  where item.ShowRoomId == showRoomId
+                                  && item.UnitRoleId == UnitRole.UnitRoleId
+                                  && item.ProcessListName != "Short/Excess"
+                                  select new
+                                  {
+                                      item.ProcessListId,
+                                      item.ProcessListName
+                                  }).ToList();
+            }
+            else
+            {
+                prosessListAll = (from item in db.ProcessLists
+                                  where item.UnitRoleId == UnitRole.UnitRoleId
                                   where item.ShowRoomId == showRoomId
                                   select new
                                   {
                                       item.ProcessListId,
                                       item.ProcessListName
                                   }).ToList();
+            }
+
             var purchasedProductList = (from item in db.PurchasedProducts
-                                        where item.ShowRoomId == showRoomId
+                                        where item.ShowRoomId == showRoomId && item.ProductTypeId==2
                                         select new
                                         {
+                                            item.ProductTypeId,
                                             item.PurchasedProductId,
                                             item.PurchasedProductName
                                         }).ToList();
@@ -114,18 +139,19 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
                                       item.ConversionId,
                                       item.ConversionName
                                   }).ToList();
-            //var showRoomList = (from item in db.ShowRooms
-            //                    select new
-            //                    {
-            //                        item.ShowRoomId,
-            //                        item.ShowRoomName
-            //                    }).ToList();
+            var finishedGoodsList = (from item in db.FinishedGoods
+                                     where item.ShowRoomId == showRoomId
+                                     select new
+                                     {
+                                         item.FinishedGoodId,
+                                         item.FinishedGoodName
+                                     }).ToList();
             //if (list == null)
             //{
             //    return NotFound();
             //}
 
-            return Ok(new { list, prosessList, purchasedProductList, processeLocationList, conversionList, prosessListAll });
+            return Ok(new { list, prosessList, purchasedProductList, processeLocationList, conversionList, prosessListAll, finishedGoodsList, unitRole });
         }
 
         [HttpGet, Route("api/Processes/GetProcessData/{processeLocationId}/{processListId}/{lotNo}")]
@@ -580,7 +606,6 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
 
             return Ok(process);
         }
-
 
         //[HttpGet, Route("api/Processes/GetReceiveQuantity/{ProcesseLocationId}/{processListId}/{lotNo}/{productId}/{deliveryQuantity}")]
         //public IHttpActionResult GetReceiveQuantity(int ProcesseLocationId, int processListId, string lotNo, int productId, double deliveryQuantity)

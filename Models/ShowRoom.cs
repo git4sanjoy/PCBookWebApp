@@ -21,6 +21,9 @@ namespace PCBookWebApp.Models
         [Required]
         [StringLength(145)]
         public string ShowRoomName { get; set; }
+
+        public string ZoneName { get; set; }
+
         [Required]
         [StringLength(145)]
         public string ShowRoomNameBangla { get; set; }

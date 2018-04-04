@@ -24,34 +24,26 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
 
-
-
         [Route("api/PurchasedProducts/PurchasedProductsMultiSelectList")]
         [HttpGet]
-        public IHttpActionResult GetPurchasedProductsMultiSelectList()
+        public IHttpActionResult PurchasedProductsMultiSelectList()
         {
             string userId = User.Identity.GetUserId();
             var showRoomId = db.ShowRoomUsers
                 .Where(a => a.Id == userId)
                 .Select(a => a.ShowRoomId)
                 .FirstOrDefault();
+            var list = (from item in db.PurchasedProducts
+                        where item.ShowRoomId== showRoomId
+                        select new
+                        {
+                            item.ShowRoomId,
+                            label = item.PurchasedProductName,
+                            id = item.PurchasedProductId
+                        }).ToList();
 
-            var list = db.PurchasedProducts
-                            .Where(d => d.ShowRoomId == showRoomId)
-                            .OrderBy(d => d.PurchasedProductName)
-                            .Select(e => new {
-                                id = e.PurchasedProductId,
-                                label = e.PurchasedProductName
-                            });
-
-            if (list == null)
-            {
-                return NotFound();
-            }
             return Ok(list);
         }
-
-
         [Route("api/PurchasedProducts/PurchasedProductsList")]
         [HttpGet]
         public IHttpActionResult GetPurchasedProductsList()
@@ -117,8 +109,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             string currentUserId = User.Identity.GetUserId();
 
             var list = db.ProductTypes
-                            .Where(a => a.ShowRoomId == showRoomId)
-                            .Select(e => new { id = e.ProductTypeId, text = e.ProductTypeName })
+                             .Select(e => new { id = e.ProductTypeId, text = e.ProductTypeName })
                             .OrderBy(e => e.text);
             if (list == null)
             {
@@ -127,42 +118,8 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             return Ok(list);
         }
 
-        // End XEdit Method
 
-        [Route("api/PurchasedProducts/ProductBalanceById/{ProductId}")]
-        [HttpGet]
-        public IHttpActionResult GetProductBalance(int ProductId)
-        {
-            string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
-            var list = (from item in db.Purchases
-                        where item.PurchasedProductId == ProductId
-                        select new
-                        {
-                            item.PurchasedProductId,
-                            item.Quantity,
-                            item.DeliveryQuantity,
-                            item.SE,
-                            item.Amount,
-                            item.Discount
-                        }).ToList().GroupBy(x => new {  x.PurchasedProductId })
-                        .Select(
-                                g => new
-                                {
-                                    Key = g.Key,
-                                    DeliveryQuantity = g.Sum(s => s.DeliveryQuantity),
-                                    ReceiveQuantity = g.Sum(s => s.Quantity),
-                                    SE = g.Sum(s => s.SE)
 
-                                }).Where(q => q.ReceiveQuantity != (q.DeliveryQuantity + q.SE));
-
-            if (list == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(list);
-        }
 
 
         // GET: api/PurchasedProducts
@@ -319,11 +276,12 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         [ResponseType(typeof(PurchasedProduct))]
         public async Task<IHttpActionResult> PostPurchasedProduct(PurchasedProduct purchasedProduct)
         {
-            var msg = 0;
-            var check = db.PurchasedProducts.FirstOrDefault(m => m.PurchasedProductName == purchasedProduct.PurchasedProductName);
             string userId = User.Identity.GetUserId();
             var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
             string userName = User.Identity.GetUserName();
+            var msg = 0;
+            var check = db.PurchasedProducts.FirstOrDefault(m => m.PurchasedProductName == purchasedProduct.PurchasedProductName.Trim() && m.ShowRoomId==showRoomId);
+
 
             //if (!ModelState.IsValid)
             //{

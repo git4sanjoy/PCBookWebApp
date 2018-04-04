@@ -38,8 +38,8 @@ app.controller('ProcessReportController', ['$scope', '$location', '$http', '$tim
         $scope.reportOption.FromDate = new Date();
         $scope.reportOption.ToDate = new Date();
         //End DatePicker
-        //*******************************************
-        //**************Report Option*****************************
+        //**********************************************************
+        //**************Report Option*******************************
         $scope.printTypeArray = [];
         $scope.printTypeArray.push({ name: "Print", Text: "Print", isDefault: true });
         $scope.printTypeArray.push({ name: "Excel", Text: "Excel", isDefault: false });
@@ -115,6 +115,7 @@ app.controller('ProcessReportController', ['$scope', '$location', '$http', '$tim
                 if ($scope.supplierListMultiSelect.length > 0) {
                     angular.forEach($scope.supplierListMultiSelect, function (item) {
                         ledgerIds.push(item.id);
+                        console.log(item.id);
                     })
                 }
                 $http({
@@ -137,18 +138,23 @@ app.controller('ProcessReportController', ['$scope', '$location', '$http', '$tim
                     alert(error);
                 });
             } else if (selectedReport == "DateBetweenProductWisePurchase") {
+              
                 var reportShowType = $scope.printOptionRadios.name;
                 var fd = $filter('date')($scope.reportOption.FromDate, "yyyy-MM-dd");
                 var td = $filter('date')($scope.reportOption.ToDate, "yyyy-MM-dd");
                 var ledgerIds = [];
-                if ($scope.ledgeListMultiSelect.length > 0) {
-                    angular.forEach($scope.ledgeListMultiSelect, function (item) {
+                //var ledgerIds = $scope.productListMultiSelect;
+                if ($scope.productListMultiSelect.length > 0) {
+                    angular.forEach($scope.productListMultiSelect, function (item) {
                         ledgerIds.push(item.id);
+                        //ledgerIds = [ 1,2,3,4];
                     })
+                    //ledgerIds = [1, 2, 3, 4];
                 }
+                //alert(ledgerIds);
                 $http({
                     method: "GET",
-                    url: "/Reports/ShowLedgerRptInNewWin",
+                    url: "/ProcessReports/ShowProductRptInNewWin",
                     params: {
                         FromDate: fd,
                         ToDate: td,
@@ -167,12 +173,170 @@ app.controller('ProcessReportController', ['$scope', '$location', '$http', '$tim
                         alert(error);
                     });
             }
-
-
-
+            else if (selectedReport == "DateBetweenStoreDeliveryFactoryWise") {
+                // alert('sss');
+                var reportShowType = $scope.printOptionRadios.name;
+                var fd = $filter('date')($scope.reportOption.FromDate, "yyyy-MM-dd");
+                var td = $filter('date')($scope.reportOption.ToDate, "yyyy-MM-dd");
+                var ledgerIds = [];
+                if ($scope.factoryListMultiSelect.length > 0) {
+                    angular.forEach($scope.factoryListMultiSelect, function (item) {
+                        ledgerIds.push(item.id);
+                    })
+                }
+                $http({
+                    method: "GET",
+                    url: "/ProcessReports/ShowFactoryRptInNewWin",
+                    params: {
+                        FromDate: fd,
+                        ToDate: td,
+                        LedgerIds: ledgerIds,
+                        SelectedReportOption: selectedReport,
+                        ShowType: reportShowType
+                    }
+                }).success(function (data) {
+                    if (data == 'NoRecord') {
+                        alert('No Record Found');
+                    } else {
+                        window.open("../GenericReportViewer/ShowGenericRpt", 'mywindow', 'fullscreen=yes, scrollbars=auto');
+                    }
+                })
+                    .error(function (error) {
+                        alert(error);
+                    });
+            }
+            else if (selectedReport == "PendingProcessBalanceFactoryWise") {
+                // alert('sss');
+                var reportShowType = $scope.printOptionRadios.name;
+                var fd = $filter('date')($scope.reportOption.FromDate, "yyyy-MM-dd");
+                var td = $filter('date')($scope.reportOption.ToDate, "yyyy-MM-dd");
+                var ledgerIds = [];
+                if ($scope.factoryListMultiSelect.length > 0) {
+                    angular.forEach($scope.factoryListMultiSelect, function (item) {
+                        ledgerIds.push(item.id);
+                    })
+                }
+                $http({
+                    method: "GET",
+                    url: "/ProcessReports/FactoryWisePendingProcess",
+                    params: {
+                        FromDate: fd,
+                        ToDate: td,
+                        LedgerIds: ledgerIds,
+                        SelectedReportOption: selectedReport,
+                        ShowType: reportShowType
+                    }
+                }).success(function (data) {
+                    if (data == 'NoRecord') {
+                        alert('No Record Found');
+                    } else {
+                        window.open("../GenericReportViewer/ShowGenericRpt", 'mywindow', 'fullscreen=yes, scrollbars=auto');
+                    }
+                })
+                    .error(function (error) {
+                        alert(error);
+                    });
+            }
+            else if (selectedReport == "FactoryWiseProcessHistory") {
+                // alert('sss');
+                var reportShowType = $scope.printOptionRadios.name;
+                var fd = $filter('date')($scope.reportOption.FromDate, "yyyy-MM-dd");
+                var td = $filter('date')($scope.reportOption.ToDate, "yyyy-MM-dd");
+                var ledgerIds = [];
+                if ($scope.factoryListMultiSelect.length > 0) {
+                    angular.forEach($scope.factoryListMultiSelect, function (item) {
+                        ledgerIds.push(item.id);
+                    })
+                }
+                $http({
+                    method: "GET",
+                    url: "/ProcessReports/FactoryWiseProcessHistory",
+                    params: {
+                        FromDate: fd,
+                        ToDate: td,
+                        LedgerIds: ledgerIds,
+                        SelectedReportOption: selectedReport,
+                        ShowType: reportShowType
+                    }
+                }).success(function (data) {
+                    if (data == 'NoRecord') {
+                        alert('No Record Found');
+                    } else {
+                        window.open("../GenericReportViewer/ShowGenericRpt", 'mywindow', 'fullscreen=yes, scrollbars=auto');
+                    }
+                })
+                    .error(function (error) {
+                        alert(error);
+                    });
+            }
+            else if (selectedReport == "StoreBalanceProductWise") {
+                // alert('sss');
+                var reportShowType = $scope.printOptionRadios.name;
+                var fd = $filter('date')($scope.reportOption.FromDate, "yyyy-MM-dd");
+                var td = $filter('date')($scope.reportOption.ToDate, "yyyy-MM-dd");
+                var ledgerIds = [];
+                if ($scope.productListMultiSelect.length > 0) {
+                    angular.forEach($scope.productListMultiSelect, function (item) {
+                        ledgerIds.push(item.id);
+                    })
+                }
+                $http({
+                    method: "GET",
+                    url: "/ProcessReports/ProductWiseStoreBalance",
+                    params: {
+                        FromDate: fd,
+                        ToDate: td,
+                        LedgerIds: ledgerIds,
+                        SelectedReportOption: selectedReport,
+                        ShowType: reportShowType
+                    }
+                }).success(function (data) {
+                    if (data == 'NoRecord') {
+                        alert('No Record Found');
+                    } else {
+                        window.open("../GenericReportViewer/ShowGenericRpt", 'mywindow', 'fullscreen=yes, scrollbars=auto');
+                    }
+                })
+                    .error(function (error) {
+                        alert(error);
+                    });
+            }
+            else if (selectedReport == "FinishedGoodsStock") {
+                // alert('sss');
+                var reportShowType = $scope.printOptionRadios.name;
+                var fd = $filter('date')($scope.reportOption.FromDate, "yyyy-MM-dd");
+                var td = $filter('date')($scope.reportOption.ToDate, "yyyy-MM-dd");
+                var ledgerIds = [];
+                if ($scope.supplierListMultiSelect.length > 0) {
+                    angular.forEach($scope.supplierListMultiSelect, function (item) {
+                        ledgerIds.push(item.id);
+                    })
+                }
+                $http({
+                    method: "GET",
+                    url: "/ProcessReports/FinishedGoodsStock",
+                    params: {
+                        FromDate: fd,
+                        ToDate: td,
+                        LedgerIds: ledgerIds,
+                        SelectedReportOption: selectedReport,
+                        ShowType: reportShowType
+                    }
+                }).success(function (data) {
+                    if (data == 'NoRecord') {
+                        alert('No Record Found');
+                    } else {
+                        window.open("../GenericReportViewer/ShowGenericRpt", 'mywindow', 'fullscreen=yes, scrollbars=auto');
+                    }
+                })
+                    .error(function (error) {
+                        alert(error);
+                    });
+            }
         };
-        //End Report Showing Methods***********
+        //End Report Showing Methods*********** 
         //**************************************
+      
         //*******************************************
         // Supplier List Multi select
         $scope.supplierListMultiSelect = [];
@@ -183,13 +347,14 @@ app.controller('ProcessReportController', ['$scope', '$location', '$http', '$tim
         };
         $scope.supplierListMultiSelectCustomTexts = { buttonDefaultText: '--- Select Supplier Name --' };
         $scope.supplierList = [];
-        $http({
+        $http({           
             url: "/api/Suppliers/SuppliersMultiSelectList",
             method: "GET",
             headers: authHeaders
-        }).success(function (data) {
-            $scope.supplierList = data;
-            //console.log(data);
+        }).success(function (data) {                     
+            $scope.supplierList = data;           
+        }).error(function (error) {
+            console.log(error);
         });
 
         // Product List Multi select

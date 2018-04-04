@@ -140,3 +140,16 @@ D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddD
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.UpdateProductsAndCustomersTable.resources
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddUnitManager.resources
 D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddMemoCostToMemoMaster.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.addUserIdToZoneManager.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddZoneNameToShowRoom.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddZoneManagerIdAlias.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddWareHouse.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddWareHouseAgain.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddWareHouseIdToMemoMaster.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.UpdateMemoDetailsModel.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.UpdateConversionTable.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.UpdateProcessModuleAddOrderForm.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.UpdateProcessListModel.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddPurchasedProductRateModel.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddFinishedGoodStockDetailsModel.resources
+D:\Dev-PC-App\PCBookWebApp\PCBookWebApp\obj\Release\PCBookWebApp.Migrations.AddConvertedQuantityToMemo.resources

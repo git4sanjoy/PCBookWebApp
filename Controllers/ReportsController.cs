@@ -117,14 +117,10 @@ namespace PCBookWebApp.Controllers
         public ActionResult ShowLedgerRptInNewWin(string FromDate, string ToDate, int[] LedgerIds, string SelectedReportOption, string ShowType)
         {
             string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers
-                .Where(a => a.Id == userId)
-                .Select(a => a.ShowRoomId)
-                .FirstOrDefault();
-            var showRoomName = db.ShowRooms
-                            .Where(u => u.ShowRoomId == showRoomId)
-                            .Select(u => u.ShowRoomName)
-                            .FirstOrDefault();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var showRoomName = db.ShowRooms.Where(u => u.ShowRoomId == showRoomId).Select(u => u.ShowRoomName).FirstOrDefault();
+
+
 
             int recordCount = 0;
             List<LedgerView> inventoryList = new List<LedgerView>();
@@ -161,15 +157,68 @@ namespace PCBookWebApp.Controllers
                 command.Parameters.Add(new SqlParameter("@toDate", tdate));
                 command.Parameters.Add(new SqlParameter("@showRoomId", showRoomId));
                 reader = command.ExecuteReader();
-
+                bool opening = false;
                 while (reader.Read())
                 {
+                    if (opening == false)
+                    {
+                        string queryStringOpening = @"SELECT        
+                                                    dbo.Vouchers.IsBank, dbo.Vouchers.IsHonored, dbo.VoucherDetails.TransctionTypeId, dbo.VoucherDetails.LedgerId, dbo.Vouchers.VoucherDate, dbo.TransctionTypes.TransctionTypeName, dbo.Ledgers.LedgerName, 
+                                                    dbo.VoucherDetails.DrAmount, dbo.VoucherDetails.CrAmount
+                                                    FROM            
+                                                    dbo.Vouchers INNER JOIN
+                                                    dbo.VoucherDetails ON dbo.Vouchers.VoucherId = dbo.VoucherDetails.VoucherId INNER JOIN
+                                                    dbo.Ledgers ON dbo.VoucherDetails.LedgerId = dbo.Ledgers.LedgerId INNER JOIN
+                                                    dbo.TransctionTypes ON dbo.VoucherDetails.TransctionTypeId = dbo.TransctionTypes.TransctionTypeId INNER JOIN
+                                                    dbo.VoucherTypes ON dbo.Vouchers.VoucherTypeId = dbo.VoucherTypes.VoucherTypeId INNER JOIN
+                                                    dbo.Groups ON dbo.Ledgers.GroupId = dbo.Groups.GroupId
+                                                    WHERE(dbo.VoucherDetails.LedgerId = @ledgerId) AND(dbo.Vouchers.VoucherDate < CONVERT(DATETIME, @fromDate, 102))";
+                        using (SqlConnection connectionDetails = new SqlConnection(ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString))
+                        {
+                            SqlCommand commandDetails = new SqlCommand(queryStringOpening, connectionDetails);
+                            connectionDetails.Open();
+                            commandDetails.Parameters.Add(new SqlParameter("@fromDate", fdate));
+                            commandDetails.Parameters.Add(new SqlParameter("@ledgerId", (int)reader["LedgerId"]));
+
+                            SqlDataReader readerDetails = commandDetails.ExecuteReader();
+                            try
+                            {
+                                double openingDr = 0;
+                                double openingCr = 0;
+                                while (readerDetails.Read())
+                                {
+                                    openingDr = openingDr + (double)readerDetails["DrAmount"];
+                                    openingCr = openingCr + (double)readerDetails["CrAmount"];
+                                }
+                                LedgerView aLedgerOpening = new LedgerView();
+                                aLedgerOpening.VoucherNo = "BF";
+                                aLedgerOpening.Date = fdate;
+                                aLedgerOpening.LedgerName = (string)reader["LedgerName"];
+                                aLedgerOpening.Narration = "Opening";
+                                if (openingDr > openingCr)
+                                {
+                                    aLedgerOpening.DrAmount = openingDr - openingCr;
+                                    aLedgerOpening.CrAmount = 0;
+                                } else {
+                                    aLedgerOpening.DrAmount = 0;
+                                    aLedgerOpening.CrAmount = openingCr - openingDr;
+                                }
+                                inventoryList.Add(aLedgerOpening);
+                            }
+                            finally
+                            {
+                                readerDetails.Close();
+                            }
+                        }
+                    }
+                    opening = true;
                     LedgerView aLedger = new LedgerView();
                     aLedger.VoucherNo = (string)reader["VoucherNo"];
                     aLedger.Date = (DateTime)reader["VoucherDate"];
                     aLedger.DrAmount = (double)reader["DrAmount"];
                     aLedger.CrAmount = (double)reader["CrAmount"];
                     aLedger.LedgerName = (string)reader["LedgerName"];
+                    aLedger.LedgerId = (int) reader["LedgerId"];
                     if (reader["Naration"] != DBNull.Value)
                     {
                         aLedger.Narration = (string)reader["Naration"];

@@ -213,7 +213,42 @@ app.controller('SearchController', ["$scope", "$http", "$filter", "$timeout", "$
     $scope.clearSearchText = function () {
         $scope.searchText = '';
     };
+    $scope.showBankPayment = function (aItem) {
+        $scope.selectedBankLedger = '';
+        $scope.showModal = true;
+        //console.log(aItem);
+        var acc = aItem.LedgerName;
+        var iDate = aItem.VoucherDate;
+        var amount = aItem.DrAmount;
+        var voucherTypeName = aItem.VoucherTypeName;
+        $scope.vType = voucherTypeName;
+        if (aItem.VoucherTypeName === "Bank Receive") {
+            $http({
+                url: "/api/CheckReceives/" + aItem.VoucherDetailId,
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.accNo = acc;
+                $scope.issueDate = iDate;
+                $scope.amountCr = amount;
+                $scope.selectedBankLedger = data.checkReceive;
+            }).error(function (data) {
 
+            });
+        } else if (aItem.VoucherTypeName === "Bank Payment"){
+            $http({
+                url: "/api/Check/" + aItem.VoucherDetailId,
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.amountCr = 0;
+                $scope.selectedBankLedger = data.check;
+            }).error(function (data) {
+
+            });
+        }       
+        //console.log($scope.selectedBankLedger);
+    };
     ///Dailog Method
     $scope.status = '  ';
     $scope.customFullscreen = false;
@@ -264,7 +299,7 @@ app.controller('SearchController', ["$scope", "$http", "$filter", "$timeout", "$
             
         } else {           
             var fd = $filter('date')(newVal, "yyyy-MM-dd");
-            console.log(fd);
+            //console.log(fd);
             $http({
                 url: "/api/Vouchers/GetVoucherByDate/" + fd,
                 method: "GET",

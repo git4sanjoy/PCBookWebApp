@@ -1,0 +1,213 @@
+﻿<div ng-controller="InvoiceController as invoiceCtrl">
+
+
+    <div class="box box-danger">
+        <div class="box-header with-border">
+            <h3 class="box-title"><i class="fa fa-cart-plus"></i> Create Invoice</h3>
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+
+        <div class="box-body">
+
+
+        </div><!-- /.box-body -->
+        <div class="box-footer no-border">
+
+            <div class="col-sm-12" style="margin-top:-2em;margin-bottom:1em;">
+                
+                <center><img src="Content/images/PakizaCollection.png" /></center>
+                <center><h4>Pakiza Fabrics Collection</h4></center>
+                <center><strong>Showroom No : {{invoice.showRoom.ShowRoomName}}</strong></center>
+            </div>
+
+            <div class="row" style="margin-top:1em;">
+                <div class="col-md-6">
+                    <div class="box box-danger" style="margin-bottom: 0px;">
+                        <div class="box-body">
+
+                            <div class="box box-widget widget-user-2" style="margin-bottom: 0px;">
+                                <div class="box-footer no-padding">
+                                    <ul class="nav nav-stacked">
+                                        <li><span class="badge bg-red badgeSize">Address: {{invoice.customer_info.Address}}</span> <span class="pull-right badge bg-red badgeSize">Email: {{invoice.customer_info.Email}}</span></li>
+                                        <li><span class="badge bg-red badgeSize">Phone:{{invoice.customer_info.Phone}}</span> <span class="pull-right badge bg-red badgeSize">Balance: {{invoice.customer_info.balance}}</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div><!-- /.box-body -->
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="box box-danger" style="margin-bottom: 0px;">
+
+                        <div class="box-body">
+                            <div class="box box-widget widget-user-2" style="margin-bottom: 0px;">
+                                <div class="box-footer no-padding">
+                                    <ul class="nav nav-stacked">
+                                        <li><span class="badge bg-red badgeSize">Sharee : 0</span> <span class="pull-right badge bg-red badgeSize">Bedsheet : 0</span></li>
+                                        <li><span class="badge bg-red badgeSize">Print/Poplin/Voil : 0</span> <span class="pull-right badge bg-red badgeSize">Three Pic : 0</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div><!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="">
+                <div class="col-xs-12 col-md-6 col-lg-3">
+                    <div class="form-group">
+                        <label>Party Name </label>
+                        <input id="" type="text" name="CheckNo" class="form-control" autocomplete="off" placeholder="Party Name " tabindex="1" autofocus
+                               move-focus-by-enter-key
+                               ng-model="invoice.customer_info.name"
+                               ng-minlength="3"
+                               ng-maxlength="20"
+                               ng-required="true"
+                               ng-keyup="$event.keyCode == 13 && GetCustomerDetailById()"
+                               typeahead-on-select="changeSelectCustomerName($item)"
+                               typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:8" />
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3">
+                    <div class="invoice-number-container">
+                        <label for="invoice-number">Invoice </label>
+                        <input class="form-control" type="text" id="invoice-number" tabindex="2"
+                               move-focus-by-enter-key
+                               ng-model="invoice.number" />
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3">
+                    <div class="invoice-number-container">
+                        <label for="invoice-date">Date </label>
+                        <input class="form-control" type="text" id="invoice-date"
+                               ng-focus="InvoiceDatePickerOpen()"
+                               datepicker-localdate
+                               datepicker-popup="dd/MM/yyyy"
+                               is-open="invoiceDatePickerIsOpen"
+                               ng-click="InvoiceDatePickerOpen()"
+                               ng-required="true"
+                               ng-model="invoice.invoiceDate" />
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3">
+                    <div class="form-group">
+                        <label>Show Room No</label>
+                        <select name="showRoom" class="form-control" id="showRoom"
+                                ng-focus="true"
+                                ng-model="invoice.showRoom"
+                                ng-options="s.ShowRoomName for s in showRoomList track by s.ShowRoomId"
+                                ng-required="true">
+                            <option value="">--Select Show Room No--</option>
+                        </select>
+
+                    </div>
+                </div>
+            </div>
+
+            <table border=1 width=100% class="table table-bordered table-responsive table-hover table-striped" style="margin-top: 1em;" id="invoiceTable">
+                <tr class="info">
+                    <th></th>
+                    <th width="35%">Product Name</th>
+                    <th width="15%">Quantity</th>
+                    <th width="15%">Rate</th>
+                    <th width="15%">Discount</th>
+                    <th width="20%">Total</th>
+                </tr>
+                <tr class="warning">
+                    <td text-align="center"><a style="padding: 0px 4px;" class="btn btn-default btn-sm" href=""><i class="fa fa-pencil-square-o"></i></a></td>
+                    <td>
+                        <input class="form-control" type="text" tabindex="3" placeholder="Product Name"
+                               ng-model="productName"
+                               move-focus-by-enter-key />
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" tabindex="4" placeholder="0"
+                               ng-model="itemQuentity"
+                               move-focus-by-enter-key />
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" tabindex="5" placeholder="0"
+                               ng-model="itemCost"
+                               move-focus-by-enter-key />
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" tabindex="6" placeholder="0"
+                               ng-model="itemDiscount"
+                               move-focus-by-enter-key />
+                    </td>
+                    <td>
+                        <button class="btn btn-info btn-sm" tabindex="7" move-focus-by-enter-key ng-click="addItem()"><i class="fa fa-pencil"></i> Add</button>
+                        <button class="btn btn-success btn-sm"><i class="fa fa-check-square-o"></i> Save</button>
+                    </td>
+                </tr>
+
+                <tr ng-repeat="item in invoice.items">
+                    <td text-align="center"><a style="padding: 0px 4px;" class="btn btn-danger btn-sm" href="" ng-click="removeItem(item.description)"><i class="fa fa-times"></i></a></td>
+                    <td><input class="form-control" type="text" ng-model="item.description" placeholder="Description"></td>
+                    <td><input class="form-control" type="number" ng-model="item.quentity" placeholder="0"></td>
+                    <td><input class="form-control" type="number" ng-model="item.cost" placeholder="0"></td>
+                    <td><input class="form-control" type="number" ng-model="item.discount" placeholder="0"></td>
+                    <td placeholder="0">{{ item.quentity * (item.cost-item.discount) }}</td>
+                </tr>
+                <tr>
+                    <td text-align="center"><a class="btn btn-success" style="color:#fff" href ng-click="addItem()"><i class="fa fa-pencil"></i></a></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="info">
+                    <td text-align="center"></td>
+                    <td colspan="3"></td>
+                    <td>Sub Total:</td>
+                    <td>
+                        <p>{{subTotal()}}</p>
+                    </td>
+                </tr>
+                <tr class="danger">
+                    <td text-align="center"></td>
+                    <td colspan="3"></td>
+                    <td class="form-inline">Final Discount:</td>
+                    <td>
+                        <input class="form-control" type="number" ng-model="invoice.tax" style="width:100px">
+                    </td>
+                </tr>
+                <tr class="success">
+                    <td text-align="center"></td>
+                    <td colspan="3"></td>
+                    <td>Grand Total:</td>
+                    <td>
+                        <p>{{grandTotal()}}</p>
+                    </td>
+                </tr>
+                <tr class="success">
+                    <td text-align="center"></td>
+                    <td colspan="3"></td>
+                    <td class="form-inline">Payment:</td>
+                    <td>
+                        <input class="form-control" type="number" ng-model="invoice.payment" style="width:100px">
+                    </td>
+                </tr>
+                <tr class="danger">
+                    <td text-align="center"></td>
+                    <td colspan="3"></td>
+
+                    <td>Due Total:</td>
+                    <td>
+                        <p>{{dueTotal()}}</p>
+                    </td>
+                </tr>
+            </table>
+
+
+        </div><!-- /.box-footer -->
+    </div>
+</div>
+
+
+

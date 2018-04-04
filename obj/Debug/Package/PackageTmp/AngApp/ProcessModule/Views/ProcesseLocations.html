@@ -1,0 +1,103 @@
+﻿<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-industry"></i> Process Location (Factory Name)</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <!--Server side error messageing------>
+    <div class="col-sm-12" ng-hide="serverMessage" style="margin-top:1em;">
+        <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+            <ul>
+                <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+            </ul>
+        </div>
+    </div>
+    <!--End Server side error messageing-->
+    <!--Client side error messageing------>
+    <div class="col-sm-12" ng-hide="clientMessage" style="margin-top:1em;">
+        <div class="alert alert-{{messageType}} alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-check"></i> {{messageType}}!</h4>
+            {{message}}
+        </div>
+    </div>
+    <!--End Client side error messageing-->
+    <!--Original-->
+
+
+        <div class="box-body">
+            <form name="entryForm" novalidate role="form" class="form-horizontal" id="entryForm">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <label>Factory Name : *</label>
+                            <div class="input-group" ng-class="{ 'has-error' : entryForm.ProcesseLocationName.$invalid && (entryForm.ProcesseLocationName.$dirty || submitted)}">
+                                <span class="input-group-addon"><i class="fa fa-industry"></i></span>
+                                <input id="ProcesseLocationName" type="text" class="form-control" name="ProcesseLocationName" autocomplete="off" tabindex="1"
+                                       move-focus-by-enter-key
+                                       ng-model=" processeLocation.ProcesseLocationName"
+                                       ng-required="true">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-12">
+                            <label> </label>
+                            <div class="form-group" style="margin-top: 5px">
+                                <button type="button" ng-click="Save(processeLocation)" ng-disabled="entryForm.$invalid" class="btn btn-success uppercase saveButton">Save</button>
+                                <button type="button" ng-click="Cancel()" class="btn btn-default uppercase cancelButton">Cancel</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+            <table class="table table-bordered table-hover table-condensed" id="tableData">
+                <thead>
+                    <tr style="font-weight: bold" class="info">
+                        <td>Location Name</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <!--<tbody id="tableBody"></tbody>-->
+                <tbody>
+                    <tr ng-repeat="item in ProcesseLicationObj">
+                        <td>
+                            <span editable-text="item.ProcesseLocationName"
+                                  ng-model="item.ProcesseLocationName"
+                                  e-name="ProcesseLocationName" e-form="rowform"
+                                  onbeforesave="checkName($data)" e-required>
+                                {{item.ProcesseLocationName || 'empty' }}
+                            </span>
+                        </td>
+                        <td style="white-space: nowrap">
+                            <!-- form -->
+                            <form editable-form name="rowform" onbeforesave="updateProcessLocation($data, item.ProcesseLocationId)"
+                                  ng-show="rowform.$visible"
+                                  class="form-buttons form-inline"
+                                  shown="inserted == item">
+                                <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-warning">
+                                    <i class="fa fa-pencil"></i> Update
+                                </button>
+                                <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                                    <i class="fa fa-close"></i>
+                                </button>
+                            </form>
+                            <div class="buttons" ng-show="!rowform.$visible">
+                                <button class="btn btn-primary btn-sm" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>
+                                <button class="btn btn-danger btn-sm" ng-click="remove($index, item.ProcesseLocationId)"><i class="glyphicon glyphicon-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr ng-show="item.warning">
+                        <td colspan="3" style="text-align: center">Warning !!!</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+</div>
+

@@ -86,14 +86,18 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
                 templateUrl: '/AngApp/ProcessModule/Views/ProcessReport.html',
                 controller: 'ProcessReportController'
             })
+            .when('/OrderProduct', {
+                templateUrl: '/AngApp/ProcessModule/Views/OrderProduct.html',
+                controller: 'OrderProductController'
+            })
 
             .when('/DesignGallery', {// For Design Management Routes
                 templateUrl: '/AngApp/ProcessModule/Views/DesignGallery.html',
                 controller: 'DesignGalleryController'
             })
-            .when('/FinishedGood', {
-                templateUrl: '/AngApp/ProcessModule/Views/FinishedGood.html',
-                controller: 'FinishedGoodController'
+            .when('/AddDesign', {
+                templateUrl: '/AngApp/ProcessModule/Views/AddDesign.html',
+                controller: 'DesignController'
             })
             .when('/Invoice', { // For Sales Management Routes
                 templateUrl: '/AngApp/SalesModule/Views/Cart.html',
@@ -135,6 +139,10 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
                 templateUrl: '/AngApp/SalesModule/Views/SalesSearch.html',
                 controller: 'SalesSearchController'
             })
+            .when('/SalesEdit', {
+                templateUrl: '/AngApp/SalesModule/Views/SalesEdit.html',
+                controller: 'SalesEditController'
+            })
             .when('/SalesReports', {
                 templateUrl: '/AngApp/SalesModule/Views/SalesReport.html',
                 controller: 'SalesReportController'
@@ -150,6 +158,10 @@ app.config(['$locationProvider', '$routeProvider', '$ariaProvider',
             .when('/Divisions', {
                 templateUrl: '/AngApp/SalesModule/Views/Divisions.html',
                 controller: 'DivisionsController'
+            })
+            .when('/WareHouse', {
+                templateUrl: '/AngApp/SalesModule/Views/WareHouse.html',
+                controller: 'WareHouseController'
             })
         .when('/Bookkeeping', {// For Accounts  Module Management Routes
             templateUrl: '/AngApp/BookModule/Views/Bookkeeping.html',
@@ -333,3 +345,17 @@ app.factory('AddDealService', ['$http', function ($http) {
 
     return fac;
 }])
+//app.factory('Excel', function ($window) {
+//    var uri = 'data:application/vnd.ms-excel;base64,',
+//        template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+//        base64 = function (s) { return $window.btoa(unescape(encodeURIComponent(s))); },
+//        format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
+//    return {
+//        tableToExcel: function (tableId, worksheetName) {
+//            var table = $(tableId),
+//                ctx = { worksheet: worksheetName, table: table.html() },
+//                href = uri + base64(format(template, ctx));
+//            return href;
+//        }
+//    };
+//})

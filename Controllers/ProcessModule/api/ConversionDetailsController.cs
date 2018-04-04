@@ -25,12 +25,18 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         [HttpGet]
         public IHttpActionResult GetPurchaseProductList()
         {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
             var list = (from item in db.PurchasedProducts
                         select new
                         {
+                            item.ProductTypeId,
                             item.PurchasedProductId,
-                            item.PurchasedProductName
-                        }).ToList();
+                            item.PurchasedProductName,
+                            item.ShowRoomId
+                        })
+                        .Where(item => item.ProductTypeId==1 && item.ShowRoomId==showRoomId)
+                        .ToList();
             var list2 = (from item in db.Conversions
                        select new
                        {

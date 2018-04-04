@@ -20,6 +20,44 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
         private PCBookWebAppContext db = new PCBookWebAppContext();
 
 
+        [Route("api/Divisions/AllReportList")]
+        [HttpGet]
+        public IHttpActionResult GetAllReportList()
+        {
+            string currentUserId = User.Identity.GetUserId();
+            string currentUserName = User.Identity.GetUserName();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == currentUserId).Select(a => a.ShowRoomId).FirstOrDefault();
+
+            var listDivisions = db.Divisions
+                .Where(d => d.DivisionId != 9)
+                .Select(e => new {
+                    DivisionId = e.DivisionId,
+                    DivisionName = e.DivisionName,
+                    DivisionNameBangla = e.DivisionNameBangla
+                })
+                .OrderBy(e => e.DivisionName);
+            var listZoneManagers = db.ZoneManagers
+                .Where(zm=>zm.ZoneManagerId <= 7)
+                            .OrderBy(d => d.ZoneManagerId)
+                            .Select(e => new {
+                                ZoneManagerId = e.ZoneManagerId,
+                                ZoneManagerName = e.ZoneManagerName
+                            });
+            var listSaleZones = db.SaleZones
+                .Select(e => new {
+                    id = e.SaleZoneId,
+                    label = e.SaleZoneName,
+                    ZoneManagerId = e.ZoneManager.ZoneManagerId,
+                    ZoneManagerName = e.ZoneManager.ZoneManagerName,
+                    DivisionId = e.DivisionId,
+                    e.SaleZoneDescription
+                })
+                .OrderBy(e => e.label);
+            var listDistricts = db.Districts.Select(e => new { id = e.DistrictId, label = e.DistrictName });
+
+            return Ok(new { listDivisions , listZoneManagers , listSaleZones , listDistricts });
+        }
+
         [Route("api/Divisions/DivisionsList")]
         [HttpGet]
         public IHttpActionResult GetDivisionsList()

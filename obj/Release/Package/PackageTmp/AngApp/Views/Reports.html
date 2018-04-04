@@ -1,0 +1,165 @@
+﻿<div class="box box-primary">
+    <div class="box-header with-border">
+
+        <div class="form-group" style="margin-bottom: 0px;">
+            <h3 class="box-title"><i class="fa fa-print"></i> Accouts Report</h3>
+            <div class="radio-inline" ng-repeat="print in printTypeArray" style="margin-left:1em;">
+                <label>
+                    <input name="printOptionRadios" type="radio"
+                           ng-change="updatePrintType()"
+                           ng-value="print"
+                           ng-model="$parent.printOptionRadios" />
+                    {{print.Text}}
+                </label>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <form name="reportForm" novalidate role="form" class="form-horizontal" id="reportForm" ng-submit="submitCashBookEntryForm()">
+        <div class="box-body">
+            <div class="row">
+
+
+                <div class="col-lg-5 col-md-6 col-sm-12">
+
+                    <label>Please Select Repot</label>
+                    <div class="form-group">
+                        <div class="radio" ng-repeat="report in reportArray" style="margin-left:2em;">
+                            <label>
+                                <input name="reportOptionRadios" type="radio"
+                                       ng-change="updateControlStatus()"
+                                       ng-value="report"
+                                       ng-model="$parent.reportOptionRadios" />
+                                {{report.Text}}
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-7 col-md-6 col-sm-12">
+
+                    <div class="row">
+                        <!-- Consumption Div -->
+                        <div ng-show="consumptionDiv">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="exampleInputNameYear">Year</label>
+                                    <select name="exampleInputNameYear"
+                                            ng-model="yearDdl"
+                                            ng-change="changedYear()"
+                                            class="form-control">
+                                        <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="exampleInputNameMonth">Month</label>
+                                    <select name="exampleInputNameMonth"
+                                            ng-model="monthDdl"
+                                            ng-change="changedMonth()"
+                                            ng-options="x as x.name for x in months track by x.id"
+                                            class="form-control">
+                                        <option value="">--Month--</option>
+                                    </select>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Date Div -->
+                        <div ng-show="dateDiv">
+
+                            <div class="col-sm-4">
+                                <label>From Date</label>
+                                <div class="input-group" ng-class="{ 'has-error' : reportForm.FromDate.$invalid && (reportForm.FromDate.$dirty || submitted)}">
+                                    <span class="input-group-addon"><i class="fa fa-calendar" ng-click="FromDatePickerOpen()"></i></span>
+                                    <input class="form-control" type="text" id="FromDate" name="FromDate" tabindex="1" autocomplete="off"
+                                           move-focus-by-enter-key
+                                           ng-focus="FromDatePickerOpen()"
+                                           datepicker-localdate
+                                           datepicker-popup="dd/MM/yyyy"
+                                           is-open="fromDatePickerIsOpen"
+                                           ng-click="FromDatePickerOpen()"
+                                           ng-required="true"
+                                           ng-model="reportOption.FromDate" />
+                                </div>
+                                <p ng-show="reportForm.FromDate.$error.required && (reportForm.FromDate.$dirty || submitted)" class="help-block">Date is required.</p>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <label>To Date</label>
+                                <div class="input-group" ng-class="{ 'has-error' : reportForm.ToDate.$invalid && (reportForm.ToDate.$dirty || submitted)}">
+                                    <span class="input-group-addon"><i class="fa fa-calendar" ng-click="ToDatePickerOpen()"></i></span>
+                                    <input class="form-control" type="text" id="ToDate" name="ToDate" tabindex="2" autocomplete="off"
+                                           move-focus-by-enter-key
+                                           ng-focus="ToDatePickerOpen()"
+                                           datepicker-localdate
+                                           datepicker-popup="dd/MM/yyyy"
+                                           is-open="toDatePickerIsOpen"
+                                           ng-click="ToDatePickerOpen()"
+                                           ng-required="true"
+                                           ng-model="reportOption.ToDate" />
+                                </div>
+                                <p ng-show="reportForm.ToDate.$error.required && (reportForm.ToDate.$dirty || submitted)" class="help-block">To Date is required.</p>
+                            </div>
+                            <div class="col-sm-4">
+                                <label>&nbsp;</label>
+                            </div>
+                                
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <!-- Ledger Div -->
+                        <div ng-show="ledgerDiv">
+                            <div class="col-sm-12">
+                                <label>Ledger Name</label><br />
+                                <div ng-dropdown-multiselect=""
+                                     options="ledgerList"
+                                     selected-model="ledgeListMultiSelect"
+                                     extra-settings="ledgeListMultiSelectSettings"
+                                     checkboxes="true"
+                                     translation-texts="ledgeListMultiSelectCustomTexts">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Group Div -->
+                        <div ng-show="groupDiv">
+                            <div class="col-sm-12">
+                                <label>Group Name</label><br />
+                                <div ng-dropdown-multiselect=""
+                                     options="groupList"
+                                     selected-model="groupListMultiSelect"
+                                     extra-settings="groupListMultiSelectSettings"
+                                     checkboxes="true"
+                                     translation-texts="groupListMultiSelectCustomText">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div><!-- /.box-body -->
+        <div class="box-footer no-border">
+
+            <button type="submit" class="btn btn-primary" tabindex="7"
+                    move-focus-by-enter-key
+                    ng-click="showReport()">
+                <i class="fa fa-print"></i> Show Report
+            </button>
+
+            <button type="button" class="btn btn-default"
+                    ng-click="cancel()">
+                <span class="glyphicon glyphicon-remove"></span> Clear
+            </button>
+
+        </div><!-- /.box-footer -->
+    </form>
+
+</div>

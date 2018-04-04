@@ -1,6 +1,6 @@
 ﻿<div class="box box-primary">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-cube"></i> Show Room Add Form</h3>
+        <h3 class="box-title"><i class="fa fa-cube"></i>  Organizational Unit</h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -33,7 +33,7 @@
                     <label>Show Room Name</label>
                     <div class="input-group" ng-class="{ 'has-error' : showRoomForm.ShowRoomName.$invalid && (showRoomForm.ShowRoomName.$dirty || submitted)}">
                         <span class="input-group-addon"><i class="fa fa-building"></i></span>
-                        <input id="ShowRoomName" type="text" class="form-control" name="ShowRoomName" autocomplete="off" tabindex="1" autofocus
+                        <input id="ShowRoomName" type="text" class="form-control" name="ShowRoomName" autocomplete="off" tabindex="1" 
                                move-focus-by-enter-key
                                ng-model="showRoom.ShowRoomName"
                                ng-required="true">
@@ -44,7 +44,7 @@
                     <label>Show Room Name Bangla</label>
                     <div class="input-group" ng-class="{ 'has-error' : showRoomForm.ShowRoomNameBangla.$invalid && (showRoomForm.ShowRoomNameBangla.$dirty || submitted)}">
                         <span class="input-group-addon"><i class="fa fa-building"></i></span>
-                        <input id="ShowRoomNameBangla" type="text" class="form-control" name="ShowRoomNameBangla" autocomplete="off" tabindex="2" autofocus
+                        <input id="ShowRoomNameBangla" type="text" class="form-control" name="ShowRoomNameBangla" autocomplete="off" tabindex="2" 
                                move-focus-by-enter-key
                                ng-model="showRoom.ShowRoomNameBangla"
                                ng-required="true">
@@ -89,7 +89,7 @@
 
 <div class="box box-primary">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-cubes"></i> Total Show Room : {{users.length}}</h3>
+        <h3 class="box-title"><i class="fa fa-cubes"></i> Total  Organizational Units : {{users.length}}</h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -99,10 +99,11 @@
     <div class="box-body">
         <table class="table table-bordered table-hover table-condensed">
             <tr style="font-weight: bold" class="info">
-                <td style="width:30%">Show Room Name</td>
+                <td style="width:20%">Show Room Name</td>
+                <td style="width:20%">ZoneName</td>
                 <td style="width:30%">প্রদর্শনী রুম বাংলা</td>
                 <td style="width:25%">Unit</td>
-                <td style="width:15%">Action</td>
+                <td style="width:5%">Action</td>
             </tr>
             <tr ng-repeat="user in users">
                 <td>
@@ -112,6 +113,10 @@
                     </span>
                 </td>
                 <td>
+                    <span editable-text="user.ZoneName" e-name="ZoneName" e-form="rowform" e-required>
+                        {{ user.ZoneName || 'empty' }}
+                    </span>
+                </td><td>
                     <span editable-text="user.ShowRoomNameBangla" e-name="ShowRoomNameBangla" e-form="rowform" e-required>
                         {{ user.ShowRoomNameBangla || 'empty' }}
                     </span>

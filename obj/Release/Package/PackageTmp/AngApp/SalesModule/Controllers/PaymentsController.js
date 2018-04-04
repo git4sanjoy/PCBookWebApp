@@ -49,7 +49,7 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
     $scope.searchPayment = {};
     $scope.customerList = {};
     $http({
-        url: "/api/Customer/GetDropDownList",
+        url: "/api/Customer/CustomerDropDownList",
         method: "GET",
         headers: authHeaders
     }).success(function (data) {
@@ -67,11 +67,12 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
             //console.log(data);
         });
     };
-    $scope.open = function ($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        $scope.opened = true;
-    };
+
+    //$scope.open = function ($event) {
+    //    $event.preventDefault();
+    //    $event.stopPropagation();
+    //    $scope.opened = true;
+    //};
 
     $scope.invoiceDatePickerIsOpen = false;
     $scope.InvoiceDatePickerOpen = function () {
@@ -299,13 +300,13 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
                     $scope.Address = data[0].Address;
                     $scope.DistrictName = data[0].DistrictName;
                     $scope.Image = data[0].Image;
-                    $scope.BfAmount = data[0].BfAmount;
-                    $scope.BFDate = data[0].BFDate;
+                    $scope.BfAmount = data[0].TotalBf;
+                    //$scope.BFDate = data[0].BFDate;
                     $scope.CreditLimit = data[0].CreditLimit;
-                    $scope.ActualCredit = data[0].ActualCredit;
-                    $scope.TotalSale = data[0].TotalSale;
-                    $scope.TotalCollection = data[0].TotalCollection;
-                    $scope.TotalDiscount = data[0].TotalDiscount;
+                    $scope.ActualCredit = parseFloat(data[0].GrossSales) - parseFloat(data[0].MemoDiscount) + parseFloat(data[0].GatOther);
+                    $scope.TotalSale = data[0].GrossSales;
+                    $scope.TotalCollection = data[0].TotalPayments;
+                    $scope.TotalDiscount = data[0].TotalDiscounts;
 
                 } else {
                     $scope.Address = '';
@@ -348,13 +349,13 @@ app.controller('PaymentsController', ['$scope', '$location', '$http', '$timeout'
                     $scope.searchPayment.Address = data[0].Address;
                     $scope.searchPayment.DistrictName = data[0].DistrictName;
                     $scope.searchPayment.Image = data[0].Image;
-                    $scope.searchPayment.BfAmount = data[0].BfAmount;
-                    $scope.searchPayment.BFDate = data[0].BFDate;
+                    $scope.searchPayment.BfAmount = data[0].TotalBf;
+                    //$scope.searchPayment.BFDate = data[0].BFDate;
                     $scope.searchPayment.CreditLimit = data[0].CreditLimit;
-                    $scope.searchPayment.ActualCredit = data[0].ActualCredit;
-                    $scope.searchPayment.TotalSale = data[0].TotalSale;
-                    $scope.searchPayment.TotalCollection = data[0].TotalCollection;
-                    $scope.searchPayment.TotalDiscount = data[0].TotalDiscount;
+                    $scope.searchPayment.ActualCredit = parseFloat(data[0].GrossSales) - parseFloat(data[0].MemoDiscount) + parseFloat(data[0].GatOther);
+                    $scope.searchPayment.TotalSale = data[0].GrossSales;
+                    $scope.searchPayment.TotalCollection = data[0].TotalPayments;
+                    $scope.searchPayment.TotalDiscount = data[0].TotalDiscounts;
                 } else {
                     $scope.searchPayment.CreditLimit = 0;
                     $scope.searchPayment.ActualCredit = 0;

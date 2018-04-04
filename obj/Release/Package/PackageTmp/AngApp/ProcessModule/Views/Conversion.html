@@ -1,108 +1,100 @@
-﻿
-<div class="box box-primary">
+﻿<div class="box box-primary">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-recycle"></i> Conversion</h3>
+        <h3 class="box-title"><i class="fa fa-apple"></i>Conversion</h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
     </div>
-    <!--Server side error messageing------>
-    <div class="col-sm-12" ng-hide="serverMessage" style="margin-top:1em;">
-        <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
-            <ul>
-                <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
-            </ul>
-        </div>
-    </div>
-    <!--End Server side error messageing-->
-    <!--Client side error messageing------>
-    <div class="col-sm-12" ng-hide="clientMessage" style="margin-top:1em;">
-        <div class="alert alert-{{messageType}} alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            <h4><i class="icon fa fa-check"></i> {{messageType}}!</h4>
-            {{message}}
-        </div>
-    </div>
-    <!--End Client side error messageing-->
-    <form name="entryForm" novalidate role="form" class="form-horizontal" id="entryForm">
-        <div class="box-body">
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <label>Conversion : *</label>
-                    <div class="input-group" ng-class="{ 'has-error' : entryForm.ConversionName.$invalid && (entryForm.ConversionName.$dirty || submitted)}">
-                        <span class="input-group-addon"><i class="fa fa-recycle"></i></span>
-                        <input id="SupplierName" type="text" class="form-control" name="ConversionName" autocomplete="off" tabindex="1"
-                               move-focus-by-enter-key
-                               ng-model="conversion.ConversionName"
-                               ng-required="true">
-                    </div>
-                </div>
 
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <label> </label>
-                    <div class="form-group" style="margin-top: 5px">
-                        <button type="button" ng-click="Save(conversion)" ng-disabled="entryForm.$invalid" class="btn btn-success uppercase saveButton">Save</button>
-                        <button type="button" ng-click="Cancel()" class="btn btn-default uppercase cancelButton">Cancel</button>
-                    </div>
+    <div class="box-body">
+        <!--Server side error messageing------>
+        <div class="col-sm-12">
+            <div class="" ng-hide="serverMessage">
+                <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                    <ul>
+                        <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                    </ul>
                 </div>
-
             </div>
         </div>
-    </form><br />
-
-    <div class="box box-primary">
-        <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-recycle"></i> Conversion List</h3>
-            <div class="box-tools pull-right">
-                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        <!--End Server side error messageing-->
+        <!--Client side error messageing------>
+        <div class="col-sm-12">
+            <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+                {{message}}
             </div>
         </div>
-
-        <div class="box-body">
-            <table class="table table-bordered table-hover table-condensed">
-                <tr style="font-weight: bold" class="danger">
-                    <td style="width:20%"> Name</td>
-                    <td colspan="2" style="width:20%">Action</td>
+        <!--End Client side error messageing-->
+        <div>
+            <button class="btn btn-success" ng-click="addConversion()"><i class="fa fa-pencil"></i> Add Conversion</button>
+        </div>
+        <table class="table table-bordered table-hover table-condensed table-striped">
+            <thead>
+                <tr style="font-weight: bold" class="info">
+                    <td style="width:50%">Conversion Name</td>
+                    <td style="width:20%">Matric From</td>
+                    <td style="width:20%">Matric To</td>
+                    <td style="width:10%"></td>
                 </tr>
-                <tr ng-repeat="item in ConversionObj">
+            </thead>
+            <tbody>
+               
+                <tr ng-repeat="conversionObj in (filteredProductList = (conversions | filter: searchText)) | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
                     <td>
-                        <!-- editable buyername (text with validation) -->
-                        <span editable-text="item.ConversionName" e-name="ConversionName" e-form="rowform" onbeforesave="checkName($data, item.id)" e-required>
-                            {{ item.ConversionName || 'empty' }}
+                        <span editable-text="conversionObj.ConversionName" 
+                              e-name="ConversionName" e-form="rowform" 
+                              onbeforesave="checkName($data, conversionObj.id)">
+                            {{ conversionObj.ConversionName || 'empty' }}
                         </span>
                     </td>
 
+                    <td>
+                        <span editable-select="conversionObj.MatricId1" e-name="MatricId1" e-form="rowform" 
+                              e-ng-options="s.value as s.text for s in matricsList">
+                            {{ displayMatricName1(conversionObj) }}
+                        </span>
+                    </td>
+                    <td>
+                        <span editable-select="conversionObj.MatricId2" e-name="MatricId2" e-form="rowform" 
+                              e-ng-options="s.value as s.text for s in matricsList">
+                            {{ displayMatricName2(conversionObj) }}
+                        </span>
+                    </td>
 
                     <td style="white-space: nowrap">
-                        <!-- form -->
-                        <form editable-form name="rowform" onbeforesave="updateData($data, item.ConversionId)"
-                              ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == item">
-                            <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-warning">
-                                <i class="fa fa-pencil"></i> Update
+                        <form editable-form name="rowform" onbeforesave="saveConversion($data, conversionObj.id)" 
+                              ng-show="rowform.$visible" 
+                              class="form-buttons form-inline" 
+                              shown="inserted == conversionObj">
+                            <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+                                save
                             </button>
                             <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
-                                <i class="fa fa-close"></i>
+                                cancel
                             </button>
                         </form>
                         <div class="buttons" ng-show="!rowform.$visible">
-                            <button class="btn btn-primary btn-sm" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>
-                            <button class="btn btn-danger btn-sm" ng-click="remove($index, item.ConversionId)"><i class="glyphicon glyphicon-trash"></i></button>
+                            <button class="btn btn-primary" ng-click="rowform.$show()"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-danger" ng-click="remove($index, conversionObj.id)"><i class="fa fa-trash"></i></button>
                         </div>
                     </td>
                 </tr>
-            </table>
+            </tbody>
+            <tfoot>
 
-        </div>
-
-
-        <div class="box-footer no-border">
-
-        </div>
-
+            </tfoot>
+        </table>
     </div>
-
 </div>
+
+
+
+
+
+
+

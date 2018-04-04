@@ -1,0 +1,112 @@
+﻿
+<div class="box box-danger" ng-show="UnitRoleList.length==0">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cube"></i> Unit Role</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <!--Server side error messageing------>
+    <div class="col-sm-12">
+
+        <div class="" ng-hide="serverMessage">
+            <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                <ul>
+                    <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--End Server side error messageing-->
+    <!--Client side error messageing------>
+    <div class="col-sm-12">
+        <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+            {{message}}
+        </div>
+    </div>
+    <!--End Client side error messageing-->
+    <form name="UnitRoleForm" novalidate role="form" class="form-horizontal" id="UnitRoleForm" ng-submit="submitUnitRoleForm()">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="input-group" ng-class="{ 'has-error' : UnitRoleForm.UnitRoleName.$invalid && (UnitRoleForm.UnitRoleName.$dirty || submitted)}">
+                        <div layout="row" layout-align="space-between center">                           
+                            <md-select ng-model="UnitRole.UnitRoleName" placeholder="Unit Role" class="md-no-underline"  id="UnitRoleName" name="UnitRoleName">
+                                <md-option value="Trading">Trading</md-option>
+                                <md-option value="Industrial">Industry</md-option>
+                            </md-select>
+                            <p ng-show="UnitRoleForm.UnitRoleName.$error.required && (UnitRoleForm.UnitRoleName.$dirty || submitted)" class="help-block">Unit Role Name is required.</p>
+                            <button type="submit" class="btn btn-success" tabindex="2" style="margin-left:1em;"
+                                    move-focus-by-enter-key
+                                    ng-hide="addButton"
+                                    ng-disabled="UnitRoleForm.$invalid">
+                                <i class="fa fa-pencil"></i> Save
+                            </button>
+                            <button type="button" class="btn btn-default" style="margin-left:1em;"
+                                    ng-hide="cancelButton"
+                                    ng-click="clear()">
+                                <span class="glyphicon glyphicon-remove"></span> Clear
+                            </button>
+                        </div>                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div><!-- /.box-body -->
+
+    </form>
+</div>
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-cubes"></i> Unit Roles</h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <table class="table table-bordered table-hover table-condensed">
+            <tr style="font-weight: bold" class="danger">
+                <td style="width:80%">UnitRole Name</td>
+                <td style="width:20%">Action</td>
+            </tr>
+
+            <tr ng-repeat="UnitRole in UnitRoleList">
+                <td>
+                    <!-- editable buyername (text with validation) -->
+                    <span editable-text="UnitRole.UnitRoleName" e-name="UnitRoleName" e-form="rowform" onbeforesave="checkName($data, UnitRole.UnitRoleId)" e-required>
+                        {{ UnitRole.UnitRoleName || 'empty' }}
+                    </span>
+                </td>
+
+                <td style="white-space: nowrap">
+                    <!-- form -->
+                    <form editable-form name="rowform" onbeforesave="update($data, UnitRole.UnitRoleId)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == UnitRole">
+                        <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-warning">
+                            <i class="fa fa-pencil"></i> Update
+                        </button>
+                        <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </form>
+                    <div class="buttons" ng-show="!rowform.$visible">
+                        <!--<button class="btn btn-primary btn-sm" ng-click="rowform.$show()"><i class="glyphicon glyphicon-edit"></i></button>-->
+                        <button class="btn btn-danger btn-sm" ng-click="remove($index, UnitRole.UnitRoleId)"><i class="glyphicon glyphicon-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div><!-- /.box-body -->
+    <div class="box-footer no-border">
+
+    </div><!-- /.box-footer -->
+
+</div>

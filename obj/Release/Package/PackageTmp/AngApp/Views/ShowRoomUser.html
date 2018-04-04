@@ -2,7 +2,7 @@
 
 <div class="box box-primary">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-cube"></i> Show Room User</h3>
+        <h3 class="box-title"><i class="fa fa-cube"></i> OU User</h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -15,7 +15,7 @@
                     <label>User Name</label>
                     <div class="input-group" ng-class="{ 'has-error' : showroomUserForm.userListCmb.$invalid && (showroomUserForm.userListCmb.$dirty || submitted)}">
                         <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                        <select name="userListCmb" class="form-control" id="userListCmb" tabindex="1" autofocus
+                        <select name="userListCmb" class="form-control" id="userListCmb" tabindex="1" 
                                 ng-focus="true"
                                 ng-model="showRoomUser.userListCmb"
                                 ng-options="s.UserName for s in usersList track by s.Id"
@@ -84,9 +84,6 @@
                     <p ng-show="showroomUserForm.email.$error.required && (showroomUserForm.email.$dirty || submitted)" class="help-block">Email is required.</p>
                 </div>
             </div>
-
-
-
         </div><!-- /.box-body -->
 
         <div class="box-footer no-border">

@@ -33,6 +33,6 @@ namespace PCBookWebApp.Models.ProcessModule
         [Required(ErrorMessage = "Show Room Name is required.")]
         public int ShowRoomId { get; set; }
         public virtual ShowRoom ShowRoom { get; set; }
-
+        public virtual UnitRole UnitRole { get; set; }
     }
 }

@@ -242,18 +242,125 @@
     <Compile Include="Controllers\MDModule\api\DealProductionsController.cs" />
     <Compile Include="Controllers\MDModule\api\DealsController.cs" />
     <Compile Include="Controllers\MDModule\api\Deal_ImageController.cs" />
+    <Compile Include="Controllers\ProcessModule\AddDesignController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\FinishedGoodStockDetailsController.cs" />
+    <Compile Include="Controllers\ProcessModule\api\PurchasedProductRatesController.cs" />
     <Compile Include="Controllers\ProcessModule\DesignGalleryController.cs" />
+    <Compile Include="Controllers\ProcessModule\OrderProductController.cs" />
+    <Compile Include="Controllers\ProcessModule\ProcessListController.cs" />
+    <Compile Include="Controllers\ProcessModule\ProductTypesController.cs" />
+    <Compile Include="Controllers\ProcessModule\UnitRoleController.cs" />
     <Compile Include="Controllers\SalesModule\Api\DivisionsController.cs" />
     <Compile Include="Controllers\SalesModule\Api\SaleZonesController.cs" />
     <Compile Include="Controllers\SalesModule\Api\UnitManagersController.cs" />
+    <Compile Include="Controllers\SalesModule\Api\WareHousesController.cs" />
     <Compile Include="Controllers\SalesModule\Api\ZoneManagersController.cs" />
     <Compile Include="Controllers\SalesModule\DistrictController.cs" />
     <Compile Include="Controllers\SalesModule\DivisionsController.cs" />
+    <Compile Include="Controllers\SalesModule\SalesEditController.cs" />
     <Compile Include="Controllers\SalesModule\SalesManController.cs" />
+    <Compile Include="Controllers\SalesModule\SalesReportController.cs" />
     <Compile Include="Controllers\SalesModule\SaleZoneController.cs" />
     <Compile Include="Controllers\SalesModule\UnitManagersController.cs" />
+    <Compile Include="Controllers\SalesModule\WareHouseController.cs" />
     <Compile Include="Controllers\SalesModule\ZoneManagerController.cs" />
     <Compile Include="Controllers\ShowRoomUserController.cs" />
+    <Compile Include="CrystalReports\FinishedGoodsStock.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FinishedGoodsStock.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\ProcessFactory.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProcessFactory.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\ProcessFactoryWisePending.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProcessFactoryWisePending.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\ProcessFactoryWisePendingProcess.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProcessFactoryWisePendingProcess.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\ProcessFactoryWiseProcessHistory.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProcessFactoryWiseProcessHistory.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\ProcessProduct.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProcessProduct.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\SalesZoneProductWise.cs">
+      <DependentUpon>SalesZoneProductWise.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\SalesZoneClosingBalanceSummary.cs">
+      <DependentUpon>SalesZoneClosingBalanceSummary.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\SalesZoneClosingBalance.cs">
+      <DependentUpon>SalesZoneClosingBalance.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\SalesDate.cs">
+      <DependentUpon>SalesDate.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\SalesCustomerRegister.cs">
+      <DependentUpon>SalesCustomerRegister.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\SalesMemoBangla.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SalesMemoBangla.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\SalesProductWise.cs">
+      <DependentUpon>SalesProductWise.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\SalesMemoWise.cs">
+      <DependentUpon>SalesMemoWise.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\SalesClosingBalance.cs">
+      <DependentUpon>SalesClosingBalance.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\ProductWiseStoreBalance.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProductWiseStoreBalance.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Migrations\201803010358518_AddDealProduction.cs" />
     <Compile Include="Migrations\201803010358518_AddDealProduction.Designer.cs">
       <DependentUpon>201803010358518_AddDealProduction.cs</DependentUpon>
@@ -281,6 +388,58 @@
     <Compile Include="Migrations\201803071036036_AddMemoCostToMemoMaster.cs" />
     <Compile Include="Migrations\201803071036036_AddMemoCostToMemoMaster.Designer.cs">
       <DependentUpon>201803071036036_AddMemoCostToMemoMaster.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803100903591_addUserIdToZoneManager.cs" />
+    <Compile Include="Migrations\201803100903591_addUserIdToZoneManager.Designer.cs">
+      <DependentUpon>201803100903591_addUserIdToZoneManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803101649357_AddZoneNameToShowRoom.cs" />
+    <Compile Include="Migrations\201803101649357_AddZoneNameToShowRoom.Designer.cs">
+      <DependentUpon>201803101649357_AddZoneNameToShowRoom.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803111451313_AddZoneManagerIdAlias.cs" />
+    <Compile Include="Migrations\201803111451313_AddZoneManagerIdAlias.Designer.cs">
+      <DependentUpon>201803111451313_AddZoneManagerIdAlias.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803111513228_AddWareHouse.cs" />
+    <Compile Include="Migrations\201803111513228_AddWareHouse.Designer.cs">
+      <DependentUpon>201803111513228_AddWareHouse.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803111515052_AddWareHouseAgain.cs" />
+    <Compile Include="Migrations\201803111515052_AddWareHouseAgain.Designer.cs">
+      <DependentUpon>201803111515052_AddWareHouseAgain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803111554474_AddWareHouseIdToMemoMaster.cs" />
+    <Compile Include="Migrations\201803111554474_AddWareHouseIdToMemoMaster.Designer.cs">
+      <DependentUpon>201803111554474_AddWareHouseIdToMemoMaster.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803170518052_UpdateMemoDetailsModel.cs" />
+    <Compile Include="Migrations\201803170518052_UpdateMemoDetailsModel.Designer.cs">
+      <DependentUpon>201803170518052_UpdateMemoDetailsModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803190424125_UpdateConversionTable.cs" />
+    <Compile Include="Migrations\201803190424125_UpdateConversionTable.Designer.cs">
+      <DependentUpon>201803190424125_UpdateConversionTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803200712474_UpdateProcessModuleAddOrderForm.cs" />
+    <Compile Include="Migrations\201803200712474_UpdateProcessModuleAddOrderForm.Designer.cs">
+      <DependentUpon>201803200712474_UpdateProcessModuleAddOrderForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803221536239_UpdateProcessListModel.cs" />
+    <Compile Include="Migrations\201803221536239_UpdateProcessListModel.Designer.cs">
+      <DependentUpon>201803221536239_UpdateProcessListModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803221626002_AddPurchasedProductRateModel.cs" />
+    <Compile Include="Migrations\201803221626002_AddPurchasedProductRateModel.Designer.cs">
+      <DependentUpon>201803221626002_AddPurchasedProductRateModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803251209479_AddFinishedGoodStockDetailsModel.cs" />
+    <Compile Include="Migrations\201803251209479_AddFinishedGoodStockDetailsModel.Designer.cs">
+      <DependentUpon>201803251209479_AddFinishedGoodStockDetailsModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804030422391_AddConvertedQuantityToMemo.cs" />
+    <Compile Include="Migrations\201804030422391_AddConvertedQuantityToMemo.Designer.cs">
+      <DependentUpon>201804030422391_AddConvertedQuantityToMemo.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\MDModule\DealProduction.cs" />
     <Compile Include="Models\MDModule\DealsView.cs" />
@@ -455,6 +614,7 @@
     <Compile Include="Models\ProcessModule\FinishedGood.cs" />
     <Compile Include="Models\ProcessModule\FinishedGoodImage.cs" />
     <Compile Include="Models\ProcessModule\FinishedGoodStock.cs" />
+    <Compile Include="Models\ProcessModule\FinishedGoodStockDetails.cs" />
     <Compile Include="Models\ProcessModule\Matric.cs" />
     <Compile Include="Models\ProcessModule\Process.cs" />
     <Compile Include="Models\ProcessModule\ProcesseLocation.cs" />
@@ -462,11 +622,21 @@
     <Compile Include="Models\ProcessModule\ProductType.cs" />
     <Compile Include="Models\ProcessModule\Purchase.cs" />
     <Compile Include="Models\ProcessModule\PurchasedProduct.cs" />
+    <Compile Include="Models\ProcessModule\PurchasedProductRate.cs" />
     <Compile Include="Models\ProcessModule\Supplier.cs" />
     <Compile Include="Models\ProcessModule\UnitRole.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\FactoryRptView.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\FactoryWisePendingRptView.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\FactoryWiseProcessHistoryRptView.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\FactorywisePurchaseRptView.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\FinishedGoodsRptView.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\ProductRptView.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\ProductWiseStoreBalanceRptView.cs" />
     <Compile Include="Models\ProcessModule\ViewModels\PurchaseRptView.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\PurchaseView.cs" />
     <Compile Include="Models\ProcessModule\ViewModels\VmConversion.cs" />
     <Compile Include="Models\ProcessModule\ViewModels\VmConversionDetails.cs" />
+    <Compile Include="Models\ProcessModule\ViewModels\VmMatrics.cs" />
     <Compile Include="Models\ProcessModule\ViewModels\VmProcessList.cs" />
     <Compile Include="Models\ProcessModule\ViewModels\vMPurchasedProduct.cs" />
     <Compile Include="Models\Project.cs" />
@@ -485,16 +655,25 @@
     <Compile Include="Models\SalesModule\SubCategory.cs" />
     <Compile Include="Models\SalesModule\UnitManager.cs" />
     <Compile Include="Models\SalesModule\Upazila.cs" />
+    <Compile Include="Models\SalesModule\ViewModel\ClosingBalanceReportView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\CustomerBalanceView.cs" />
+    <Compile Include="Models\SalesModule\ViewModel\CustomerLedgerReportView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\CustomerView.cs" />
+    <Compile Include="Models\SalesModule\ViewModel\MemoBanglaReportView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\MemoDetailView.cs" />
+    <Compile Include="Models\SalesModule\ViewModel\MemoItemReportView.cs" />
+    <Compile Include="Models\SalesModule\ViewModel\MemoReportView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\MemoView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\PaymentView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\ProductView.cs" />
+    <Compile Include="Models\SalesModule\ViewModel\ProductXEditView.cs" />
+    <Compile Include="Models\SalesModule\ViewModel\SalesCollectionDiscountReportView.cs" />
+    <Compile Include="Models\SalesModule\ViewModel\SalesReportView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\SalesView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\UnitManagerView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\UpazilaView.cs" />
     <Compile Include="Models\SalesModule\ViewModel\ZoneCustomerView.cs" />
+    <Compile Include="Models\SalesModule\WareHouse.cs" />
     <Compile Include="Models\SalesModule\ZoneManager.cs" />
     <Compile Include="Models\ShowRoom.cs" />
     <Compile Include="Models\ShowRoomUser.cs" />
@@ -569,9 +748,11 @@
     <Content Include="AngApp\Factories\userService.js" />
     <Content Include="AngApp\ProcessModule\Controllers\ConversionController.js" />
     <Content Include="AngApp\ProcessModule\Controllers\ConversionDetailController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\DesignController.js" />
     <Content Include="AngApp\ProcessModule\Controllers\DesignGalleryController.js" />
     <Content Include="AngApp\ProcessModule\Controllers\FinishedGoodController.js" />
     <Content Include="AngApp\ProcessModule\Controllers\MatricsController.js" />
+    <Content Include="AngApp\ProcessModule\Controllers\OrderProductController.js" />
     <Content Include="AngApp\ProcessModule\Controllers\ProcessController.js" />
     <Content Include="AngApp\ProcessModule\Controllers\ProcesseLocationController.js" />
     <Content Include="AngApp\ProcessModule\Controllers\ProcessListController.js" />
@@ -582,11 +763,13 @@
     <Content Include="AngApp\ProcessModule\Controllers\StoreDeliveryController.js" />
     <Content Include="AngApp\ProcessModule\Controllers\SuppliersController.js" />
     <Content Include="AngApp\ProcessModule\Controllers\UnitRoleController.js" />
+    <Content Include="AngApp\ProcessModule\Views\AddDesign.html" />
     <Content Include="AngApp\ProcessModule\Views\Conversion.html" />
     <Content Include="AngApp\ProcessModule\Views\ConversionDetail.html" />
     <Content Include="AngApp\ProcessModule\Views\DesignGallery.html" />
     <Content Include="AngApp\ProcessModule\Views\FinishedGood.html" />
     <Content Include="AngApp\ProcessModule\Views\Matric.html" />
+    <Content Include="AngApp\ProcessModule\Views\OrderProduct.html" />
     <Content Include="AngApp\ProcessModule\Views\Process.html" />
     <Content Include="AngApp\ProcessModule\Views\ProcesseLocations.html" />
     <Content Include="AngApp\ProcessModule\Views\ProcessList.html" />
@@ -606,6 +789,7 @@
     <Content Include="AngApp\SalesModule\Controllers\MainCategoryController.js" />
     <Content Include="AngApp\SalesModule\Controllers\PaymentsController.js" />
     <Content Include="AngApp\SalesModule\Controllers\ProductController.js" />
+    <Content Include="AngApp\SalesModule\Controllers\SalesEditController.js" />
     <Content Include="AngApp\SalesModule\Controllers\SalesManController.js" />
     <Content Include="AngApp\SalesModule\Controllers\SalesReportController.js" />
     <Content Include="AngApp\SalesModule\Controllers\SalesSearchController.js" />
@@ -613,6 +797,7 @@
     <Content Include="AngApp\SalesModule\Controllers\SubCategoryController.js" />
     <Content Include="AngApp\SalesModule\Controllers\UnitManagersController.js" />
     <Content Include="AngApp\SalesModule\Controllers\UpazilaController.js" />
+    <Content Include="AngApp\SalesModule\Controllers\WareHouseController.js" />
     <Content Include="AngApp\SalesModule\Controllers\ZoneManagerController.js" />
     <Content Include="AngApp\SalesModule\Views\Cart.html" />
     <Content Include="AngApp\SalesModule\Views\Customer.html" />
@@ -622,6 +807,7 @@
     <Content Include="AngApp\SalesModule\Views\MainCategory.html" />
     <Content Include="AngApp\SalesModule\Views\Payment.html" />
     <Content Include="AngApp\SalesModule\Views\Product.html" />
+    <Content Include="AngApp\SalesModule\Views\SalesEdit.html" />
     <Content Include="AngApp\SalesModule\Views\SalesMan.html" />
     <Content Include="AngApp\SalesModule\Views\SalesReport.html" />
     <Content Include="AngApp\SalesModule\Views\SalesSearch.html" />
@@ -629,6 +815,7 @@
     <Content Include="AngApp\SalesModule\Views\SubCategory.html" />
     <Content Include="AngApp\SalesModule\Views\UnitManagers.html" />
     <Content Include="AngApp\SalesModule\Views\Upazila.html" />
+    <Content Include="AngApp\SalesModule\Views\WareHouse.html" />
     <Content Include="AngApp\SalesModule\Views\ZoneManager.html" />
     <Content Include="AngApp\Views\About.html" />
     <Content Include="AngApp\Views\Accounts.html" />
@@ -736,6 +923,7 @@
     <Content Include="Content\images\pakiza-collection.png" />
     <Content Include="Content\images\pfc-bangla.png" />
     <Content Include="Content\images\psc-bangla.png" />
+    <Content Include="Content\images\ShareeStoreLogo.jpg" />
     <Content Include="Content\images\slide-1.jpg" />
     <Content Include="Content\images\slide-2.jpg" />
     <Content Include="Content\images\slide-3.jpg" />
@@ -748,6 +936,7 @@
     <Content Include="Content\img\jsfiddle01.png" />
     <Content Include="Content\img\jsfiddle02.png" />
     <Content Include="Content\img\preview.png" />
+    <Content Include="Content\img\search-icon.png" />
     <Content Include="Content\loading-bar.min.css" />
     <Content Include="Content\print.css" />
     <Content Include="Content\themes\base\accordion.css" />
@@ -885,6 +1074,7 @@
     <Content Include="Scripts\sparkline\jquery.sparkline.js" />
     <Content Include="Scripts\sparkline\jquery.sparkline.min.js" />
     <Content Include="WebForms\Import\Index.aspx" />
+    <Content Include="Models\ProcessModule\ViewModels\vssver2.scc" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\fastclick\fastclick.js" />
@@ -952,13 +1142,18 @@
     <Content Include="Views\UnitManagers\Index.cshtml" />
     <Content Include="Views\ShowRoomUser\Index.cshtml" />
     <Content Include="Views\SalesMan\Index.cshtml" />
+    <Content Include="Views\WareHouse\Index.cshtml" />
+    <Content Include="Views\OrderProduct\Index.cshtml" />
+    <Content Include="Views\UnitRole\Index.cshtml" />
+    <Content Include="Views\ProductTypes\Index.cshtml" />
+    <Content Include="Views\ProcessList\Index.cshtml" />
+    <Content Include="Views\SalesEdit\Index.cshtml" />
+    <Content Include="Views\AddDesign\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="AngApp\MDModule\Views\" />
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\ProcessModule\Report\" />
-    <Folder Include="CrystalReports\BankModule\" />
-    <Folder Include="CrystalReports\BookModule\" />
-    <Folder Include="CrystalReports\SalesModule\" />
+    <Folder Include="Views\SalesReport\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -976,6 +1171,66 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CrystalReports\FinishedGoodsStock.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>FinishedGoodsStock.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\ProcessFactory.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>ProcessFactory.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\ProcessFactoryWisePending.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>ProcessFactoryWisePending.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\ProcessFactoryWisePendingProcess.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>ProcessFactoryWisePendingProcess.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\ProcessFactoryWiseProcessHistory.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>ProcessFactoryWiseProcessHistory.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\ProcessProduct.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>ProcessProduct.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\SalesZoneProductWise.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>SalesZoneProductWise.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\SalesZoneClosingBalanceSummary.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>SalesZoneClosingBalanceSummary.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\SalesZoneClosingBalance.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>SalesZoneClosingBalance.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\SalesDate.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>SalesDate.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\SalesCustomerRegister.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>SalesCustomerRegister.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\SalesMemoBangla.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>SalesMemoBangla.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\SalesProductWise.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>SalesProductWise.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\SalesMemoWise.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>SalesMemoWise.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\SalesClosingBalance.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>SalesClosingBalance.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="CrystalReports\ProcessPurchase.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>ProcessPurchase.cs</LastGenOutput>
@@ -987,6 +1242,10 @@
     <EmbeddedResource Include="CrystalReports\Ledger.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>Ledger.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\ProductWiseStoreBalance.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>ProductWiseStoreBalance.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201802060715599_InitialCreate.resx">
       <DependentUpon>201802060715599_InitialCreate.cs</DependentUpon>
@@ -1047,6 +1306,45 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803071036036_AddMemoCostToMemoMaster.resx">
       <DependentUpon>201803071036036_AddMemoCostToMemoMaster.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803100903591_addUserIdToZoneManager.resx">
+      <DependentUpon>201803100903591_addUserIdToZoneManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803101649357_AddZoneNameToShowRoom.resx">
+      <DependentUpon>201803101649357_AddZoneNameToShowRoom.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803111451313_AddZoneManagerIdAlias.resx">
+      <DependentUpon>201803111451313_AddZoneManagerIdAlias.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803111513228_AddWareHouse.resx">
+      <DependentUpon>201803111513228_AddWareHouse.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803111515052_AddWareHouseAgain.resx">
+      <DependentUpon>201803111515052_AddWareHouseAgain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803111554474_AddWareHouseIdToMemoMaster.resx">
+      <DependentUpon>201803111554474_AddWareHouseIdToMemoMaster.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803170518052_UpdateMemoDetailsModel.resx">
+      <DependentUpon>201803170518052_UpdateMemoDetailsModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803190424125_UpdateConversionTable.resx">
+      <DependentUpon>201803190424125_UpdateConversionTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803200712474_UpdateProcessModuleAddOrderForm.resx">
+      <DependentUpon>201803200712474_UpdateProcessModuleAddOrderForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803221536239_UpdateProcessListModel.resx">
+      <DependentUpon>201803221536239_UpdateProcessListModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803221626002_AddPurchasedProductRateModel.resx">
+      <DependentUpon>201803221626002_AddPurchasedProductRateModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803251209479_AddFinishedGoodStockDetailsModel.resx">
+      <DependentUpon>201803251209479_AddFinishedGoodStockDetailsModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804030422391_AddConvertedQuantityToMemo.resx">
+      <DependentUpon>201804030422391_AddConvertedQuantityToMemo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

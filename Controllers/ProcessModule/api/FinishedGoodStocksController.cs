@@ -11,9 +11,12 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using PCBookWebApp.DAL;
 using PCBookWebApp.Models.ProcessModule;
+using Microsoft.AspNet.Identity;
+using System.Data.Entity.Migrations;
 
 namespace PCBookWebApp.Controllers.ProcessModule.api
 {
+    [Authorize]
     public class FinishedGoodStocksController : ApiController
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
@@ -41,20 +44,27 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutFinishedGoodStock(int id, FinishedGoodStock finishedGoodStock)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
-            if (id != finishedGoodStock.FinishedGoodStockId)
-            {
-                return BadRequest();
-            }
+            //if (id != finishedGoodStock.FinishedGoodStockId)
+            //{
+            //    return BadRequest();
+            //}
 
-            db.Entry(finishedGoodStock).State = EntityState.Modified;
+            //db.Entry(finishedGoodStock).State = EntityState.Modified;
 
             try
             {
+                var obj = db.FinishedGoodStocks.FirstOrDefault(m => m.FinishedGoodStockId == id);
+                finishedGoodStock.CreatedBy = obj.CreatedBy;
+                finishedGoodStock.ShowRoomId = obj.ShowRoomId;
+                finishedGoodStock.DateCreated = obj.DateCreated;
+                finishedGoodStock.DateUpdated = DateTime.Now;
+                finishedGoodStock.Active = true;
+                db.FinishedGoodStocks.AddOrUpdate(finishedGoodStock);
                 await db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -76,13 +86,24 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         [ResponseType(typeof(FinishedGoodStock))]
         public async Task<IHttpActionResult> PostFinishedGoodStock(FinishedGoodStock finishedGoodStock)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            string userName = User.Identity.GetUserName();
 
-            db.FinishedGoodStocks.Add(finishedGoodStock);
-            await db.SaveChangesAsync();
+            try
+            {
+                finishedGoodStock.ShowRoomId = showRoomId;
+                finishedGoodStock.CreatedBy = userName;
+                finishedGoodStock.DateCreated = DateTime.Now;
+                finishedGoodStock.DateUpdated = finishedGoodStock.DateCreated;
+                finishedGoodStock.Active = true;
+                db.FinishedGoodStocks.Add(finishedGoodStock);
+                await db.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }            
 
             return CreatedAtRoute("DefaultApi", new { id = finishedGoodStock.FinishedGoodStockId }, finishedGoodStock);
         }
@@ -115,6 +136,41 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         private bool FinishedGoodStockExists(int id)
         {
             return db.FinishedGoodStocks.Count(e => e.FinishedGoodStockId == id) > 0;
+        }
+        [Route("api/FinishedGoodStocks/GetAllList")]
+        [HttpGet]
+        public IHttpActionResult GetAllList()
+        {
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var list = (from item in db.FinishedGoodStocks
+                        where item.ShowRoomId == showRoomId
+                        && item.OrderQuantity != 0
+                        select new
+                        {
+                            item.FinishedGoodStockId,
+                            item.FinishedGoodId,
+                            item.FinishedGood.FinishedGoodName,
+                            item.OrderQuantity,
+                            item.ReceiveDate,
+                            item.OrderNumber,
+                            item.BuyerName,                            
+                            item.ShowRoomId,
+                            item.CreatedBy,
+                            item.Active,
+                            item.DateCreated,
+                            item.DateUpdated
+                        }).ToList();
+
+            var finishedGoodList = (from item in db.FinishedGoods
+                                   where item.ShowRoomId == showRoomId
+                                   select new
+                                   {
+                                       item.FinishedGoodId,
+                                       item.FinishedGoodName
+                                   }).ToList();
+
+            return Ok(new { list, finishedGoodList });
         }
     }
 }

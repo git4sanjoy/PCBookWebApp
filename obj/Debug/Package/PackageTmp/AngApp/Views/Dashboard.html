@@ -1,0 +1,1456 @@
+﻿<modal title="Invoice" visible="showModal" class="">
+
+    <div class="modal-body" style="margin-top:-1em;">
+
+        <md-tabs md-dynamic-height md-border-bottom  ng-repeat="m in memos">
+
+            <md-tab label="Print Preview English">
+                <md-content class="md-padding">
+                    <div id="printable-memo-english{{$index}}">
+                        <div class="col-sm-12">
+                            <center><img src="Content/images/pakiza-collection.png" /></center>
+                            <center><h4>House 97, Road 11/A, Dhanmondi, Dhaka 1209</h4></center>
+                            <center><strong>Showroom Name : {{m.ShowRoomName}}</strong></center>
+                            <center>Duplicate Copy</center>
+                        </div>
+                        <table class="table table-bordered">
+                            <tr class="text-bold">
+                                <td colspan="3">
+                                    Date: {{m.MemoDate |date:"dd-MM-yyyy"}}
+                                </td>
+                                <td colspan="3" style="text-align:right"> Invoice No: {{m.MemoNo}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">Name: {{m.CustomerName}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">Address: {{m.Address}}</td>
+                            </tr>
+
+                            <tr class="danger">
+                                <th style="text-align:center">SL#</th>
+                                <th width="35%" style="text-align:center">Product Name</th>
+                                <th width="15%" style="text-align:center">Quantity</th>
+                                <th width="15%" style="text-align:center">Rate</th>
+                                <th width="15%" style="text-align:center">Discount</th>
+                                <th width="20%" style="text-align:center">Total</th>
+                            </tr>
+
+                            <tr ng-repeat="item in m.MemoDetailViews">
+                                <td>{{$index+1}}</td>
+                                <td>{{item.ProductName}}</td>
+                                <td style="text-align:right">{{item.Quantity}}</td>
+                                <td style="text-align:right">{{item.Rate}}</td>
+                                <td style="text-align:right">{{item.Discount}}</td>
+                                <td style="text-align:right">{{item.Quantity * (item.Rate - item.Discount) | currency}}</td>
+                            </tr>
+                            <tr class="text-red text-bold">
+                                <td colspan="4"></td>
+                                <td>Total:</td>
+                                <td style="text-align:right">{{total(m.MemoDetailViews) | currency}}</td>
+                            </tr>
+                            <tr class=" text-bold">
+                                <td colspan="4"></td>
+                                <td class="form-inline">Final Discount:</td>
+                                <td style="text-align:right;">
+                                    {{m.MemoDiscount| currency}}
+                                </td>
+                            </tr>
+
+                            <tr class="text-bold">
+                                <td colspan="4"></td>
+                                <td class="form-inline">Other Expencess:</td>
+                                <td style="text-align:right">
+                                    {{m.GatOther| currency}}
+                                </td>
+                            </tr>
+                            <tr class="text-green text-bold">
+                                <td colspan="4"></td>
+                                <td>Grand Total:</td>
+                                <td style="text-align:right">
+                                    <p>{{grandTotal(m.MemoDetailViews,m.GatOther, m.MemoDiscount) | currency}}</p>
+                                </td>
+                            </tr>
+                            <tr class="text-bold">
+                                <td colspan="4"></td>
+                                <td class="form-inline">Payment:</td>
+                                <td style="text-align:right;">
+                                    {{m.MemoPaidAmount| currency}}
+                                </td>
+                            </tr>
+                            <tr class="text-bold">
+                                <td colspan="4"></td>
+                                <td>Invoice Due:</td>
+                                <td style="text-align:right">
+                                    <p>{{dueTotal(m.MemoDetailViews,m.GatOther, m.MemoDiscount,m.MemoPaidAmount)| currency}}</p>
+                                </td>
+                            </tr>
+
+                        </table>
+                        <div class="col-sm-12">
+                            
+                            <button id="" class=" print-hide-button btn btn-primary pull-right" ng-click="printMemo('printable-memo-english'+$index)"><i class="fa fa-print"></i> Print</button>
+                        </div>
+                    </div>
+
+                </md-content>
+            </md-tab>
+            <md-tab label="মুদ্রণ পূর্বরূপ বাংলা">
+                <md-content class="md-padding">
+                    <div id="printable-memo-bangla{{$index}}">
+                        <div class="col-sm-12">
+                            <center><img id="" src="Content/images/pfc-bangla.png" /></center>
+                            <center><h4>হাউজ নং ৯৭, রোড নং ১১ / এ, ধানমন্ডি, ঢাকা</h4></center>
+                            <center><strong>দোকানের নাম: {{m.ShowRoomNameBangla}}</strong></center>
+                            <center>(অনুলিপি)</center>
+                        </div>
+                        <table class="table table-bordered">
+                            <tr class="text-bold">
+                                <td colspan="3" style="border-top: 0px solid #f4f4f4">
+                                    তারিখ: <span class="bangla-font">{{m.MemoDate |date:"dd-MM-yyyy"}}</span>
+                                </td>
+                                <td colspan="3" style="text-align:right;border-top: 0px solid #f4f4f4"> বিল নং: <span class="bangla-font">{{m.MemoNo}}</span></td>
+                            </tr>
+                            <tr class="text-bold">
+                                <td colspan="6">নাম: {{m.CustomerNameBangla}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">ঠিকানা: {{m.AddressBangla}}</td>
+                            </tr>
+
+                            <tr class="danger">
+                                <th width="10%" style="text-align:center">ক্রমিক নং</th>
+                                <th width="35%" style="text-align:center">পণ্যের নাম</th>
+                                <th width="15%" style="text-align:center">পরিমাণ</th>
+                                <th width="10%" style="text-align:center">হার</th>
+                                <th width="15%" style="text-align:center">ডিসকাউন্ট</th>
+                                <th width="15%" style="text-align:center">আইটেম খরচ</th>
+                            </tr>
+                            <tr ng-repeat="item in  m.MemoDetailViews">
+                                <td style="text-align:center;" class="bangla-font">{{$index+1}}</td>
+                                <td>{{item.ProductNameBangla}}</td>
+                                <td style="text-align:right;" class="bangla-font">{{item.Quantity}}</td>
+                                <td style="text-align:right;" class="bangla-font">{{item.Rate}}</td>
+                                <td style="text-align:right;" class="bangla-font">{{item.Discount}}</td>
+                                <td style="text-align:right;" class="bangla-font">{{item.Quantity * (item.Rate - item.Discount) | currency:""}}</td>
+                            </tr>
+
+                            <tr class="text-red text-bold">
+                                <td colspan="4"></td>
+                                <td>মোট খরচ:</td>
+                                <td style="text-align:right" class="bangla-font">{{total(m.MemoDetailViews) | currency:""}}</td>
+                            </tr>
+                            <tr class=" text-bold">
+                                <td colspan="4"></td>
+                                <td class="form-inline">চূড়ান্ত ডিসকাউন্ট:</td>
+                                <td style="text-align:right;">
+                                    <span class="bangla-font">{{m.MemoDiscount| currency:""}}</span>
+                                </td>
+
+                            </tr>
+
+                            <tr class="text-bold">
+                                <td colspan="4"></td>
+                                <td class="form-inline">অন্যান্য খরচ:</td>
+                                <td style="text-align:right">
+                                    <span class="bangla-font">{{m.GatOther| currency:""}}</span>
+                                </td>
+
+                            </tr>
+                            <tr class="text-green text-bold">
+                                <td colspan="4"></td>
+                                <td>সর্বমোট খরচ:</td>
+                                <td style="text-align:right">
+                                    <p class="bangla-font">{{grandTotal(m.MemoDetailViews,m.GatOther, m.MemoDiscount) | currency:""}}</p>
+                                </td>
+
+                            </tr>
+                            <tr class="text-bold">
+                                <td colspan="4"></td>
+                                <td class="form-inline">দেওয়া পরিমাণ:</td>
+                                <td style="text-align:right;">
+                                    <span class="bangla-font">{{m.MemoPaidAmount| currency:""}}</span>
+                                </td>
+
+                            </tr>
+                            <tr class="text-bold">
+                                <td colspan="4"></td>
+
+                                <td>বাকি টাকা:</td>
+                                <td style="text-align:right">
+                                    <p class="bangla-font">{{dueTotal(m.MemoDetailViews,m.GatOther, m.MemoDiscount,m.MemoPaidAmount)| currency}}</p>
+                                </td>
+
+                            </tr>
+                        </table>
+                        <div class="col-sm-12">
+                            <button id="" class="btn btn-primary pull-right print-hide-button" ng-click="printMemo('printable-memo-bangla'+$index)"><i class="fa fa-print"></i> মুদ্রণ </button>
+                        </div>
+                    </div>
+                </md-content>
+            </md-tab>
+
+        </md-tabs>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+
+</modal>
+
+<!--Design Manager-->
+<div class="row" ng-show="userRole=='Design Manager'">
+    <div class="col-md-12">
+        <div class="box box-danger">
+            <div class="box-header with-border">
+                <form class="form-inline">
+                    <span class="box-title"><i class="fa fa-image"></i> Total Design : {{filteredMdList.length}} </span>
+                    <input ng-model="searchText" class="searchTextBox" type="text" value="" placeholder="Search" style="margin:0em 1em;">
+                </form>
+
+                <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+
+                <table class="table table-bordered table-striped">
+                    <tr class="text-bold">
+                        <td>SL</td>
+                        <td>Image</td>
+                        <td>Design No</td>
+                        <td>Name</td>
+                        <td>Quantity</td>
+                        <td>Repeat</td>
+                        <td>Last Production</td>
+                    </tr>
+                    <tr ng-repeat="a in (filteredMdList = (designList | filter: searchText)) | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                        <td>{{$index+1}}</td>
+                        <td><img style="height:90px; width:70px" ng-src="{{a.Deal_Images[0].ImageUrl}}" alt="{{a.Description}}" /></td>
+                        <td>{{a.Name}}</td>
+                        <td>{{a.Description}}</td>
+                        <td>{{a.TotalProduction}}</td>
+                        <td>{{a.DealProductions.length>1 ? a.DealProductions.length-1 : 0}}</td>
+                        <td>{{a.LastProduction|date:"dd-MM-yyyy"}}</td>
+                    </tr>
+                </table>
+
+
+                <pagination ng-model="currentPage"
+                            total-items="filteredMdList.length"
+                            max-size="maxSize"
+                            items-per-page="pageSize"
+                            boundary-links="true">
+                </pagination>
+
+            </div><!-- /.box-body -->
+
+        </div><!-- /.box -->
+    </div>
+
+</div>
+
+<!--Process Manager-->
+<div class="row" ng-show="userRole=='Process Manager' || userRole=='Process Officer'">
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-purple">
+            <div class="inner">
+                <h3>{{appDetails.lastBookEntryDate| date:'dd-MM-yy'}}</h3>
+                <p>Last Process Entry</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-calendar"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-aqua">
+            <div class="inner">
+                <h3>{{appDetails.noOfPurchasedProducts| number:0}}</h3>
+                <p>Products</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-apple"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-green">
+            <div class="inner">
+                <h3>{{appDetails.noOfSupplier| number:0}}</h3>
+                <p>Suppliers</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-users"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-red">
+            <div class="inner">
+                <h3>{{appDetails.noOfFactories| number:0}}</h3>
+                <p>Factories</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-industry"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+
+</div>
+
+<div class="row" ng-show="userRole=='Process Manager' || userRole=='Process Officer'">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <form class="form-inline">
+                    <span class="box-title"><i class="fa fa-pie-chart"></i> Process : {{piList.length}} </span>
+                    <div class="form-group">
+                        <label for="exampleInputNameYear" style="margin-left:1em;">Year</label>
+                        <select name="exampleInputNameYear"
+                                ng-model="yearDdl"
+                                ng-change="changedYear()"
+                                class="form-control">
+                            <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputNameMonth" style="margin-left:1em;">Month</label>
+                        <select name="exampleInputNameMonth"
+                                ng-model="monthDdl"
+                                ng-change="changedMonth()"
+                                ng-options="x as x.name for x in months track by x.id"
+                                class="form-control">
+                            <option value="">--Month--</option>
+                        </select>
+
+                    </div>
+
+                </form>
+
+                <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+
+
+
+
+            </div><!-- /.box-body -->
+            <!-- Loading (remove the following to stop the loading)-->
+            <div ng-class="class" ng-show="loading">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+            <!-- end loading -->
+        </div><!-- /.box -->
+    </div>
+</div>
+<!--End Process Manager-->
+<!--Accounts Manager-->
+<div class="row" ng-show="userRole=='Accounts Manager' || userRole=='Accounts'">
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-purple">
+            <div class="inner">
+                <h3>{{appDetails.lastBookEntryDate| date:'dd-MM-yy'}}</h3>
+                <p>Last Book Entry</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-calendar"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-aqua">
+            <div class="inner">
+                <h3>{{appDetails.noOfLedgers| number:0}}</h3>
+                <p>Ledgers</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-book"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-green">
+            <div class="inner">
+                <h3>{{appDetails.noOfGroups| number:0}}</h3>
+                <p>Groups</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-cubes"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-red">
+            <div class="inner">
+                <h3>{{appDetails.noOfVoucherTypes| number:0}}</h3>
+                <p>Voucher Types</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-credit-card"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+</div>
+
+<div class="row" ng-show="userRole=='Accounts Manager' || userRole=='Accounts'">
+    <div class="col-md-12">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <form class="form-inline">
+                    <span class="box-title"><i class="fa fa-money"></i> Pending Checks : {{pendingCheckList.length}} </span>
+                    <div class="form-group">
+                        <label for="exampleInputNameYear" style="margin-left:1em;">Year</label>
+                        <select name="exampleInputNameYear"
+                                ng-model="yearDdl"
+                                ng-change="changedYear()"
+                                class="form-control">
+                            <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputNameMonth" style="margin-left:1em;">Month</label>
+                        <select name="exampleInputNameMonth"
+                                ng-model="monthDdl"
+                                ng-change="changedMonth()"
+                                ng-options="x as x.name for x in months track by x.id"
+                                class="form-control">
+                            <option value="">--Month--</option>
+                        </select>
+
+                    </div>
+
+                </form>
+
+                <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+
+                <div class="table-responsive">
+                    <table id="" class="table table-bordered table-condensed table-hover table-striped" style="font-size:.9em;">
+                        <tr>
+                            <td colspan="7"><input ng-model="searchTextPendingCheck" type="text" class="form-control" id="usr" placeholder="Filter your search result"></td>
+                            <td><button class="btn btn-default btn-block"><i class="fa fa-refresh"></i></button></td>
+                        </tr>
+                        <tr style="font-weight: bold" class="success">
+                            <td width="10%">VoucherNo</td>
+                            <td width="5%">Vou.Date</td>
+                            <td width="5%">Hon.Date</td>
+                            <td width="25%" align="center">Ledger Name</td>
+                            <td width="35%" align="center">Account Number</td>
+                            <td width="10%" align="center">CheckNumber</td>
+                            <td width="5%" align="center">Amount</td>
+                            <td width="5%"></td>
+                        </tr>
+
+
+                        <tr class="text-bold success">
+                            <td colspan="6" style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{filteredPendingCheckList |sumByKey:'Amount' |currency:"":"0"}}</td>
+                            <td style="text-align:center">{{filteredPendingCheckList.length}}</td>
+                        </tr>
+                        <tr ng-repeat="aObj in (filteredPendingCheckList = (pendingCheckList | filter: searchTextPendingCheck)) | orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                            <td>{{ aObj.VoucherNo }}</td>
+                            <td>{{ aObj.IssueDate| date:'dd-MM-yy' }}</td>
+                            <td>{{ aObj.HonourDate| date:'dd-MM-yy'  }}</td>
+                            <td>{{ aObj.LedgerName }}</td>
+                            <td>{{ aObj.BankAccountNumber }}</td>
+                            <td>{{ aObj.CheckNumber }}</td>
+                            <td style="text-align:right">{{ aObj.Amount |currency:"":"0" }}</td>
+                            <td>
+                                <button ng-click="checkHonour($index,aObj)" class="btn btn-success btn-block" style="margin:0;padding : 1px 5px;"><i class="fa fa-check"></i></button>
+                            </td>
+                        </tr>
+                        <tr class="text-bold success">
+                            <td colspan="6" style="text-align:right">Total:</td>
+                            <td style="text-align:right">{{filteredPendingCheckList |sumByKey:'Amount' |currency:"":"0"}}</td>
+                            <td style="text-align:right"></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+
+
+            </div><!-- /.box-body -->
+            <!-- Loading (remove the following to stop the loading)-->
+            <div ng-class="class" ng-show="loading">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+            <!-- end loading -->
+        </div><!-- /.box -->
+    </div>
+</div>
+<!--End Accounts Manager-->
+
+<!-- /. Sales Unit Namager  collapsed-box-->
+<div class="box box-danger" ng-show="userRole=='Unit Manager'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-users"></i> Customers Credit  <span class="text-red">({{customerList.length}})</span></h3>
+            <input ng-model="searchText" class="searchTextBox" type="text" value="" placeholder="Filter" style="margin:0em 1em;">
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="table-responsive">
+            <table id="" class="table table-bordered table-condensed table-hover table-striped" style="font-size:.9em;">
+                <tr style="font-weight: bold" class="danger">
+                    <td style="" ng-click="sort('DivisionName')"><span class="glyphicon sort-icon" ng-show="sortKey=='DivisionName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Division</td>
+                    <td style="" ng-click="sort('SaleZoneName')"><span class="glyphicon sort-icon" ng-show="sortKey=='SaleZoneName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleZoneName</td>
+                    <td style="" ng-click="sort('ZoneManagerName')"><span class="glyphicon sort-icon" ng-show="sortKey=='ZoneManagerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ZoneManager</td>
+                    <td style="" ng-click="sort('DistrictName')"><span class="glyphicon sort-icon" ng-show="sortKey=='DistrictName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> District</td>
+                    <td style="" ng-click="sort('UpazilaName')"><span class="glyphicon sort-icon" ng-show="sortKey=='UpazilaName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> UpazilaName</td>
+                    <td style="" ng-click="sort('CustomerName')"><span class="glyphicon sort-icon" ng-show="sortKey=='CustomerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CustomerName</td>
+
+                    <td style="" ng-click="sort('TotalBf')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalBf'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> BF</td>
+                    <td style="" ng-click="sort('ActualSales')"><span class="glyphicon sort-icon" ng-show="sortKey=='ActualSales'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Sale</td>
+                    <td style="" ng-click="sort('TotalPayments')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalPayments'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Payments</td>
+                    <td style="" ng-click="sort('TotalDiscounts')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalDiscounts'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Discounts</td>
+                    <td style="" ng-click="sort('Balance')"><span class="glyphicon sort-icon" ng-show="sortKey=='Balance'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Balance</td>
+                </tr>
+                <tr class="text-bold danger">
+                    <td colspan="6" style="text-align:left">Total:</td>
+
+                    <td style="text-align:right">{{customerList |sumByKey:'TotalBf' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{customerList |sumByKey:'ActualSales' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{customerList |sumByKey:'TotalPayments' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{customerList |sumByKey:'TotalDiscounts' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{customerList |sumByKey:'Balance' |currency:"":"0"}}</td>
+                </tr>
+                <tr ng-repeat="user in customerList ">
+                    <td>{{ user.DivisionName }}</td>
+                    <td>{{ user.SaleZoneName }}</td>
+                    <td>{{ user.ZoneManagerName }}</td>
+                    <td>{{ user.DistrictName || 'empty' }}</td>
+                    <td>{{ user.UpazilaName }}</td>
+                    <td>{{ user.CustomerName }}</td>
+
+                    <td style="text-align:right">{{ user.TotalBf |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.ActualSales |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalPayments |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalDiscounts |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ (user.Opening+user.Balance) |currency:"":"0" }}</td>
+                </tr>
+                <tr class="text-bold danger">
+                    <td colspan="6" style="text-align:left">Total:</td>
+
+                    <td style="text-align:right">{{customerList |sumByKey:'TotalBf' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{customerList |sumByKey:'ActualSales' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{customerList |sumByKey:'TotalPayments' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{customerList |sumByKey:'TotalDiscounts' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{customerList |sumByKey:'Balance' |currency:"":"0"}}</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /. Sales Unit Manager -->
+
+<!-- /. Sales Zone Namager -->
+<div class="box box-danger" ng-show="userRole=='Zone Manager'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-user"></i> Customer Ledger</h3>
+            <md-card ng-show="true">
+
+                <md-card-content>
+
+                    <md-card-content style="padding-bottom:0">
+                        <form name="searchCustomerLedgerForm" novalidate role="form" class="" id="searchCustomerLedgerForm" ng-submit="submitSearchCustomerLedgerForm()">
+                            <div layout-gt-sm="row">
+                                <md-input-container class="md-block" flex-gt-sm style="width:100%">
+                                    <label>Customer Name</label>
+                                    <input style="min-width:200px;" id="CustomerAutoCompliteSerch" type="text" class="form-control" name="CustomerAutoCompliteSerch" autocomplete="off" tabindex="1"
+                                           ng-model="searchCustomerLedger.customerAutoComplite"
+                                           move-focus-by-enter-key
+                                           ng-keydown='$event.keyCode == 13 && GetCustomerDetailById(searchCustomerLedger.customerAutoComplite)'
+                                           ng-keyup="updatePartyTypeaheadList(searchCustomerLedger.customerAutoComplite)"
+                                           typeahead-on-select="changeSelectCustomerName($item)"
+                                           typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:20">
+                                </md-input-container>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <div class="form-group">
+                                        <label for="invoiceDate">From Date</label>
+                                        <input class="form-control" type="text" tabindex="2" name="fromDate" id="fromDate"
+                                               move-focus-by-enter-key
+                                               ng-focus="InvoiceDatePickerOpen()"
+                                               datepicker-localdate
+                                               datepicker-popup="dd/MM/yyyy"
+                                               is-open="invoiceDatePickerIsOpen"
+                                               ng-click="InvoiceDatePickerOpen()"
+                                               ng-required="true"
+                                               ng-model="searchCustomerLedger.fromDate" />
+                                        <p ng-show="searchCustomerLedgerForm.fromDate.$error.required && (searchCustomerLedgerForm.fromDate.$dirty || submitted)" class="help-block">From Date is required.</p>
+                                    </div>
+                                </md-input-container>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <div class="form-group">
+                                        <label for="invoiceDate">To Date</label>
+                                        <input class="form-control" type="text" tabindex="3" name="toDate" id="toDate"
+                                               move-focus-by-enter-key
+                                               ng-focus="ToDatePickerOpen()"
+                                               datepicker-localdate
+                                               datepicker-popup="dd/MM/yyyy"
+                                               is-open="toDatePickerIsOpen"
+                                               ng-click="ToDatePickerOpen()"
+                                               ng-required="true"
+                                               ng-model="searchCustomerLedger.toDate" />
+                                        <p ng-show="searchCustomerLedgerForm.toDate.$error.required && (searchCustomerLedgerForm.toDate.$dirty || submitted)" class="help-block">To Date is required.</p>
+                                    </div>
+                                </md-input-container>
+
+                                <div layout-gt-sm="row">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <md-button class="md-raised md-primary" tabindex="4" type="submit"
+                                                   aria-label="Favorite"
+                                                   move-focus-by-enter-key
+                                                   ng-disabled="searchCustomerLedgerForm.$invalid">
+                                            <i class="fa fa-search"></i> Search
+                                        </md-button>
+                                    </md-input-container>
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <md-button class="md-raised md-default" tabindex="" type="button" ng-click="clear()">
+                                            <i class="fa fa-refresh"></i> Clear
+                                        </md-button>
+                                    </md-input-container>
+                                </div>
+
+                            </div>
+                        </form>
+                        <!-- Customer Info Div -->
+                        <div class="row" ng-show="Address">
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-aqua"><img ng-src="{{Image ? 'Upload/Customers/'+Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">Address</span>
+                                        <span class="info-box-number" style="font-size:1em;">{{Address}}</span>
+                                        <span class="info-box-text">District</span>
+                                        <span class="info-box-number" style="font-size:1em;">{{DistrictName}}</span>
+                                    </div><!-- /.info-box-content -->
+                                </div><!-- /.info-box -->
+                            </div><!-- /.col -->
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-green"><i class="fa fa-cart-plus"></i></span>
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">BF Amount</span>
+                                        <span class="info-box-number" style="font-size:1em;color:red;">{{BfAmount | currency:"৳":0}}</span>
+                                        <span class="info-box-text">Sale</span>
+                                        <span class="info-box-number" ng-show="BfAmount>0" style="font-size:1em;">{{TotalSale| currency:"৳":0}}</span>
+                                    </div><!-- /.info-box-content -->
+                                </div><!-- /.info-box -->
+                            </div><!-- /.col -->
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-yellow"><i class="fa fa-money"></i></span>
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">Collection</span>
+                                        <span class="info-box-number" style="font-size:1em;">{{TotalCollection| currency:"৳":0}}</span>
+                                        <span class="info-box-text">Discount</span>
+                                        <span class="info-box-number" style="font-size:1em;">{{TotalDiscount| currency:"৳":0}}</span>
+                                    </div><!-- /.info-box-content -->
+                                </div><!-- /.info-box -->
+                            </div><!-- /.col -->
+                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-red"><i class="fa fa-bar-chart"></i></span>
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">Credit</span>
+                                        <span class="info-box-number" style="font-size:1em;color:red;">{{(ActualCredit)|currency:"৳":0}}</span>
+
+                                        <span class="info-box-text">Credit Limit</span>
+                                        <span class="info-box-number" style="font-size:1em;">{{ CreditLimit | currency:"৳":0}}</span>
+                                    </div><!-- /.info-box -->
+                                </div><!-- /.col -->
+                            </div>
+                        </div>
+                        <!-- Sale Category wise Summary -->
+                        <div class="col-sm-12" style="padding:0;margin:0;">
+                            <div class="progress-group" ng-repeat="(key, value) in categoryWiseGroupingSaleList | groupBy: 'MainCategoryName'">
+                                <span class="progress-text">{{ key }}</span>
+                                <span class="progress-number"><b>{{ GetGroupSumOfILineQu(value) |number:"0" }}</b>/<b class="text-green">{{ GetGroupSumOfILineTotal(value) |currency:"৳":"0" }}</b></span>
+                                <div class="progress progress-xs progress-striped active">
+                                    <div class="progress-bar progress-bar-success" style="width: 100%;"></div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Result Table -->
+                        <table class="table table-bordered table-hover table-condensed" ng-show="customerLedgers.length>0||customerSaleLedgers.length>0">
+                            <tr style="font-weight: bold" class="danger">
+                                <td style="width:10%;text-align:center">Date</td>
+                                <td style="width:35%;text-align:center">Customer Name</td>
+                                <td style="width:10%;text-align:center">MemoNo</td>
+                                <td style="width:10%;text-align:center">Sales</td>
+                                <td style="width:10%;text-align:center">Collection</td>
+                                <td style="width:10%;text-align:center">Discount</td>
+                                <td style="width:10%;text-align:center">Remark</td>
+                                <td style="width:5%;text-align:center"></td>
+                            </tr>
+                            <tr class="info text-bold">
+                                <td colspan="3" style="text-align:left;color:blue;">Opening : {{opening|currency:"৳":"0"}}</td>
+                                <td style="text-align:right">{{customerSaleLedgers |sumByKey:'NetMemoAmount' |currency:"":"0"}}</td>
+                                <td style="text-align:right">{{customerLedgers |sumByKey:'SCAmount' |currency:"":"0"}}</td>
+                                <td style="text-align:right">{{customerLedgers |sumByKey:'SDiscount' |currency:"":"0"}}</td>
+                                <td colspan="2" style="color:red;">{{ customerNetBalance(customerSaleLedgers, customerLedgers)|currency:"৳":"0"}}</td>
+                            </tr>
+                            <tr ng-repeat="aSaleLedger in customerSaleLedgers">
+                                <td>{{ (aSaleLedger.MemoDate | date : "dd-MM-yyyy") || 'empty' }}</td>
+                                <td>{{ aSaleLedger.CustomerName }}</td>
+                                <td>{{ aSaleLedger.MemoNo }}</td>
+                                <td style="text-align:right">{{ aSaleLedger.NetMemoAmount || 0 }}</td>
+                                <td style="text-align:right">{{ 0 }}</td>
+                                <td style="text-align:right">{{ 0 }}</td>
+                                <td>{{ 'Invoice' }}</td>
+                                <td>
+                                    <button style="margin:0;padding: 1px 5px;" class="btn btn-info btn-block" ng-click="showMemo(aSaleLedger)"><i class="fa fa-file"></i></button>
+                                </td>
+                            </tr>
+
+                            <tr ng-repeat="aCustomerLedger in customerLedgers">
+                                <td>{{ (aCustomerLedger.PaymentDate | date : "dd-MM-yyyy") || 'empty' }}</td>
+                                <td>{{ aCustomerLedger.CustomerName }}</td>
+                                <td>{{ aCustomerLedger.MemoNo }}</td>
+                                <td style="text-align:right">{{ aCustomerLedger.SSAmount || 0 }}</td>
+                                <td style="text-align:right">{{ aCustomerLedger.SCAmount || 0 }}</td>
+                                <td style="text-align:right">{{ aCustomerLedger.SDiscount || 0  }}</td>
+                                <td>{{ aCustomerLedger.PaymentType }}</td>
+                                <td></td>
+                            </tr>
+
+
+                            <tr class="danger text-bold">
+                                <td colspan="3" style="text-align:left">Total:</td>
+                                <td style="text-align:right">{{customerSaleLedgers |sumByKey:'NetMemoAmount' |currency:"":"0"}}</td>
+                                <td style="text-align:right">{{customerLedgers |sumByKey:'SCAmount' |currency:"":"0"}}</td>
+                                <td style="text-align:right">{{customerLedgers |sumByKey:'SDiscount' |currency:"":"0"}}</td>
+                                <td colspan="2">{{ customerNetBalance(customerSaleLedgers, customerLedgers)|currency:"৳":"0"}} </td>
+                            </tr>
+                        </table>
+
+                    </md-card-content>
+
+
+
+
+                    <!-- Loading (remove the following to stop the loading)-->
+                    <div ng-class="class" ng-show="loading">
+                        <i class="fa fa-refresh fa-spin"></i>
+                    </div>
+
+                </md-card-content>
+            </md-card>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+
+
+    </div>
+    <!-- /.box-body -->
+</div>
+
+<div class="box box-danger collapsed-box" ng-show="userRole=='Zone Manager'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-pie-chart"></i> Zone wise Customers Balance  <span class="text-red">({{filteredzoneWiseCustomerList.length}})</span></h3>
+            <input ng-model="zoneWiseCustomerSearchText" class="searchTextBox" type="text" value="" placeholder="Filter" style="margin:0em 1em;">
+        </div>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div><!-- /.box-tools -->
+    </div><!-- /.box-header -->
+    <div class="box-body">
+        <div class="table-responsive">
+            <table id="" class="table table-bordered table-condensed table-hover table-striped" style="font-size:.9em;">
+                <tr style="font-weight: bold" class="danger">
+                    <td style="" ng-click="sort('DivisionName')"><span class="glyphicon sort-icon" ng-show="sortKey=='DivisionName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Division</td>
+                    <td style="" ng-click="sort('SaleZoneName')"><span class="glyphicon sort-icon" ng-show="sortKey=='SaleZoneName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleZoneName</td>
+                    <td style="" ng-click="sort('ZoneManagerName')"><span class="glyphicon sort-icon" ng-show="sortKey=='ZoneManagerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ZoneManager</td>
+                    <td style="" ng-click="sort('DistrictName')"><span class="glyphicon sort-icon" ng-show="sortKey=='DistrictName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> District</td>
+                    <td style="" ng-click="sort('UpazilaName')"><span class="glyphicon sort-icon" ng-show="sortKey=='UpazilaName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> UpazilaName</td>
+                    <td style="" ng-click="sort('CustomerName')"><span class="glyphicon sort-icon" ng-show="sortKey=='CustomerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CustomerName</td>
+                    <td style="" ng-click="sort('BfAmount')"><span class="glyphicon sort-icon" ng-show="sortKey=='BfAmount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> BF</td>
+                    <td style="" ng-click="sort('TotalSale')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalSale'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Sale</td>
+                    <td style="" ng-click="sort('TotalCollection')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalCollection'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Payments</td>
+                    <td style="" ng-click="sort('TotalDiscount')"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalDiscount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Discounts</td>
+                    <td style="" ng-click="sort('ActualCredit')"><span class="glyphicon sort-icon" ng-show="sortKey=='ActualCredit'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Balance</td>
+                </tr>
+                <tr class="text-bold">
+                    <td colspan="6" style="text-align:left">
+                        <pagination ng-model="currentPage" style="margin:0;padding:0;"
+                                    total-items="filteredzoneWiseCustomerList.length"
+                                    max-size="maxSize"
+                                    items-per-page="pageSize"
+                                    boundary-links="true">
+                        </pagination>
+                    </td>
+                    <td style="text-align:right">{{filteredzoneWiseCustomerList |sumByKey:'BfAmount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredzoneWiseCustomerList |sumByKey:'TotalSale' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredzoneWiseCustomerList |sumByKey:'TotalCollection' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredzoneWiseCustomerList |sumByKey:'TotalDiscount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredzoneWiseCustomerList |sumByKey:'ActualCredit' |currency:"":"0"}}</td>
+                </tr>
+                <tr ng-repeat="user in (filteredzoneWiseCustomerList = (zoneWiseCustomerListForZoneManager | filter: zoneWiseCustomerSearchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                    <td>{{ user.DivisionName }}</td>
+                    <td>{{ user.SaleZoneName }}</td>
+                    <td>{{ user.ZoneManagerName }}</td>
+                    <td>{{ user.DistrictName || 'empty' }}</td>
+                    <td>{{ user.UpazilaName }}</td>
+                    <td>{{ user.CustomerName }}</td>
+                    <td style="text-align:right">{{ user.BfAmount |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalSale |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalCollection |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalDiscount |currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.ActualCredit |currency:"":"0" }}</td>
+                </tr>
+                <tr class="text-bold danger">
+                    <td colspan="6" style="text-align:right">Total:</td>
+
+                    <td style="text-align:right">{{filteredzoneWiseCustomerList |sumByKey:'BfAmount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredzoneWiseCustomerList |sumByKey:'TotalSale' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredzoneWiseCustomerList |sumByKey:'TotalCollection' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredzoneWiseCustomerList |sumByKey:'TotalDiscount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredzoneWiseCustomerList |sumByKey:'ActualCredit' |currency:"":"0"}}</td>
+                </tr>
+            </table>
+
+        </div>
+    </div><!-- /.box-body -->
+</div><!-- /.box -->
+<!-- /. Sales Zone Manager -->
+
+<!--Sales Manager Common Summary-->
+<div class="row" ng-show="userRole=='Show Room Sales'">
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-purple">
+            <div class="inner">
+                <h3>{{appDetails.lastSaleEntryDate| date:'dd-MM-yy'}}</h3>
+                <p>Last Sales Entry</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-calendar"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-aqua">
+            <div class="inner">
+                <h3>{{customerClosingBalances |sumByKey:'Balance' |currency:"৳":"0"}}</h3>
+                <p>Show Room Credits</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-edit"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-green">
+            <div class="inner">
+                <h3>{{appDetails.noOfCustomers| number:0}}</h3>
+                <p>Customers</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-users"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-red">
+            <div class="inner">
+                <h3>{{appDetails.noOfProducts| number:0}}</h3>
+                <p>Products</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-apple"></i>
+            </div>
+
+        </div>
+    </div><!-- ./col -->
+
+</div>
+<!--Sales Manager Common Summary-->
+<!-- /. Customers Closing Balance -->
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Sales'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-users"></i> Customers Closing Balances <span class="text-red">({{filteredList.length}})</span></h3>
+            <input ng-model="searchText" class="searchTextBox" type="text" value="" placeholder="Filter" style="margin:0em 1em;">
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
+        <div class="table-responsive">
+            <table id="customerBalanceTable" class="table table-bordered table-condensed table-hover table-striped">
+                <tr style="font-weight: bold" class="danger">
+                    <td style="" ng-click="sort('DistrictName')"><span class="glyphicon sort-icon" ng-show="sortKey=='DistrictName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> District</td>
+                    <td style="" ng-click="sort('SalesManName')"><span class="glyphicon sort-icon" ng-show="sortKey=='SalesManName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
+                    <td style="" ng-click="sort('CustomerName')"><span class="glyphicon sort-icon" ng-show="sortKey=='CustomerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CustomerName</td>
+                    <td style="" ng-click="sort('Limit')"><span class="glyphicon sort-icon" ng-show="sortKey=='Limit'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Limit</td>
+                    <td style="" ng-click="sort('BfAmount')"><span class="glyphicon sort-icon" ng-show="sortKey=='BfAmount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> BF</td>
+                    <td style="" ng-click="sort('SaleCost')"><span class="glyphicon sort-icon" ng-show="sortKey=='SaleCost'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Sale</td>
+                    <td style="" ng-click="sort('MemoDiscount')"><span class="glyphicon sort-icon" ng-show="sortKey=='MemoDiscount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>MDis.</td>
+                    <td style="" ng-click="sort('GatOther')"><span class="glyphicon sort-icon" ng-show="sortKey=='GatOther'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Other</td>
+                    <td style="" ng-click="sort('PaymentAmount')"><span class="glyphicon sort-icon" ng-show="sortKey=='PaymentAmount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Collection</td>
+                    <td style="" ng-click="sort('Adjustment')"><span class="glyphicon sort-icon" ng-show="sortKey=='Adjustment'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Discount</td>
+                    <td style="" ng-click="sort('Balance')"><span class="glyphicon sort-icon" ng-show="sortKey=='Balance'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Balance</td>
+                </tr>
+                <tr class="text-bold info">
+                    <td colspan="3" style="text-align:left">Total:</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'CreditLimit' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'TotalBf' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'ActualSales' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'MemoDiscount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'GatOther' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'TotalDiscounts' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'TotalDiscounts' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'Balance' |currency:"":"0"}}</td>
+                </tr>
+                <tr ng-repeat="user in (filteredList = (customerClosingBalances | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                    <td>{{ user.DistrictName }}</td>
+                    <td>{{ user.SalesManName }}</td>
+                    <td>{{ user.CustomerName || 'empty' }}</td>
+                    <td style="text-align:right">{{ user.CreditLimit|currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalBf|currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.ActualSales|currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.MemoDiscount|currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.GatOther|currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalDiscounts|currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.TotalDiscounts|currency:"":"0" }}</td>
+                    <td style="text-align:right">{{ user.Balance|currency:"":"0" }}</td>
+                </tr>
+                <tr class="text-bold info">
+                    <td colspan="3" style="text-align:left">Total:</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'CreditLimit' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'TotalBf' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'ActualSales' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'MemoDiscount' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'GatOther' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'TotalDiscounts' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'TotalDiscounts' |currency:"":"0"}}</td>
+                    <td style="text-align:right">{{filteredList |sumByKey:'Balance' |currency:"":"0"}}</td>
+                </tr>
+            </table>
+        </div>
+        <pagination ng-model="currentPage"
+                    total-items="filteredList.length"
+                    max-size="maxSize"
+                    items-per-page="pageSize"
+                    boundary-links="true">
+        </pagination>
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /. Customers Closing Balance -->
+<!-- /. Product Monthly Summary Wiget Box -->
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Sales'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-apple"></i> Products wise Monthly Sale</h3>
+            <div class="form-group">
+                <label for="yearDdlMonthlySales" style="margin-left:1em;">Year</label>
+                <select name="yearDdlMonthlyProductSales" id="yearDdlMonthlyProductSales"
+                        ng-model="yearDdlMonthlyProductSales"
+                        ng-change="changedMonthDdlMonthlyProductsSales()"
+                        class="form-control">
+                    <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="monthDdlMonthlySales" style="margin-left:1em;">Month</label>
+                <select name="monthDdlMonthlyProductSales" id="monthDdlMonthlyProductSales"
+                        ng-model="monthDdlMonthlyProductSales"
+                        ng-change="changedMonthDdlMonthlyProductsSales()"
+                        ng-options="x as x.name for x in months track by x.id"
+                        class="form-control">
+                    <option value="">--Month--</option>
+                </select>
+
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
+        <div class="row">
+            <div class="col-sm-12">
+                <canvas id="bar" class="chart chart-bar"
+                        chart-colors="colors"
+                        chart-data="dataProductBar"
+                        chart-labels="labelsProductBar"
+                        chart-series="seriesProductBar"></canvas>
+                <div class="table-responsive" ng-show="productWiseMonthlySaleFilteredList.length>0">
+                    <table class="table table-bordered table-condensed table-hover table-striped">
+                        <tr style="font-weight: bold" class="info">
+                            <td style="" ng-click="sort('ProductName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='ProductName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ProductName</td>
+                            <td style="" ng-click="sort('TotalQuantity')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalQuantity'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Quantity</td>
+
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{productWiseMonthlySaleFilteredList |sumByKey:'TotalQuantity' | currency:"" :"0"}}</td>
+
+                        </tr>
+                        <tr ng-repeat="s in (productWiseMonthlySaleFilteredList = (productWiseMonthlySale | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                            <td>{{ s.ProductName }}</td>
+                            <td style="text-align:right">{{ s.TotalQuantity }}</td>
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{productWiseMonthlySaleFilteredList |sumByKey:'TotalQuantity' | currency:"" :"0"}}</td>
+
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /. End Product Monthly Summary Wiget Box -->
+<!-- /. Product Wise Yearly Sale Quantity box -->
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Sales'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-apple"></i> Products wise Yearly Sale</h3>
+            <div class="form-group">
+                <label for="exampleInputNameYear" style="margin-left:1em;">Year</label>
+                <select name="exampleInputNameYear" id="yearDdlYearlySales"
+                        ng-model="yearDdlYearlyProductsSales"
+                        ng-change="changedYearDdlYearlyProductsSales()"
+                        class="form-control">
+                    <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
+        <div class="row">
+            <div class="col-sm-12">
+                <canvas id="barYear" class="chart chart-bar"
+                        chart-data="dataProductBarYear"
+                        chart-labels="labelsProductBarYear"
+                        chart-colors="colors"
+                        chart-series="seriesProductBarYear"></canvas>
+                <div class="table-responsive" ng-show="salesProductWiseYearlyFilteredList.length>0">
+                    <table class="table table-bordered table-condensed table-hover table-striped">
+                        <tr style="font-weight: bold" class="info">
+                            <td style="" ng-click="sort('ProductName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='ProductName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Product Name</td>
+                            <td style="" ng-click="sort('TotalQuantity')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalQuantity'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Quantity</td>
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{salesProductWiseYearlyFilteredList |sumByKey:'TotalQuantity' | currency:"" :"0"}}</td>
+                        </tr>
+                        <tr ng-repeat="y in (salesProductWiseYearlyFilteredList = (salesProductWiseYearly | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                            <td>{{ y.ProductName }}</td>
+                            <td style="text-align:right">{{ y.TotalQuantity }}</td>
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{salesProductWiseYearlyFilteredList |sumByKey:'TotalQuantity' | currency:"" :"0"}}</td>
+                        </tr>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /.End Product Wise Sale Quantity Yearly box -->
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Sales'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-user-secret"></i> Managers Monthly Sale and Collection</h3>
+            <div class="form-group">
+                <label for="yearDdlMonthlySales" style="margin-left:1em;">Year</label>
+                <select name="yearDdlMonthlySales" id="yearDdlMonthlySales"
+                        ng-model="yearDdlMonthlySales"
+                        ng-change="changedYearDdlMonthlySales()"
+                        class="form-control">
+                    <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="monthDdlMonthlySales" style="margin-left:1em;">Month</label>
+                <select name="monthDdlMonthlySales" id="monthDdlMonthlySales"
+                        ng-model="monthDdlMonthlySales"
+                        ng-change="changedMonthDdlMonthlySales()"
+                        ng-options="x as x.name for x in months track by x.id"
+                        class="form-control">
+                    <option value="">--Month--</option>
+                </select>
+
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
+        <div class="row">
+            <div class="col-md-4 col-sm-12">
+
+                <div class="table-responsive" ng-show="salesManWiseMonthlySale.length>0">
+                    <table class="table table-bordered table-condensed table-hover table-striped">
+                        <tr style="font-weight: bold" class="info">
+                            <td style="" ng-click="sort('SalesManName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='SalesManName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
+                            <td style="" ng-click="sort('TotalSaleTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalSaleTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Sale</td>
+                            <td style="" ng-click="sort('TotalCollectionTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalCollectionTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Collection</td>
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{salesManFilteredList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
+                            <td style="text-align:right">{{salesManFilteredList |sumByKey:'TotalCollectionTaka' | currency:"" :"0"}}</td>
+                        </tr>
+                        <tr ng-repeat="s in (salesManFilteredList = (salesManWiseMonthlySale | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                            <td>{{ s.SalesManName }}</td>
+                            <td style="text-align:right">{{ s.TotalSaleTaka }}</td>
+                            <td style="text-align:right">{{ s.TotalCollectionTaka }}</td>
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{salesManFilteredList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
+                            <td style="text-align:right">{{salesManFilteredList |sumByKey:'TotalCollectionTaka' | currency:"" :"0"}}</td>
+                        </tr>
+                    </table>
+
+                </div>
+
+            </div>
+            <div class="col-md-8 col-sm-12">
+                <canvas id="bar" class="chart chart-bar"
+                        chart-colors="colors"
+                        chart-dataset-override="datasetOverride"
+                        chart-data="dataBar"
+                        chart-labels="labelsBar"
+                        chart-series="seriesBar"></canvas>
+            </div>
+
+        </div>
+
+
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /. Managers Monthly Sale Collection box -->
+<div class="box box-default collapsed-box" ng-show="userRole=='Show Room Sales'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-user-secret"></i> Managers Yearly Sale and Collection</h3>
+            <div class="form-group">
+                <label for="exampleInputNameYear" style="margin-left:1em;">Year</label>
+                <select name="exampleInputNameYear" id="yearDdlYearlySales"
+                        ng-model="yearDdlYearlySales"
+                        ng-change="changedYearDdlYearlySales()"
+                        class="form-control">
+                    <option ng-repeat="item in yearList" ng-selected="{{item==yearListSelectedData}}" value="{{item}}">{{item}}</option>
+                </select>
+            </div>
+
+
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body" style="display: none;">
+        <div class="row">
+            <div class="col-md-4 col-sm-12">
+
+                <div class="table-responsive" ng-show="salesManWiseYearlySale.length>0">
+                    <table class="table table-bordered table-condensed table-hover table-striped">
+                        <tr style="font-weight: bold" class="info">
+                            <td style="" ng-click="sort('SalesManName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='SalesManName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
+                            <td style="" ng-click="sort('TotalSaleTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalSaleTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Sale</td>
+                            <td style="" ng-click="sort('TotalCollectionTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalCollectionTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Collection</td>
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{salesManFilteredYearList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
+                            <td style="text-align:right">{{salesManFilteredYearList |sumByKey:'TotalCollectionTaka' | currency:"" :"0"}}</td>
+                        </tr>
+                        <tr ng-repeat="y in (salesManFilteredYearList = (salesManWiseYearlySale | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                            <td>{{ y.SalesManName }}</td>
+                            <td style="text-align:right">{{ y.TotalSaleTaka }}</td>
+                            <td style="text-align:right">{{ y.TotalCollectionTaka }}</td>
+                        </tr>
+                        <tr class="text-bold danger">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{salesManFilteredYearList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
+                            <td style="text-align:right">{{salesManFilteredYearList |sumByKey:'TotalCollectionTaka' | currency:"" :"0"}}</td>
+                        </tr>
+                    </table>
+
+                </div>
+
+            </div>
+            <div class="col-md-8 col-sm-12">
+                <canvas id="barYear" class="chart chart-bar"
+                        chart-colors="colors"
+                        chart-dataset-override="datasetOverride"
+                        chart-data="dataBarYear"
+                        chart-labels="labelsBarYear"
+                        chart-series="seriesBarYear"></canvas>
+            </div>
+
+        </div>
+
+
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /. Manager Yearly Sale Collection box -->
+<!-- /.Daily Sale Box box -->
+<div class="box box-default" ng-show="userRole=='Show Room Sales' || userRole=='Zone Manager' || userRole=='Cash Sale'">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <h3 class="box-title"><i class="fa fa-calendar"></i> Sales on Date</h3>
+            <div class="form-group">
+                <input class="form-control" type="text" tabindex="" name="saleDate" id="saleDate"
+                       ng-change="dateSaleInGoogleMap()"
+                       move-focus-by-enter-key
+                       ng-focus="FromDatePickerOpen()"
+                       datepicker-localdate
+                       datepicker-popup="dd/MM/yyyy"
+                       is-open="fromDatePickerIsOpen"
+                       ng-click="FromDatePickerOpen()"
+                       ng-model="saleDate" />
+
+            </div>
+            <div class="form-group">
+                <label for="" style="margin-left:1em;">Manager</label>
+                <select name="SalesManId" class="form-control" tabindex=""
+                        move-focus-by-enter-key
+                        ng-model="customer.SalesManId"
+                        ng-options="l.SalesManName for l in salesManList track by l.SalesManId">
+                    <option value="">--Sales Manager Name--</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <div class="table-responsive" ng-show="dateSalesinMapList.length>0">
+                    <table class="table table-bordered table-condensed table-hover">
+                        <tr class="danger text-bold">
+                            <td style="" ng-click="sort('DistrictName')" width="50%"><span class="glyphicon sort-icon" ng-show="sortKey=='DistrictName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> District</td>
+                            <td style="" ng-click="sort('TotalSaleTaka')" width="25%"><span class="glyphicon sort-icon" ng-show="sortKey=='TotalSaleTaka'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> SaleAmount</td>
+                        </tr>
+                        <tr class="info text-bold">
+                            <td style="text-align:left">Total:</td>
+                            <td style="text-align:right">{{dateSalesinMapFilteredList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
+                        </tr>
+                        <tr ng-repeat="b in (dateSalesinMapFilteredList = (dateSalesinMapList | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                            <td>{{ b.DistrictName }}</td>
+                            <td style="text-align:right">{{ b.TotalSaleTaka }}</td>
+                        </tr>
+                        <tr class="danger text-bold">
+                            <td style="text-align:right">Total:</td>
+                            <td style="text-align:right">{{dateSalesinMapFilteredList |sumByKey:'TotalSaleTaka' | currency:"" :"0"}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <!--The GoogleMap -->
+                <style>
+                    #map {
+                        height: 550px;
+                    }
+                </style>
+
+                <div id="map"></div>
+
+            </div>
+        </div>
+    </div><!-- /.box-body -->
+    <!-- /.box-footer -->
+</div>
+<!-- /.Daily Sale Box box -->
+<!--End Sales Manager-->
+
+<script>
+    //(function () {
+    //    var date = new Date();
+    //    var yyyy = date.getFullYear().toString();
+    //    var mm = (date.getMonth() + 1).toString();
+    //    var dd = date.getDate().toString();
+    //    var mmChars = mm.split('');
+    //    var ddChars = dd.split('');
+    //    var saleDate = (yyyy + '-' + (mmChars[1] ? mm : "0" + mmChars[0]) + '-' + (ddChars[1] ? dd : "0" + ddChars[0]));
+    //    $.ajax({
+    //        url: '/Dashboard/GetDateSalesInMapJQueryCall/?Date=' + saleDate,
+    //        type: "GET",
+    //        dataType: "json",
+    //        contentType: "application/json; charset=utf-8",
+    //        //data: JSON.stringify({Date :'2018-02-03', SalesManId: 0}),
+    //        success: function (data) {
+    //            var array = [];
+    //            $.each(data, function (index, value) {
+    //                array.push({ place: JSON.stringify(value.DistrictName), TotalSaleTaka: JSON.stringify(value.TotalSaleTaka) });
+    //            })
+    //            districtSaleList = array;
+    //            setMarkers(map, districtSaleList)
+    //        },
+    //    });
+        
+    //    setTimeout(arguments.callee, 10000);
+    //})();
+
+
+    var districtSaleList = [];
+    //Get Current date
+    var date = new Date();
+    var yyyy = date.getFullYear().toString();
+    var mm = (date.getMonth() + 1).toString();
+    var dd = date.getDate().toString();
+    var mmChars = mm.split('');
+    var ddChars = dd.split('');
+    var saleDate = (yyyy + '-' + (mmChars[1] ? mm : "0" + mmChars[0]) + '-' + (ddChars[1] ? dd : "0" + ddChars[0]));
+    //End Current Date
+    $.ajax({
+        url: '/Dashboard/GetDateSalesInMapJQueryCall/?Date=' + saleDate,
+        type: "GET",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        //data: JSON.stringify({Date :'2018-02-03', SalesManId: 0}),
+        success: function (data) {
+            var array = [];
+            $.each(data, function (index, value) {
+                array.push({ place: JSON.stringify(value.DistrictName), TotalSaleTaka: JSON.stringify(value.TotalSaleTaka) });
+            })
+            districtSaleList = array;
+            
+        },
+    });
+    var markers = [];
+    var map;
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 7,
+            center: { lat: 23.684994, lng: 90.35633099999995 }
+        });
+        setMarkers(map, districtSaleList)
+    }
+
+
+    function setMarkers(map, locations) {
+        var marker, i
+        var geocoder = new google.maps.Geocoder();
+        for (idx in locations) {
+            var location = locations[idx];
+            var address = location['place'];
+            geocoder.geocode({ 'address': address }, function (location, idx) {
+                return (function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        var latlng = results[0].geometry.location;
+                        var plaseObj = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng() };
+                        //console.log(location);
+                        //console.log(idx);
+                        var marker = new google.maps.Marker({
+                            map: map, title: location.place, position: plaseObj
+                        });
+                        //map.setCenter(marker.getPosition())
+
+                        var content = '<h4>' + location.place + ': ' + location.TotalSaleTaka + '</h4>';
+                        var infowindow = new google.maps.InfoWindow()
+                        google.maps.event.addListener(marker, 'click', (function (marker, content, infowindow) {
+                            return function () {
+                                infowindow.setContent(content);
+                                infowindow.open(map, marker);
+                            };
+                        })(marker, content, infowindow));
+
+                    }
+                });
+            }(location, idx));
+        }
+    }
+
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9-411AYtIuknkcqsKJabhUDc5-L-9XEY&callback=initMap&language=bn&region=BD" ">
+</script>

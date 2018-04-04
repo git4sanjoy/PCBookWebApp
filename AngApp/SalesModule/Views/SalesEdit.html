@@ -1,0 +1,236 @@
+﻿<modal title="Edit Invoice" visible="showModal" class="">
+
+    <div class="modal-body" style="margin-top:-1em;">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <center><img src="Content/images/pakiza-collection.png" /></center>
+                <center><h4>House 97, Road 11/A, Dhanmondi, Dhaka 1209</h4></center>
+            </div>
+            <table class="table table-bordered">
+                <tr class="text-bold info">
+                    <td align="left" width="25%">Date: {{editObj.MemoDate |date:"dd-MM-yyyy"}}</td>
+                    <td align="center" width="50%">Name: {{editObj.CustomerName}}</td>
+                    <td align="right" width="25%">Invoice No: {{editObj.MemoNo}}</td>
+                    
+                </tr>
+                <tr>
+                    <td>
+                        <label for="MemoCost">Gross Tk</label>
+                        <input name="MemoCost" id="MemoCost" class="form-control" type="number" tabindex="1" placeholder="Gross Tk"
+                               onfocus="javascript: if(this.value == '0'){ this.value = ''; }"
+                               onblur="javascript: if(this.value==''){this.value='0';}"
+                               move-focus-by-enter-key
+                               ng-model="invoice.MemoCost">
+
+                    </td>
+                    <td>
+                        
+                        <span style="width:100%">
+                            <span style="width:50%;float:left">
+                                <label for="MemoDiscount">Final Discount</label>
+                                <input name="MemoDiscount" id="MemoDiscount" class="form-control" type="number" tabindex="2" placeholder="Final Discount"
+                                       onfocus="javascript: if(this.value == '0'){ this.value = ''; }"
+                                       onblur="javascript: if(this.value==''){this.value='0';}"
+                                       move-focus-by-enter-key
+                                       ng-model="invoice.MemoDiscount">
+                            </span>
+                            <span style="width:50%;float:left">
+                                <label for="GatOther">Other Expencess</label>
+                                <input name="GatOther" id="GatOther" class="form-control" type="number" tabindex="3" placeholder="Other Expencess"
+                                       onfocus="javascript: if(this.value == '0'){ this.value = ''; }"
+                                       onblur="javascript: if(this.value==''){this.value='0';}"
+                                       move-focus-by-enter-key
+                                       ng-model="invoice.GatOther">
+                            </span>
+                        </span>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="invoiceDate">Memo Date</label>
+                            <input class="form-control" type="text" tabindex="4" name="invoiceDate" id="invoiceDate"
+                                   move-focus-by-enter-key
+                                   ng-focus="InvoiceDatePickerOpen()"
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="invoiceDatePickerIsOpen"
+                                   ng-click="InvoiceDatePickerOpen()"
+                                   ng-required="true"
+                                   ng-model="invoice.invoiceDate" />
+
+                        </div>
+                    </td>
+                    
+                </tr>
+                <tr class="text-bold info">
+                    <td colspan="2" class="text-red">
+                        Net Amount: {{(editObj.MemoCost-invoice.MemoDiscount+invoice.GatOther)}}
+                    </td>
+                    <td>
+                        <button id="" class=" print-hide-button btn btn-info btn-block" ng-click="updateMemo()"><i class="fa fa-edit"></i> Update</button>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+
+</modal>
+
+
+
+<md-card>
+    <md-card-title>
+        <md-card-title-text>
+            <span class="md-headline"><i class="fa fa-search"></i> Search Invoices <span ng-show="memos.length>0">Total: {{memos.length}}</span></span>
+        </md-card-title-text>
+    </md-card-title>
+
+    <md-card-content>
+        <form name="searchForm" novalidate role="form" class="" id="searchForm" ng-submit="submitSearchForm()">
+            <div layout-gt-sm="row">
+
+                <md-input-container class="md-block" flex-gt-sm>
+                    <div class="form-group">
+                        <label for="invoiceDate">From Date</label>
+                        <div class="input-group" ng-class="{ 'has-error' : searchForm.FromDate.$invalid && (searchForm.FromDate.$dirty || submitted)}">
+
+                            <input class="form-control" type="text" id="FromDate" name="FromDate" tabindex="1" autocomplete="off"
+                                   move-focus-by-enter-key
+                                   ng-focus="FromDatePickerOpen()"
+                                   datepicker-localdate
+                                   datepicker-popup="dd/MM/yyyy"
+                                   is-open="fromDatePickerIsOpen"
+                                   ng-click="FromDatePickerOpen()"
+                                   ng-model="memoMaster.FromDate" />
+                        </div>
+
+                    </div>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>To Date</label>
+                    <div class="input-group" ng-class="{ 'has-error' : searchForm.ToDate.$invalid && (searchForm.ToDate.$dirty || submitted)}">
+                        <input class="form-control" type="text" id="ToDate" name="ToDate" tabindex="2" autocomplete="off"
+                               move-focus-by-enter-key
+                               ng-focus="ToDatePickerOpen()"
+                               datepicker-localdate
+                               datepicker-popup="dd/MM/yyyy"
+                               is-open="toDatePickerIsOpen"
+                               ng-click="ToDatePickerOpen()"
+                               ng-model="memoMaster.ToDate" />
+                    </div>
+                </md-input-container>
+
+
+
+                <div layout-gt-sm="row">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <md-button class="md-raised md-primary" tabindex="5" type="submit"
+                                   aria-label="Favorite"
+                                   move-focus-by-enter-key
+                                   ng-disabled="searchForm.$invalid">
+                            <i class="fa fa-search"></i> Search
+                        </md-button>
+
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <md-button class="md-raised md-default" tabindex="6" type="button"
+                                   ng-click="clearForm()"
+                                   aria-label="Favorite"
+                                   move-focus-by-enter-key>
+                            <i class="fa fa-recycle"></i> Clear
+                        </md-button>
+                    </md-input-container>
+                </div>
+
+            </div>
+        </form>
+        <div class="row">
+            <!--Server side error messageing------>
+            <div class="col-sm-12">
+
+                <div class="" ng-hide="serverMessage">
+                    <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                        <ul>
+                            <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--End Server side error messageing-->
+            <!--Client side error messageing------>
+            <div class="col-sm-12">
+                <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-check"></i> {{messageType|capitalize}}!</h4>
+                    {{message}}
+                </div>
+            </div>
+            <!--End Client side error messageing-->
+        </div>
+        <table class="table table-bordered table-striped" ng-show="memos.length>0">
+            <tr>
+                <th>Customer Name</th>
+                <th>Date</th>
+                <th>MemoNo</th>
+                <th>GrossTk</th>
+                <th>Other</th>
+                <th>Discount</th>
+                <th>NetTk</th>
+                <td></td>
+            </tr>
+            <tr class="text-bold danger">
+                <td colspan="3" style="text-align:left">Total:</td>
+                <td style="text-align:right">{{filteredList |sumByKey:'MemoCost' |currency:"":"0"}}</td>
+                <td style="text-align:right">{{filteredList |sumByKey:'GatOther' |currency:"":"0"}}</td>
+                <td style="text-align:right">{{filteredList |sumByKey:'MemoDiscount' |currency:"":"0"}}</td>
+                <td>{{netSale(filteredList) |currency:"":"0"}}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="8">
+                    <input ng-model="searchText" class="form-control" type="text" value="" placeholder="Filter Search Result">
+                </td>
+            </tr>
+            <tr ng-repeat="m in (filteredList = (memos | filter: searchText)) | orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+
+                <td>{{m.CustomerName}}, {{m.DistrictName}}</td>
+                <td>{{m.MemoDate |date:"dd-MM-yyyy"}}</td>
+                <td>{{m.MemoNo}}</td>
+                <td align="right">{{m.MemoCost|currency:"":"0"}}</td>
+                <td align="right">{{m.GatOther}}</td>
+                <td align="right">{{m.MemoDiscount}}</td>
+                <td align="right">{{(m.MemoCost+m.GatOther-m.MemoDiscount)|currency:"":"0"}}</td>
+                <td>
+                    <button class="btn btn-info" ng-click="editInvoice(m, $index)" style="margin:0;padding: 1px 6px;"><i class="fa fa-edit"></i></button>
+                    <button class="btn btn-danger" ng-click="deleteInvoice(m, $index)" style="margin:0;padding: 1px 6px;"><i class="fa fa-trash"></i></button>
+
+                </td>
+            </tr>
+            <tr class="text-bold danger">
+                <td colspan="3" style="text-align:left">Total:</td>
+                <td style="text-align:right">{{filteredList |sumByKey:'MemoCost' |currency:"":"0"}}</td>
+                <td style="text-align:right">{{filteredList |sumByKey:'GatOther' |currency:"":"0"}}</td>
+                <td style="text-align:right">{{filteredList |sumByKey:'MemoDiscount' |currency:"":"0"}}</td>
+                <td>{{netSale(filteredList) |currency:"":"0"}}</td>
+                <td></td>
+            </tr>
+        </table>
+
+    </md-card-content>
+
+
+</md-card>
+
+
+
+
+
+
+

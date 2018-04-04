@@ -1,10 +1,41 @@
 ﻿<div class="row">
     <div class="col-md-12">
+        <modal title="Check Details" visible="showModal" class="">
+
+                <div class="modal-body" style="margin-top:-1em;">
+                    <h4 class="text-green">{{vType}}</h4>
+                    <h3 style="margin-top:0em;padding-top:0;">{{accNo}}{{selectedBankLedger[0].BankAccountNumber}}</h3>
+                    <ul class="list-group">
+                        <li class="list-group-item bg-gray-light">
+                            <span class="badge">{{selectedBankLedger[0].CheckNumber}}</span>
+                            Check No
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge label label-success">{{issueDate| date : "dd-MM-yyyy"}}{{selectedBankLedger[0].IssueDate| date : "dd-MM-yyyy"}}</span>
+                            Issue Date
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge label label-danger" style="color:white;">{{selectedBankLedger[0].HonourDate| date : "dd-MM-yyyy"}}</span>
+                            Honour Date
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge" style="font-size:1.1em;" ng-show="amountCr">{{amountCr}}</span>
+                            <span class="badge" style="font-size:1.1em;" ng-show="selectedBankLedger[0].Amount">{{selectedBankLedger[0].Amount}}</span>
+                            Amount
+                        </li>
+                    </ul>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+
+        </modal>
         <div class="box box-success">
             <div class="box-header with-border">
                 <form class="form-inline">
                     <span class="box-title"><i class="fa fa-search"></i> Voucher Search : {{bookData.length}}</span>
-                    
+
                 </form>
 
                 <div class="box-tools pull-right">
@@ -35,56 +66,59 @@
                     </div>
                     <!--End Client side error messageing-->
                 </div>
-                    <div layout="row">
-                        <md-input-container>
-                            <!--<label>Book Date</label>-->
-                            <md-datepicker 
-                                           ng-model="voucherDate" 
-                                           md-placeholder="Book Date" 
-                                           md-open-on-focus>
-                            </md-datepicker>
+                <div layout="row">
+                    <md-input-container>
+                        <!--<label>Book Date</label>-->
+                        <md-datepicker aria-label="Date"
+                                       ng-model="voucherDate"
+                                       md-placeholder="Book Date"
+                                       md-open-on-focus>
+                        </md-datepicker>
 
-                        </md-input-container>
-                        <md-input-container>
-                            <label>Voucher Type</label>
-                            <md-select id="vouchrType" 
-                                       placeholder="Select Voucher Type" 
-                                       ng-model="vouchrType" 
-                                       md-on-open="loadVoucherTypeList()" style="min-width: 250px;">
-                                <md-option><em>None</em></md-option>
-                                <md-option ng-value="v" ng-repeat="v in vouchrTypeList">{{v.VoucherTypeName}}</md-option>
-                            </md-select>
-                        </md-input-container>
-                        <md-input-container>
-                            <label>Voucher No</label>
-                            <input id="voucherNo" ng-model="voucherNo">
-                        </md-input-container>
-                        <md-input-container>
-                            <md-button md-no-ink="" class="md-raised md-primary" ng-click="searchVoucher()"><i class="fa fa-search"></i> Search</md-button>
-                        </md-input-container>
-                        <md-input-container>
-                            <md-button md-no-ink="" class="md-raised" ng-click="searchClear()"><i class="fa fa-refresh"></i> Clear</md-button>
-                        </md-input-container>
-                    </div>
-
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Voucher Type</label>
+                        <md-select id="vouchrType"
+                                   placeholder="Select Voucher Type"
+                                   ng-model="vouchrType"
+                                   md-on-open="loadVoucherTypeList()" style="min-width: 250px;">
+                            <md-option><em>None</em></md-option>
+                            <md-option ng-value="v" ng-repeat="v in vouchrTypeList">{{v.VoucherTypeName}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Voucher No</label>
+                        <input id="voucherNo" ng-model="voucherNo">
+                    </md-input-container>
+                    <md-input-container>
+                        <md-button md-no-ink=""aria-label="save" class="md-raised md-primary" ng-click="searchVoucher()"><i class="fa fa-search"></i> Search</md-button>
+                    </md-input-container>
+                    <md-input-container>
+                        <md-button md-no-ink="" aria-label="Clear" class="md-raised" ng-click="searchClear()"><i class="fa fa-refresh"></i> Clear</md-button>
+                    </md-input-container>
+                </div>
+                <!-- Single Voucher -->
                 <div class="col-sm-12" ng-hide="voucherTable">
-                    <table class="table table-bordered table-responsive table-striped" style="" id="voucherTable">
+                    <table class="table table-bordered table-responsive" style="" id="voucherTable">
                         <tr class="info">
-                            <td colspan="5" style="text-align:center">
-                                <h3 style="padding:0;margin:0;">{{aVoucher[0].ShowRoomName}}</h3>
+                            <td colspan="4" style="text-align:center">
+                                <h3 style="padding:0;margin:0;font-weight:bold;">{{aVoucher[0].ShowRoomName}}</h3>
+                                <center><span class="text-bold">Voucher Type: {{aVoucher[0].VoucherTypeName}}</span></center>
                             </td>
                         </tr>
-                        <tr style="font-weight:bold">
-                            <td>Date: {{aVoucher[0].VoucherDate | date : "dd-MM-yyyy"}}      </td>
-                            <td style="text-align:center">Voucher Type: {{aVoucher[0].VoucherTypeName}}</td>
-                            <td colspan="3" style="text-align:right">Voucher No: {{aVoucher[0].VoucherNo}}</td>
+
+                        <tr style="background:white;border:none;font-weight:bold">
+                            <td colspan="5" class="text-bold">
+                                <span class="pull-right">Voucher No: {{aVoucher[0].VoucherNo}}</span> 
+                                <span class="pull-left">Date: {{aVoucher[0].VoucherDate | date : "dd-MM-yyyy"}}</span> 
+                                
+                            </td>
                         </tr>
                         <tr class="">
-                            <th width="15%">Dr/Cr</th>
-                            <th width="55%" style="text-align:center">Ledger Name</th>
-                            <th width="15%" style="text-align:center">Dr Amount</th>
-                            <th width="15%" style="text-align:center">Cr Amount</th>
-                            <th width="5%">P/R</th>
+                            <th width="10%">Dr/Cr</th>
+                            <th width="65%" style="text-align:center">Ledger Name</th>
+                            <th width="15%" style="text-align:center">Dr. Amount</th>
+                            <th width="15%" style="text-align:center">Cr. Amount</th>
                         </tr>
                         <tr class="task-item" ng-repeat="item in aVoucher">
 
@@ -92,42 +126,39 @@
                             <td>{{item.LedgerName}}</td>
                             <td style="text-align:right">{{item.DrAmount}}</td>
                             <td style="text-align:right">{{item.CrAmount}}</td>
-                            <td><input type=checkbox ng-model="item.IsBank" ng-checked="item.IsBank" ng-disabled="true" /></td>
-
-                        </tr>
-
-                        <tr class="info" style="font-weight:bold">
-                            <td colspan="2" style="text-align:right"> Total:</td>
-                            <td style="text-align:right">{{totalDr() | currency:""}}</td>
-                            <td style="text-align:right">{{totalCr() | currency:""}}</td>
-                            <td></td>
                         </tr>
                         <tr class="">
                             <td style="font-weight:bold">
                                 Narration
                             </td>
                             <td>{{aVoucher[0].Naration}}</td>
+                            <td style="text-align:right;font-weight:bold">{{totalDr() | currency:""}}</td>
+                            <td style="text-align:right;font-weight:bold">{{totalCr() | currency:""}}</td>
+                        </tr>
+
+                        <tr class="">                            
+                            <td colspan="2"></td>
                             <td>
                                 <md-button md-no-ink="" class="md-raised md-warn btn-block" ng-click="deleteVoucher(aVoucher[0].VoucherId)">Delete</md-button>
                             </td>
-                            <td colspan="2">
+                            <td colspan="1">
                                 <md-button md-no-ink="" class="md-raised md-primary btn-block" ng-click="printVoucher()">Print</md-button>
                             </td>
                         </tr>
-
                     </table>
                 </div>
+                <!-- Date wise Book entry -->
                 <div class="col-sm-12" ng-hide="bookDataTable">
                     <table class="table table-bordered table-responsive table-striped" style="" id="voucherTable">
                         <tr class="" style="background:white;border:none">
-                            <td colspan="6" style="background:white;border:none">
+                            <td colspan="5" style="background:white;border:none">
                                 <md-input-container class="md-block" style="margin-bottom:0;padding-bottom:0;">
                                     <label>Search</label>
-                                    <input type="text" value="" placeholder="Filter Search" ng-model="searchText">
+                                    <input type="text" value="" placeholder="Filter your search results" ng-model="searchText">
                                 </md-input-container>
                             </td>
-                            <td style="background:white;border:none">
-                                <md-button md-no-ink="" class="md-raised" ng-click="clearSearchText()"><i class="fa fa-refresh"></i></md-button>
+                            <td style="background:white;border:none" colspan="3">
+                                <md-button aria-label="Clear Filter" class="md-raised btn-block" ng-click="clearSearchText()"><i class="fa fa-refresh"></i></md-button>
                             </td>
                         </tr>
                         <tr class="success">
@@ -138,14 +169,14 @@
                                 </span>
                                 Dr/Cr
                             </th>
-                            <th width="45%" style="text-align:center" ng-click="sort('LedgerName')">
+                            <th width="40%" style="text-align:center" ng-click="sort('LedgerName')">
                                 <span class="glyphicon sort-icon"
                                       ng-show="sortKey=='LedgerName'"
                                       ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
                                 </span>
                                 Ledger Name
                             </th>
-                            <th width="10%" style="text-align:center" ng-click="sort('VoucherTypeName')">
+                            <th width="15%" style="text-align:center" ng-click="sort('VoucherTypeName')">
                                 <span class="glyphicon sort-icon"
                                       ng-show="sortKey=='VoucherTypeName'"
                                       ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
@@ -164,41 +195,55 @@
                                       ng-show="sortKey=='DrAmount'"
                                       ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
                                 </span>
-                                Dr. Amount
+                                Debtor (৳)‎
                             </th>
                             <th width="10%" style="text-align:center" ng-click="sort('CrAmount')">
                                 <span class="glyphicon sort-icon"
                                       ng-show="sortKey=='CrAmount'"
                                       ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
                                 </span>
-                                Cr. Amount
+                                Creditor ‎(৳)
                             </th>
-                            <th width="5%"></th>
+                            <th colspan="2">Count</th>
                         </tr>
-                        
-                        <tr class="success" style="font-weight:bold">
-                            <td colspan="4" style="text-align:right"> Total: </td>
-                            <td style="text-align:right">{{bookData |sumByKey:'DrAmount' |currency:"":"0"}}</td>
-                            <td style="text-align:right">{{bookData |sumByKey:'CrAmount' |currency:"":"0"}}</td>
-                            <td class="text-red">Records: {{filteredList.length}}</td>
+
+                        <tr class="" style="font-weight:bold">
+                            <td colspan="4" style="">
+                                <pagination ng-model="currentPage" style="margin:0; padding:0"
+                                            total-items="filteredList.length"
+                                            max-size="maxSize"
+                                            items-per-page="pageSize"
+                                            boundary-links="true">
+                                </pagination>
+                            </td>
+                            <td style="text-align:right">{{filteredList |sumByKey:'DrAmount' |currency:"":"0"}}</td>
+                            <td style="text-align:right">{{filteredList |sumByKey:'CrAmount' |currency:"":"0"}}</td>
+                            <td colspan="2" align="center"><span class="text-red">{{filteredList.length}}</span></td>
                         </tr>
-                        <tr class="task-item" ng-repeat="a in (filteredList = (bookData | filter: searchText)) | orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">                            
+                        <tr class="task-item" ng-repeat="a in (filteredList = (bookData | filter: searchText))">
                             <td>{{a.TransctionTypeName}}</td>
                             <td>{{a.LedgerName}}</td>
                             <td>{{a.VoucherTypeName}}</td>
                             <td>{{a.VoucherNo}}</td>
                             <td style="text-align:right">{{a.DrAmount}}</td>
                             <td style="text-align:right">{{a.CrAmount}}</td>
-                            <td><input type=checkbox ng-model="a.IsBank" ng-checked="a.IsBank" ng-disabled="true" /></td>
+                            <td colspan="2">
+                                <button ng-show="a.ReceiveOrPayment" 
+                                        ng-click="showBankPayment(a)"
+                                        class="btn btn-default btn-block" style="margin:0 0; padding: 1px 10px;">
+                                <i class="fa fa-search"></i>
+                                </button>
+                            </td>
                         </tr>
 
                         <tr class="success" style="font-weight:bold">
-                            <td colspan="4" style="text-align:right"> Total:</td>
+                            <td colspan="4" style="text-align:right"> Total: </td>
                             <td style="text-align:right">{{filteredList |sumByKey:'DrAmount' |currency:"":"0"}}</td>
                             <td style="text-align:right">{{filteredList |sumByKey:'CrAmount' |currency:"":"0"}}</td>
-                            <td class="text-red">Records: {{filteredList.length}}</td>
+                            <td colspan="2"></td>
                         </tr>
                     </table>
+
                 </div>
             </div><!-- /.box-body -->
             <!-- Loading (remove the following to stop the loading)-->
@@ -210,4 +255,3 @@
     </div>
 </div>
 
- 

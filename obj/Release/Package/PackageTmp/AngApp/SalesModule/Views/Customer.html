@@ -1,6 +1,6 @@
 ﻿<div class="box box-danger">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-users"></i> Customer</h3>
+        <h3 class="box-title"><i class="fa fa-user"></i> Customer</h3>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -36,7 +36,7 @@
                     <label>Shop Name</label>
                     <div class="input-group" ng-class="{ 'has-error' : customerForm.ShopName.$invalid && (customerForm.ShopName.$dirty || submitted)}">
                         <span class="input-group-addon"><i class="fa fa-building"></i></span>
-                        <input id="ShopName" type="text" class="form-control" name="ShopName" autocomplete="off" tabindex="1" autofocus placeholder="Shop Name"
+                        <input id="ShopName" type="text" class="form-control" name="ShopName" autocomplete="off" tabindex="1" placeholder="Shop Name"
                                move-focus-by-enter-key
                                ng-model="customer.ShopName"
                                ng-required="true">
@@ -47,7 +47,7 @@
                     <label>Customer Name</label>
                     <div class="input-group" ng-class="{ 'has-error' : customerForm.CustomerName.$invalid && (customerForm.CustomerName.$dirty || submitted)}">
                         <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                        <input id="CustomerName" type="text" class="form-control" name="CustomerName" autocomplete="off" tabindex="2" autofocus placeholder="Customer Name"
+                        <input id="CustomerName" type="text" class="form-control" name="CustomerName" autocomplete="off" tabindex="2" placeholder="Customer Name"
                                move-focus-by-enter-key
                                ng-model="customer.CustomerName"
                                ng-required="true">
@@ -160,7 +160,21 @@
                     </div>
                     <p ng-show="customerForm.CreditLimit.$error.required && (customerForm.CreditLimit.$dirty || submitted)" class="help-block">Credit Limit is required.</p>
                 </div>
-                <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label>Organizational unit (OU)</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-bank"></i></span>
+                        <select name="SubCategoryId" class="form-control" tabindex="11"
+                                ng-focus="true"
+                                move-focus-by-enter-key
+                                ng-model="customer.ShowRoomId"
+                                ng-options="l.ShowRoomName for l in showRoomList track by l.ShowRoomId">
+                            <option value="">Organizational unit (OU)</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
                     <label for="exampleInputFile">Customer Image</label>
                     <!-- image-preview-filename input [CUT FROM HERE]-->
                     <div class="input-group image-preview">
@@ -185,7 +199,7 @@
             </div>
         </div><!-- /.box-body -->
         <div class="box-footer no-border">
-            <button type="submit" class="btn btn-success" tabindex="11"
+            <button type="submit" class="btn btn-danger" tabindex="12"
                     move-focus-by-enter-key
                     ng-hide="addButton"
                     ng-disabled="customerForm.$invalid">
@@ -219,54 +233,109 @@
     </div>
 
     <div class="box-body">
-        <div class="table-responsive">
-            
-            <table class="table table-bordered table-striped">
+        <div class="table-responsive">            
+            <table class="table table-bordered table-striped" style="font-size:.9em;">
                 <tr style="font-weight: bold" class="danger">
-                    <td style="" ng-click="sort('statusName')"><span class="glyphicon sort-icon" ng-show="sortKey=='statusName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Manager</td>
+                    <td style="" ng-click="sort('status')"><span class="glyphicon sort-icon" ng-show="sortKey=='status'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ManagerName</td>
                     <td style="" ng-click="sort('ShopName')"><span class="glyphicon sort-icon" ng-show="sortKey=='ShopName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ShopName</td>
                     <td style="" ng-click="sort('name')"><span class="glyphicon sort-icon" ng-show="sortKey=='name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> CustomerName</td>
                     <td style="" ng-click="sort('CreditLimit')"><span class="glyphicon sort-icon" ng-show="sortKey=='CreditLimit'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Limit</td>
                     <td style="" ng-click="sort('Address')"><span class="glyphicon sort-icon" ng-show="sortKey=='Address'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Address</td>
-                    <td style="" ng-click="sort('groupName')"><span class="glyphicon sort-icon" ng-show="sortKey=='groupName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Upazilla</td>
+                    <td style="" ng-click="sort('group')"><span class="glyphicon sort-icon" ng-show="sortKey=='group'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Upazilla</td>
                     <td style="" ng-click="sort('Phone')"><span class="glyphicon sort-icon" ng-show="sortKey=='Phone'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Cell</td>
                     <td style="" ng-click="sort('Email')"><span class="glyphicon sort-icon" ng-show="sortKey=='Email'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Mail</td>
-                    <td style="" ng-click="sort('CustomerNameBangla')"><span class="glyphicon sort-icon" ng-show="sortKey=='CustomerNameBangla'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ক্রেতার নাম</td>
-                    <td style="" ng-click="sort('AddressBangla')"><span class="glyphicon sort-icon" ng-show="sortKey=='AddressBangla'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ঠিকানা বাংলা</td>
+                    <td style="" ng-click="sort('CustomerNameBangla')"><span class="glyphicon sort-icon" ng-show="sortKey=='CustomerNameBangla'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ক্রেতা</td>
+                    <td style="" ng-click="sort('AddressBangla')"><span class="glyphicon sort-icon" ng-show="sortKey=='AddressBangla'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> ঠিকানা</td>
+                    <td></td>
+                    
                     <td style=""></td>
                 </tr>
-                <tr ng-repeat="user in (filteredList = (users | filter: searchText)) |orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
-                    <td>{{ user.statusName }}</td>
-                    <td>{{ user.ShopName }}</td>
-                    <td>{{ user.name || 'empty' }}</td>
-                    <td style="text-align:right">{{ user.CreditLimit }}</td>
-                    <td>{{ user.Address }}</td>
-                    <td>{{ user.groupName }}</td>
-                    <td  style="text-align:right">{{ user.Phone }}</td>
-                    <td>{{ user.Email }}</td>
-                    <td class="bangla-font">{{ user.CustomerNameBangla }}</td>
-                    <td class="bangla-font">{{ user.AddressBangla }}</td>
+                <tr class="hide">
+                    <td colspan="11">
+                        <button class="btn btn-success" ng-click="addCustomer()"><i class="fa fa-pencil"></i> Add New Customer</button>
+                    </td>
+                </tr>
+                <tr ng-repeat="customer in (filteredList = (users | filter: searchText)) | orderBy:sortKey:reverse | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">                   
+                    <td>
+                        <!-- editable username (text with validation) -->
+                        <span editable-select="customer.status" e-name="status" e-form="rowform" e-ng-options="s.value as s.text for s in statuses">
+                            {{ showStatus(customer) }}
+                        </span>
+                    </td>
+                    <td>
+                        <span editable-text="customer.ShopName" e-name="ShopName" e-form="rowform">
+                            {{ customer.ShopName || 'empty' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span editable-text="customer.name" e-name="name" e-form="rowform" onbeforesave="checkName($data, customer.id)">
+                            {{ customer.name || 'empty' }}
+                        </span>
+                    </td>
+                    <td style="text-align:right">
+                        <span editable-text="customer.CreditLimit" e-name="CreditLimit" e-form="rowform">
+                            {{ customer.CreditLimit || '0' }}
+                        </span>                   
+                    </td>
+                    <td>
+                        <span editable-text="customer.Address" e-name="Address" e-form="rowform">
+                            {{ customer.Address || 'empty' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span  editable-select="customer.group"  e-name="group" onshow="loadGroups()" e-form="rowform" e-ng-options="g.id as g.text for g in groups">
+                            {{ showGroup(customer) }}
+                        </span>
+                    </td>
+                    <td  style="text-align:right">
+                        <span editable-text="customer.Phone" e-name="Phone" e-form="rowform">
+                            {{ customer.Phone }}
+                        </span>
+                    </td>
+                    <td>
+                        <span editable-text="customer.Email" e-name="Email" e-form="rowform">
+                            {{ customer.Email }}
+                        </span>
+                    </td>
+                    <td class="bangla-font">
+                        <span editable-text="customer.CustomerNameBangla" e-name="CustomerNameBangla" e-form="rowform">
+                            {{ customer.CustomerNameBangla || 'empty' }}
+                        </span>
+                    </td>
+                    <td class="bangla-font">
+                        <span editable-text="customer.AddressBangla" e-name="AddressBangla" e-form="rowform">
+                            {{ customer.AddressBangla || 'empty' }}
+                        </span>                       
+                    </td>
+                    <td>
+                        <i ng-class="customer.Active ? 'fa fa-trash text-red' : 'fa fa-check text-green'"></i>
+                    </td>
+
                     <td style="white-space: nowrap">
-                        <div class="buttons">
-                            <button class="btn btn-primary btn-sm" ng-click="getSingle(user)"><i class="fa fa-edit"></i></button>
-                            <button class="btn btn-danger btn-sm" ng-click="remove(user)"><i class="fa fa-trash"></i></button>
+                        <!-- form -->
+                        <form editable-form name="rowform" onbeforesave="saveCustomer($data, customer.id)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == customer">
+                            <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+                                save
+                            </button>
+                            <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                                cancel
+                            </button>
+                        </form>
+                        <div class="buttons" ng-show="!rowform.$visible">
+                            <button style="margin:0;padding:1px 5px;" class="btn btn-primary" ng-click="rowform.$show()"><i class="fa fa-edit"></i></button>
+                            
                         </div>
                     </td>
                 </tr>
                 <tr class="text-bold danger">
                     <td colspan="3" style="text-align:right">Total:</td>
                     <td style="text-align:right">{{filteredList |sumByKey:'CreditLimit' |currency:"":"0"}}</td>
-                    <td colspan="7"></td>
+                    <td colspan="8"></td>
 
                 </tr>
             </table>
 
         </div>
-
-            <!--<button class="btn btn-default" ng-click="addUser()">Add row</button>-->
-
-
-
     </div><!-- /.box-body -->
     <div class="box-footer no-border">
         <pagination ng-model="currentPage"
@@ -278,6 +347,7 @@
     </div><!-- /.box-footer -->
 
 </div>
+
 <script type="text/javascript">
         $(function () {
 

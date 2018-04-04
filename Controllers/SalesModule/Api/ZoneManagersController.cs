@@ -12,6 +12,7 @@ using System.Web.Http.Description;
 using PCBookWebApp.DAL;
 using PCBookWebApp.Models.SalesModule;
 using Microsoft.AspNet.Identity;
+using PCBookWebApp.Models;
 
 namespace PCBookWebApp.Controllers.SalesModule.Api
 {
@@ -20,16 +21,27 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
     {
         private PCBookWebAppContext db = new PCBookWebAppContext();
 
+
+        [Route("api/ZoneManagers/UserXEditList")]
+        [HttpGet]
+        public IHttpActionResult GetUserXEditList()
+        {
+            var context = new ApplicationDbContext();
+
+            var usersList = context.Users.Select(e => new { value = e.Id, text = e.UserName });
+            if (usersList == null)
+            {
+                return NotFound();
+            }
+            return Ok(usersList);
+
+        }
+
+
         [Route("api/ZoneManagers/ZoneManagerList")]
         [HttpGet]
         public IHttpActionResult GetZoneManagerList()
         {
-            string userId = User.Identity.GetUserId();
-            var showRoomId = db.ShowRoomUsers
-                .Where(a => a.Id == userId)
-                .Select(a => a.ShowRoomId)
-                .FirstOrDefault();
-
             var list = db.ZoneManagers
                             .OrderBy(d => d.ZoneManagerName)
                             .Select(e => new {
@@ -37,7 +49,8 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
                                 ZoneManagerName = e.ZoneManagerName,
                                 Phone = e.Phone,
                                 Address = e.Address,
-                                Email = e.Email
+                                Email = e.Email,
+                                status = e.Id
                             });
 
             if (list == null)
@@ -46,7 +59,23 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
             }
             return Ok(list);
         }
+        [Route("api/ZoneManagers/ZoneManagerReportList")]
+        [HttpGet]
+        public IHttpActionResult GetZoneManagerReportList()
+        {
+            var list = db.ZoneManagers
+                            .OrderBy(d => d.ZoneManagerName)
+                            .Select(e => new {
+                                ZoneManagerId = e.ZoneManagerId,
+                                ZoneManagerName = e.ZoneManagerName
+                            });
 
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return Ok(list);
+        }
 
         // GET: api/ZoneManagers
         public IQueryable<ZoneManager> GetZoneManagers()

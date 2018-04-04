@@ -2,28 +2,95 @@
 <md-card md-theme="{{ showDarkTheme ? 'dark-orange' : 'default' }}" md-theme-watch>
     <md-card-title>
         <md-card-title-text>
-            <span class="md-headline">Sales Report</span>
-            <span class="md-subhead">Selected Report: <span class="radioValue">{{ data.group2 }}</span></span>
+            <span class="md-subhead">
+                <b style="margin-right:1em;">Sales Report</b>
+                <span class="radio-inline" ng-repeat="print in printTypeArray">
+                    <label>
+                        <input name="printOptionRadios" type="radio"
+                               ng-change="updatePrintType()"
+                               ng-value="print"
+                               ng-model="$parent.printOptionRadios" />
+                        {{print.Text}}
+                    </label>
+                </span>
+            </span>
         </md-card-title-text>
     </md-card-title>
     <md-card-content>
 
         <div layout="row" layout-xs="column">
-            <div flex>
-
+            <div flex>                
                 <md-radio-group ng-model="data.group2" class="md-primary">
-
                     <md-radio-button ng-repeat="d in radioData"
                                      ng-value="d.value"
                                      ng-disabled=" d.isDisabled "
                                      ng-class="{'md-align-top-left': $index==1}">
                         {{ d.label }}
-
                     </md-radio-button>
-
                 </md-radio-group>
             </div>
             <div flex>
+                <div class="row" ng-show="userRole=='Unit Manager'">
+                    <div class="col-sm-12" style="margin-bottom:1em;">
+                        
+                        <md-radio-group layout="row" ng-model="unitPrintOptionRadios" ng-change="updateUnitPrintType()">
+                            <md-radio-button ng-repeat="p in unitPrintTypeArray"
+                                             ng-value="p.name"
+                                             ng-disabled="p.isDisabled ">{{ p.Text }}</md-radio-button>
+                        </md-radio-group>
+                    </div>
+                    <div class="col-sm-12" ng-show="divisionDdl">
+                        <div class="form-group">
+                            <label>Division Name </label>
+                            <select class="form-control"
+                                    ng-model="DivisionId"
+                                    ng-options="division.DivisionId as division.DivisionName for division in divisionList">
+                                <option value="">--Please select Division--</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+                    <div class="col-sm-12" ng-show="zoneManagerDdl">
+                        <div class="form-group">
+                            <label>Zone Manager Name </label>
+                            <select class="form-control"
+                                    ng-change="changedZoneManagerDdl(ZoneManagerId)"
+                                    ng-model="ZoneManagerId"
+                                    ng-options="zoneManager.ZoneManagerId as zoneManager.ZoneManagerName for zoneManager in zoneManagersList">
+                                <option value="">--Please select Zone Manager--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12" ng-show="zoneMultiselect">
+                        <div class="form-group">
+                            <label>Zone Name </label>
+                                
+                            <div ng-dropdown-multiselect=""
+                                    events="getDistrictListByZoneId" 
+                                    options="saleZonesList"
+                                    selected-model="zoneListMultiSelect"
+                                    extra-settings="zoneListMultiSelectSettings"
+                                    checkboxes="true"
+                                    translation-texts="zoneListMultiSelectCustomText">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12" ng-show="districtMultiselect">
+                        <div class="form-group">
+                            <label>District Name </label>
+                            <!-- District Div -->
+                            <br />
+                            <div ng-dropdown-multiselect=""
+                                    options="districtsList"
+                                    selected-model="districtListMultiSelect"
+                                    extra-settings="districtListMultiSelectSettings"
+                                    checkboxes="true"
+                                    translation-texts="districtListMultiSelectCustomTexts">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
                 <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex-gt-sm>
                         <div class="form-group">
@@ -35,9 +102,7 @@
                                    datepicker-popup="dd/MM/yyyy"
                                    is-open="fromDatePickerIsOpen"
                                    ng-click="FromDatePickerOpen()"
-                                   ng-required="true"
-                                   ng-model="searchPayment.fromDate" />
-                            <p ng-show="searchPaymentForm.fromDate.$error.required && (searchPaymentForm.fromDate.$dirty || submitted)" class="help-block">From Date is required.</p>
+                                   ng-model="reportOption.fromDate" />                            
                         </div>
                     </md-input-container>
                     <md-input-container class="md-block" flex-gt-sm>
@@ -50,25 +115,35 @@
                                    datepicker-popup="dd/MM/yyyy"
                                    is-open="toDatePickerIsOpen"
                                    ng-click="ToDatePickerOpen()"
-                                   ng-required="true"
-                                   ng-model="searchPayment.toDate" />
-                            <p ng-show="searchPaymentForm.toDate.$error.required && (searchPaymentForm.toDate.$dirty || submitted)" class="help-block">To Date is required.</p>
+                                   ng-model="reportOption.toDate" />
+                            
                         </div>
                     </md-input-container>
 
                 </div>
-                <div layout-gt-sm="row">
 
 
-
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Customer Name </label>
+                            <input id="customerAutoComplite" type="text" class="form-control" name="customerAutoComplite" autocomplete="off" tabindex="2"
+                                   ng-model="reportOption.customerAutoComplite"
+                                   move-focus-by-enter-key
+                                   ng-required="true"
+                                   ng-keyup="updatePartyTypeaheadList(invoice.customerAutoComplite)"
+                                   typeahead-on-select="changeSelectCustomerName($item)"
+                                   typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:20">
+                        </div>
+                    </div>
                 </div>
 
             </div>
         </div>
 
         <md-card-actions layout="row" layout-align="start center">
-            <md-button class="md-raised md-primary" aria-label="Show Report">Show Report</md-button>
-            <md-button class="md-raised md-default" aria-label="Comment">Clear</md-button>
+            <md-button class="md-raised md-primary" aria-label="Show Report" ng-click="showReport()">Show Report</md-button>
+            <md-button class="md-raised md-default" aria-label="Comment" ng-click="clear()">Clear</md-button>
         </md-card-actions>
 
     </md-card-content>

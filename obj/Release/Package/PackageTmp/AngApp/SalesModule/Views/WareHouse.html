@@ -1,0 +1,90 @@
+﻿<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-building"></i> Ware House <small class="label label-danger">{{filteredList.length}}</small></h3>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <!--Server side error messageing------>
+        <div class="col-sm-12">
+            <div class="" ng-hide="serverMessage">
+                <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                    <ul>
+                        <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!--End Server side error messageing-->
+        <!--Client side error messageing------>
+        <div class="col-sm-12">
+            <div class="alert alert-{{messageType}} alert-dismissable" ng-hide="clientMessage">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h4><i class="icon fa fa-check"></i>{{messageType|capitalize}}!</h4>
+                {{message}}
+            </div>
+        </div>
+        <!--End Client side error messageing-->
+
+        <table class="table table-bordered table-hover table-condensed table-striped">
+            <thead>
+                <tr style="font-weight: bold" class="danger">
+                    <td style="width:45%">Ware House Name</td>
+                    <td style="width:45%">Location</td>
+                    <td style="width:10%"></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4">
+                        <button class="btn btn-danger" ng-click="add()"><i class="fa fa-pencil"></i> Add Ware House</button>
+                    </td>
+                </tr>
+                <tr ng-repeat="aObj in (filteredList = (users | filter: searchText)) | startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                    <td>
+                        <!-- editable username (text with validation) -->
+                        <span editable-text="aObj.WareHouseName" e-name="WareHouseName" e-form="rowform" onbeforesave="checkName($data, aObj.id)">
+                            {{ aObj.WareHouseName || 'empty' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span editable-text="aObj.WareHouseLocation" e-name="WareHouseLocation" e-form="rowform">
+                            {{ aObj.WareHouseLocation || 'empty' }}
+                        </span>
+                    </td>
+                    <td style="white-space: nowrap">
+                        <!-- form -->
+                        <form editable-form name="rowform" onbeforesave="saveOrUpdate($data, aObj.id)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == aObj">
+                            <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-warning">
+                                <i class="fa fa-pencil"></i> Update
+                            </button>
+                            <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+                                <i class="fa fa-close"></i> Cancel
+                            </button>
+                        </form>
+                        <div class="buttons" ng-show="!rowform.$visible">
+                            <button class="btn btn-primary" ng-click="rowform.$show()"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-danger" ng-click="remove($index, aObj.id)"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+
+            </tfoot>
+        </table>
+    </div>
+
+</div>
+
+
+
+
+
+
+

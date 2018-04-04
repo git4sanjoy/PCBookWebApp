@@ -10,21 +10,63 @@
     <form name="searchForm" novalidate role="form" class="" id="searchForm" ng-submit="submitSearchForm()">
 
         <md-card-content style="padding-bottom:0">
-            <div layout-gt-sm="row">
-                <md-input-container class="md-block" flex-gt-sm>
-                    <label>Invoice No</label>
-                    <input id="memoNo" type="text" class="form-control" name="memoNo" autocomplete="off" tabindex="1"
-                           move-focus-by-enter-key
-                           ng-model="memoMaster.memoNo">
+            <!-- Customer Info Div -->
+            <div layout-gt-sm="row" ng-show="Address" style="padding:0;margin:0;">
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon" style="background-color:#ffffff !important;"><img ng-src="{{Image ? 'Upload/Customers/'+Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Address</span>
+                            <span class="info-box-number" style="font-size:1em;">{{Address}}</span>
+                            <span class="info-box-text">District</span>
+                            <span class="info-box-number" style="font-size:1em;">{{DistrictName}}</span>
+                        </div><!-- /.info-box-content -->
+                    </div><!-- /.info-box -->
+                </div><!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon" style="background-color:#ffffff !important;"><i class="fa fa-cart-plus"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">BF Amount</span>
+                            <span class="info-box-number" style="font-size:1em;color:red;">{{BfAmount | currency:"৳":0}}</span>
+                            <span class="info-box-text">Sale</span>
+                            <span class="info-box-number" ng-show="BfAmount>0" style="font-size:1em;">{{TotalSale| currency:"৳":0}}</span>
+                        </div><!-- /.info-box-content -->
+                    </div><!-- /.info-box -->
+                </div><!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon" style="background-color:#ffffff !important;"><i class="fa fa-money"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Collection</span>
+                            <span class="info-box-number" style="font-size:1em;">{{TotalCollection| currency:"৳":0}}</span>
+                            <span class="info-box-text">Discount</span>
+                            <span class="info-box-number" style="font-size:1em;">{{TotalDiscount| currency:"৳":0}}</span>
+                        </div><!-- /.info-box-content -->
+                    </div><!-- /.info-box -->
+                </div><!-- /.col -->
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon" style="background-color:#ffffff !important;"><i class="fa fa-bar-chart"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Credit</span>
+                            <span class="info-box-number" style="font-size:1em;color:red;">{{(ActualCredit)|currency:"৳":0}}</span>
 
-                </md-input-container>
+                            <span class="info-box-text">Credit Limit</span>
+                            <span class="info-box-number" style="font-size:1em;">{{ CreditLimit | currency:"৳":0}}</span>
+                        </div><!-- /.info-box -->
+                    </div><!-- /.col -->
+                </div>
+            </div>
+            <div layout-gt-sm="row">
+
 
                 <md-input-container class="md-block" flex-gt-sm>
                     <div class="form-group">
                         <label for="invoiceDate">From Date</label>
                         <div class="input-group" ng-class="{ 'has-error' : searchForm.FromDate.$invalid && (searchForm.FromDate.$dirty || submitted)}">
 
-                            <input class="form-control" type="text" id="FromDate" name="FromDate" tabindex="2" autocomplete="off"
+                            <input class="form-control" type="text" id="FromDate" name="FromDate" tabindex="1" autocomplete="off"
                                    move-focus-by-enter-key
                                    ng-focus="FromDatePickerOpen()"
                                    datepicker-localdate
@@ -39,7 +81,7 @@
                 <md-input-container class="md-block" flex-gt-sm>
                     <label>To Date</label>
                     <div class="input-group" ng-class="{ 'has-error' : searchForm.ToDate.$invalid && (searchForm.ToDate.$dirty || submitted)}">
-                        <input class="form-control" type="text" id="ToDate" name="ToDate" tabindex="3" autocomplete="off"
+                        <input class="form-control" type="text" id="ToDate" name="ToDate" tabindex="2" autocomplete="off"
                                move-focus-by-enter-key
                                ng-focus="ToDatePickerOpen()"
                                datepicker-localdate
@@ -51,16 +93,22 @@
                 </md-input-container>
                 <md-input-container class="md-block" flex-gt-sm>
                     <label>Customer Name</label>
-                    <input id="customerAutoComplite" type="text" class="form-control" name="customerAutoComplite" autocomplete="off" tabindex="4"
+                    <input id="customerAutoComplite" type="text" class="form-control" name="customerAutoComplite" autocomplete="off" tabindex="3"
                            ng-model="memoMaster.customerAutoComplite"
                            move-focus-by-enter-key
-                           ng-keydown='$event.keyCode == 13 && GetCustomerDetailById()'
+                           ng-keydown='$event.keyCode == 13 && GetCustomerDetailById(memoMaster.customerAutoComplite)'
                            ng-keyup="updatePartyTypeaheadList(memoMaster.customerAutoComplite)"
                            typeahead-on-select="changeSelectCustomerName($item)"
                            typeahead="c.CustomerName for c in customerList | filter:$viewValue | limitTo:20">
                 </md-input-container>
 
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Invoice No</label>
+                    <input id="memoNo" type="text" class="form-control" name="memoNo" autocomplete="off" tabindex="4"
+                           move-focus-by-enter-key
+                           ng-model="memoMaster.memoNo">
 
+                </md-input-container>
 
                 <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex-gt-sm>
@@ -83,70 +131,8 @@
                     </md-input-container>
                 </div>
             </div>
-            <!--Customer Details-->
-            <div class="row" ng-show="Address">
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box bg-aqua">
-                        <span class="info-box-icon"><img ng-src="{{Image ? 'Upload/Customers/'+Image : 'Content/images/no-image.jpg'}}" class="img-circle" alt="Customer Image"></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">District</span>
 
-                            <span class="info-box-number">{{DistrictName}}</span>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 100%"></div>
-                            </div>
-                            <span class="progress-description">
-                                {{Address}}
-                            </span>
-                        </div><!-- /.info-box-content -->
-                    </div><!-- /.info-box -->
-                </div><!-- /.col -->
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box bg-red">
-                        <span class="info-box-icon"><i class="fa fa-thumbs-o-up"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">BF Amount</span>
-                            <span class="info-box-number">{{BfAmount| currency:"৳":0}}</span>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 100%"></div>
-                            </div>
-                            <span class="progress-description">
-                                Bf Date: {{BFDate | date : "dd-MM-yyyy"}}
-                            </span>
-                        </div><!-- /.info-box-content -->
-                    </div><!-- /.info-box -->
-                </div><!-- /.col -->
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box bg-yellow">
-                        <span class="info-box-icon"><i class="fa fa-calendar"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Sales</span>
-                            <span class="info-box-number">{{TotalSale| currency:"৳":0}}</span>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 100%"></div>
-                            </div>
-                            <span class="progress-description">
-                                Col : {{TotalCollection| currency:"৳":0}}
-                            </span>
-                        </div><!-- /.info-box-content -->
-                    </div><!-- /.info-box -->
-                </div><!-- /.col -->
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box bg-green">
-                        <span class="info-box-icon"><i class="fa fa-comments-o"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">Balance</span>
-                            <span class="info-box-number">{{ ActualCredit == 0 ? 0 :(ActualCredit) | currency:"৳":0}}</span>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 100%"></div>
-                            </div>
-                            <span class="progress-description">
-                                Discount : {{ TotalDiscount == 0 ? 0 :  (TotalDiscount) | currency:"৳":0}}
-                            </span>
-                        </div><!-- /.info-box-content -->
-                    </div><!-- /.info-box -->
-                </div><!-- /.col -->
-            </div>
+
             <!--Sales Details-->
             <div class="row" ng-show="memos.length>0">
                 
@@ -166,7 +152,7 @@
 
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box">
-                        <span class="info-box-icon bg-red"><i class="fa fa-calculator"></i></span>
+                        <span class="info-box-icon bg-green">৳</span>
                         <div class="info-box-content">
                             <span class="info-box-text">Cash Sales</span>
                             <span class="info-box-number">{{totalCashSale(memos)|currency:"৳":"0"}}</span>
@@ -188,19 +174,19 @@
                 </div><!-- /.col -->
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box">
-                        <span class="info-box-icon bg-green">৳</span>
+                        <span class="info-box-icon bg-red">৳</span>
                         <div class="info-box-content">
                             <span class="info-box-text">Collections</span>
-                            <span class="info-box-number">{{collections[0].SCAmount |currency:"৳":"0"}}<small></small></span>
+                            <span class="info-box-number">{{SCAmount |currency:"৳":"0"}}<small></small></span>
                             <span class="info-box-text">Discount</span>
-                            <span class="info-box-number text-red">{{collections[0].SDiscount |currency:"৳":"0"}}</span>
+                            <span class="info-box-number text-red">{{SDiscount |currency:"৳":"0"}}</span>
                         </div><!-- /.info-box-content -->
                     </div><!-- /.info-box -->
                 </div><!-- /.col -->
                 
                 <div class="col-sm-12">
                     <div class="progress-group" ng-repeat="(key, value) in categoryWiseGroupingSaleList | groupBy: 'MainCategoryName'">
-                        <span class="progress-text">{{ key }} <small class="text-red text-sm">{{(GetGroupSumOfILineTotal(value)/totalSale(memos)*100)|number:"0"}}%</small></span>
+                        <span class="progress-text">{{ key }} <small class="text-red text-sm">{{(GetGroupSumOfILineTotal(value)/totalSale(memos)*100)|number:2}}%</small></span>
                         <span class="progress-number"><b>{{ GetGroupSumOfILineQu(value) |number:"0" }}</b>/<b class="text-green">{{ GetGroupSumOfILineTotal(value) |currency:"৳":"0" }}</b></span>
                         <div class="progress progress-xs progress-striped active">
                             <div class="progress-bar progress-bar-success" style="width: {{(GetGroupSumOfILineTotal(value)/totalSale(memos)*100)}}%;"></div>
@@ -221,7 +207,8 @@
         <accordion close-others="oneAtATime" ng-repeat="m in memos">
             <accordion-group>
                 <accordion-heading>
-                    Date: {{m.MemoDate |date:"dd-MM-yyyy"}} Voucher No: {{m.MemoNo}} <small class="text-red">{{m.CustomerName}}</small><small class="text-green"> Total: {{grandTotal(m.MemoDetailViews,m.GatOther, m.MemoDiscount) | currency:"৳":"0"}}</small><i class="pull-right glyphicon" ng-class="{'fa fa-toggle-off': status.open, 'fa fa-toggle-on': !status.open}"></i>
+                    Date: {{m.MemoDate |date:"dd-MM-yyyy"}} Voucher No: {{m.MemoNo}} <small class="text-blue">{{m.CustomerName}}</small><small class="text-green"> Total: {{m.MemoCost-m.MemoDiscount+m.GatOther|currency:"৳":"0"}}</small><i class="pull-right glyphicon" ng-class="{'fa fa-toggle-off': status.open, 'fa fa-toggle-on': !status.open}"></i>            
+                    <span popover="Gross amount should be {{itemTotal(m.MemoItems)}} but found {{m.MemoCost}}" popover-trigger="mouseenter" class="text-red blink_me" ng-show="(m.MemoCost-m.MemoDiscount+m.GatOther)!=grandTotal(m.MemoItems, m.GatOther, m.MemoDiscount)"><i class="fa fa-times"></i></span>
                 </accordion-heading>
                 <md-content>
                     <md-tabs md-dynamic-height md-border-bottom>
@@ -258,7 +245,7 @@
                                             <th width="20%" style="text-align:center">Total</th>
                                         </tr>
 
-                                        <tr ng-repeat="item in m.MemoDetailViews">
+                                        <tr ng-repeat="item in m.MemoItems">
                                             <td>{{$index+1}}</td>
                                             <td>{{item.ProductName}}</td>
                                             <td style="text-align:right">{{item.Quantity}}</td>
@@ -269,7 +256,7 @@
                                         <tr class="text-red text-bold">
                                             <td colspan="4"></td>
                                             <td>Total:</td>
-                                            <td style="text-align:right">{{total(m.MemoDetailViews) | currency}}</td>
+                                            <td style="text-align:right">{{total(m.MemoItems) | currency}}</td>
                                         </tr>
                                         <tr class=" text-bold">
                                             <td colspan="4"></td>
@@ -290,27 +277,27 @@
                                             <td colspan="4"></td>
                                             <td>Grand Total:</td>
                                             <td style="text-align:right">
-                                                <p>{{grandTotal(m.MemoDetailViews,m.GatOther, m.MemoDiscount) | currency}}</p>
+                                                <p>{{grandTotal(m.MemoItems, m.GatOther, m.MemoDiscount) | currency}}</p>
                                             </td>
                                         </tr>
                                         <tr class="text-bold">
                                             <td colspan="4"></td>
                                             <td class="form-inline">Payment:</td>
                                             <td style="text-align:right;">
-                                                {{m.MemoPaidAmount| currency}}
+                                                {{m.MemoPaidAmount.SCAmount| currency}}
                                             </td>
                                         </tr>
                                         <tr class="text-bold">
                                             <td colspan="4"></td>
                                             <td>Invoice Due:</td>
                                             <td style="text-align:right">
-                                                <p>{{dueTotal(m.MemoDetailViews,m.GatOther, m.MemoDiscount,m.MemoPaidAmount)| currency}}</p>
+                                                <p>{{dueTotal(m.MemoItems,m.GatOther, m.MemoDiscount,m.MemoPaidAmount.SCAmount)| currency}}</p>
                                             </td>
                                         </tr>
 
                                     </table>
                                     <div class="col-sm-12">
-                                        <button class="btn btn-danger" ng-click="deleteInvoice(m)"><i class="fa fa-trash"></i> Delete</button>
+                                        <button class="btn btn-danger" ng-click="deleteInvoice(m, $index)"><i class="fa fa-trash"></i> Delete</button>
                                         <button id="" class=" print-hide-button btn btn-primary pull-right" ng-click="printMemo('printable-memo-english'+$index)"><i class="fa fa-print"></i> Print</button>
                                     </div>
                                 </div>
@@ -348,7 +335,7 @@
                                             <th width="15%" style="text-align:center">ডিসকাউন্ট</th>
                                             <th width="15%" style="text-align:center">আইটেম খরচ</th>
                                         </tr>
-                                        <tr ng-repeat="item in  m.MemoDetailViews">
+                                        <tr ng-repeat="item in  m.MemoItems">
                                             <td style="text-align:center;" class="bangla-font">{{$index+1}}</td>
                                             <td>{{item.ProductNameBangla}}</td>
                                             <td style="text-align:right;" class="bangla-font">{{item.Quantity}}</td>
@@ -360,7 +347,7 @@
                                         <tr class="text-red text-bold">
                                             <td colspan="4"></td>
                                             <td>মোট খরচ:</td>
-                                            <td style="text-align:right" class="bangla-font">{{total(m.MemoDetailViews) | currency:""}}</td>
+                                            <td style="text-align:right" class="bangla-font">{{total(m.MemoItems) | currency:""}}</td>
                                         </tr>
                                         <tr class=" text-bold">
                                             <td colspan="4"></td>
@@ -383,7 +370,7 @@
                                             <td colspan="4"></td>
                                             <td>সর্বমোট খরচ:</td>
                                             <td style="text-align:right">
-                                                <p class="bangla-font">{{grandTotal(m.MemoDetailViews,m.GatOther, m.MemoDiscount) | currency:""}}</p>
+                                                <p class="bangla-font">{{grandTotal(m.MemoItems,m.GatOther, m.MemoDiscount) | currency:""}}</p>
                                             </td>
 
                                         </tr>
@@ -400,7 +387,7 @@
 
                                             <td>বাকি টাকা:</td>
                                             <td style="text-align:right">
-                                                <p class="bangla-font">{{dueTotal(m.MemoDetailViews,m.GatOther, m.MemoDiscount,m.MemoPaidAmount)| currency}}</p>
+                                                <p class="bangla-font">{{dueTotal(m.MemoItems,m.GatOther, m.MemoDiscount,m.MemoPaidAmount)| currency}}</p>
                                             </td>
 
                                         </tr>

@@ -107,6 +107,57 @@ namespace PCBookWebApp.Controllers.SalesModule.Api
             }
             return Ok(list);
         }
+
+        [Route("api/SaleZones/SaleZonesByDivisionId/{DivisionId}")]
+        [HttpGet]
+        public IHttpActionResult GetSaleZonesByDivisionId(int DivisionId)
+        {
+            string currentUserId = User.Identity.GetUserId();
+            string currentUserName = User.Identity.GetUserName();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == currentUserId).Select(a => a.ShowRoomId).FirstOrDefault();
+            var unitId = db.ShowRooms.Where(a => a.ShowRoomId == showRoomId).Select(a => a.UnitId).FirstOrDefault();
+            var zoneManagerId = db.ZoneManagers.Where(a => a.Id == currentUserId).Select(a => a.ZoneManagerIdAlias).FirstOrDefault();
+            var managerZoneList = db.SaleZones.Where(a => a.ZoneManagerId == zoneManagerId).Select(a => a.SaleZoneId).ToArray();
+            var inIds = String.Join(",", managerZoneList.Select(x => x.ToString()).ToArray());
+
+            var list = db.SaleZones
+                .Select(e => new {
+                    SaleZoneId = e.SaleZoneId,
+                    SaleZoneName = e.SaleZoneName,
+                    ZoneManagerId = e.ZoneManager.ZoneManagerId,
+                    ZoneManagerName = e.ZoneManager.ZoneManagerName,
+                    DivisionId = e.DivisionId,
+                    e.SaleZoneDescription
+                })
+                .OrderBy(e => e.SaleZoneName);
+            return Ok(list);
+        }
+        [Route("api/SaleZones/SaleZonesByZoneManagerId/{ZoneManagerId}")]
+        [HttpGet]
+        public IHttpActionResult GetSaleZonesByZoneManagerId(int ZoneManagerId)
+        {
+            //string currentUserId = User.Identity.GetUserId();
+            //string currentUserName = User.Identity.GetUserName();
+            //var showRoomId = db.ShowRoomUsers.Where(a => a.Id == currentUserId).Select(a => a.ShowRoomId).FirstOrDefault();
+            //var unitId = db.ShowRooms.Where(a => a.ShowRoomId == showRoomId).Select(a => a.UnitId).FirstOrDefault();
+            //var zoneManagerId = db.ZoneManagers.Where(a => a.Id == currentUserId).Select(a => a.ZoneManagerIdAlias).FirstOrDefault();
+            var managerZoneList = db.SaleZones.Where(a => a.ZoneManagerId == ZoneManagerId).Select(a =>new { id=a.SaleZoneId, label=a.SaleZoneName} ).ToArray();
+            //var inIds = String.Join(",", managerZoneList.Select(x => x.ToString()).ToArray());
+
+            //var list = db.SaleZones
+            //    .Select(e => new {
+            //        SaleZoneId = e.SaleZoneId,
+            //        SaleZoneName = e.SaleZoneName,
+            //        ZoneManagerId = e.ZoneManager.ZoneManagerId,
+            //        ZoneManagerName = e.ZoneManager.ZoneManagerName,
+            //        DivisionId = e.DivisionId,
+            //        e.SaleZoneDescription
+            //    })
+            //    .OrderBy(e => e.SaleZoneName);
+
+            return Ok(new { listSaleZones = managerZoneList });
+        }
+
         // GET: api/SaleZones
         public IQueryable<SaleZone> GetSaleZones()
         {

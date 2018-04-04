@@ -169,57 +169,85 @@ namespace PCBookWebApp.Controllers.BankModule.Api
             }
             return Ok(checks);
         }
+        [Route("api/Check/PendingCheckList")]
+        [HttpGet]
+        [ResponseType(typeof(Check))]
+        public IHttpActionResult GetPendingCheckList()
+        {
+            string currentUserId = User.Identity.GetUserId();
+            string currentUserName = User.Identity.GetUserName();
+            var showRoomId = db.ShowRoomUsers
+                            .Where(u => u.Id == currentUserId)
+                            .Select(u => u.ShowRoomId)
+                            .FirstOrDefault();
+            var unitId = db.ShowRooms
+                .Where(u => u.ShowRoomId == showRoomId)
+                .Select(u => u.UnitId)
+                .FirstOrDefault();
 
+            //if (User.IsInRole("Admin") || User.IsInRole("Manager")){
+
+            //} else {
+
+            //}
+            var checks = db.Checks
+                .Include(c => c.Ledger)
+                .Include(c => c.BankAccount)
+                .Include(c => c.Voucher)
+                .Where(c => c.Voucher.IsBank==true && c.Voucher.IsHonored == false && c.Voucher.ShowRoomId == showRoomId)
+                .Select(c => new {
+                    c.Voucher.VoucherId,
+                    c.Voucher.VoucherNo,
+                    c.Voucher.Naration,
+                    c.IssueDate,
+                    c.HonourDate,
+                    c.CheckNumber,
+                    c.Amount,
+                    c.BankAccount.BankAccountNumber,
+                    c.BankAccount.Bank.BankName,
+                    c.Ledger.LedgerName
+                })
+                .ToList();
+            if (checks == null)
+            {
+                return NotFound();
+            }
+            return Ok(checks);
+        }
         // GET: api/Check/5
         [ResponseType(typeof(Check))]
         public IHttpActionResult GetCheck(int id)
         {
             //db.Configuration.ProxyCreationEnabled = false;
-            //Check check = db.Checks.Find(id);
-            //if (check == null)
-            //{
-            //    return NotFound();
-            //}
-            //return Ok(check);
-            CheckView checkObj = new CheckView();
-            SqlConnection checkConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString);
-            checkConnection.Open();
-            try
-            {
-                SqlDataReader checkReader = null;
-                string sql = "";
-                sql = "SELECT BankAccountNumber, CheckNumber, Amount, IssueDate, CheckDate, HonourDate, Remarks, PartyName, BankName, UnitName, CheckId, PartyId, BankAccountId, UnitId, BankId FROM dbo.CheckView WHERE CheckId=" + id;
+            var checkReceive = db.CheckReceives
+                .Where(cr => cr.VoucherDetailId == id)
+                .Select(c => new {
+                    c.HonourDate,
+                    CheckNumber = c.CheckOrMoneyReceiptNo,
+                    c.Amount
+                })
+                .ToList();
 
-                SqlCommand pbCommand = new SqlCommand(sql, checkConnection);
-                checkReader = pbCommand.ExecuteReader();
-                while (checkReader.Read())
-                {
-                    
-                    checkObj.CheckId = (int)checkReader["CheckId"];
-                    checkObj.CheckNo = (string)checkReader["CheckNumber"];
-                    checkObj.IssueDate = (DateTime)checkReader["IssueDate"];
-                    checkObj.CheckDate = (DateTime)checkReader["CheckDate"];
-                    checkObj.HonourDate = (DateTime)checkReader["HonourDate"];
-                    checkObj.Amount = (double)checkReader["Amount"];
-                    checkObj.BankAccountNumber = (string)checkReader["BankAccountNumber"];
-                    checkObj.BankName = (string)checkReader["BankName"];
-                    checkObj.PartyName = (string)checkReader["PartyName"];
-                    checkObj.PartyId = (int)checkReader["PartyId"];
-                    checkObj.BankAccountId = (int)checkReader["BankAccountId"];
-                    if (checkReader["Remarks"] != System.DBNull.Value)
-                    {
-                        checkObj.Remarks = checkReader["Remarks"].ToString();
-                    }
-                    
-                }
-                checkReader.Close();
-                checkConnection.Close();
-            }
-            catch (Exception ex)
+            var check = db.Checks
+                .Include(c => c.BankAccount)
+                .Include(c => c.Ledger)
+                .Include(c => c.CheckBookPage)
+                .Where(c => c.VoucherDetailId == id)
+                .Select(c => new {
+                                    c.IssueDate,
+                                    c.HonourDate,
+                                    c.CheckDate,
+                                    c.CheckNumber,
+                                    c.Remarks,
+                                    c.BankAccount.BankAccountNumber,
+                                    c.BankAccount.Bank.BankName,
+                                    c.Amount
+                                });
+            if (check == null)
             {
-                Console.WriteLine(ex.ToString());
+                return NotFound();
             }
-            return Ok(checkObj);
+            return Ok(new { check });
         }
 
         // PUT: api/Check/5

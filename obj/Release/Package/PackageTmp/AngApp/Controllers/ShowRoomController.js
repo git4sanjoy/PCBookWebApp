@@ -31,7 +31,7 @@ function ($scope, $location, $http, $timeout, $filter) {
 
         $scope.users = [];
         $http({
-            url: "/api/ShowRooms/GetImportProductsList",
+            url: "/api/ShowRooms/ShowRoomList",
             method: "GET",
             headers: authHeaders
         }).success(function (data) {
@@ -47,6 +47,7 @@ function ($scope, $location, $http, $timeout, $filter) {
                     UnitId: $scope.showRoom.UnitId.UnitId,
                     ShowRoomName: $scope.showRoom.ShowRoomName,
                     ShowRoomNameBangla: $scope.showRoom.ShowRoomNameBangla
+                    
                 };
                 $http({
                     url: "/api/ShowRooms",
@@ -159,7 +160,9 @@ function ($scope, $location, $http, $timeout, $filter) {
             var aEditObj = {
                 ShowRoomId: id,
                 UnitId: data.group,
-                ShowRoomName: data.name
+                ShowRoomName: data.name,
+                ZoneName: data.ZoneName,
+                ShowRoomNameBangla: data.ShowRoomNameBangla
             };
 
             angular.extend(data, { ShowRoomId: id });

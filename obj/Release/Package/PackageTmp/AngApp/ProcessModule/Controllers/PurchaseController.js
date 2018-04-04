@@ -18,7 +18,7 @@ app.controller('PurchaseController', ['$scope', '$location', '$http', '$timeout'
             authHeaders.Authorization = 'Bearer ' + accesstoken;
         }
         $scope.data = {
-            cb1: false
+            cb1: true
         };
 
         $scope.simulateQuery = false;
@@ -65,6 +65,7 @@ app.controller('PurchaseController', ['$scope', '$location', '$http', '$timeout'
         }
 
         function querySearch(query) {
+
             var results = query ? $scope.ProductLists.filter(createFilterFor(query)) : $scope.ProductLists,
                 deferred;
             if ($scope.simulateQuery) {
@@ -99,19 +100,20 @@ app.controller('PurchaseController', ['$scope', '$location', '$http', '$timeout'
             $scope.purchase.PurchasedProductName = item;
         };
 
-        //**Get Purchases List**
+        //**Get All List**
         $scope.GetPurchasesList = function () {
             $http({
                 url: "api/Purchases/GetPurchasesList",
                 method: "GET",
                 headers: authHeaders
             }).success(function (data) {
-                $scope.List = data.list;
+                //$scope.List = data.list;
                 //$scope.ProsessList = data.prosessList;
                 $scope.PurchasedProductList = data.purchasedProductList;
                 $scope.SupplierList = data.supplierList;
                 $scope.ProductLists = data.purchasedProductList;
                 $scope.ShowRoomList = data.showRoomList;
+                $scope.OrderNumbers = data.orderNumber;
             }).error(function (data) {
                 $scope.message = "purchase  list loading failed.";
                 $scope.messageType = "warning";
@@ -122,19 +124,35 @@ app.controller('PurchaseController', ['$scope', '$location', '$http', '$timeout'
         }
         $scope.GetPurchasesList();
 
+        //**Get Purchases List**
+        $scope.GetPurchasesListShow = function () {
+            $http({
+                url: "api/Purchases/GetPurchasesListShow",
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.List = data.list;               
+            }).error(function (data) {
+                $scope.message = "Purchase  list loading failed.";
+                $scope.messageType = "warning";
+                $scope.clientMessage = false;
+                $timeout(function () { $scope.clientMessage = true; }, 5000);
 
+            });
+        }
 
         //**Save Purchased Product**
         $scope.Save = function (purchase) {
-            //alert($scope.purchase.PurchasedProductId);
-            //console.log('selected Item', $scope.selectedItem);
+           
             var date = $filter('date')($scope.purchase.PurchaseDate, "yyyy-MM-dd");
             purchase.PurchaseDate = date;
             purchase.PurchasedProductId = $scope.selectedItem.PurchasedProductId;
             purchase.SupplierId = $scope.supplierSelectedItem.SupplierId;
             purchase.ShowRoomId = 0;
-
-            //console.log(purchase);
+            purchase.SE = !purchase.SE ? 0 : purchase.SE;
+            purchase.Discount = !purchase.Discount ? 0 : purchase.Discount;
+            purchase.OrderNo = !$scope.orderNumberSelectedItem.OrderNumber ? 0 : $scope.orderNumberSelectedItem.OrderNumber;
+            //console.log(purchase);          
             $http({
                 traditional: true,
                 url: '/api/Purchases/PostPurchase',
@@ -145,9 +163,8 @@ app.controller('PurchaseController', ['$scope', '$location', '$http', '$timeout'
                 headers: authHeaders
             }).success(function (data) {
                 $scope.Cancel();
-                $scope.GetPurchasesList();
-                $scope.searchText = '';
-                $scope.supplierSearchText = '';
+                $scope.GetPurchasesListShow();
+                $scope.GetPurchasesList();               
                 $scope.message = "purchase data saved successfully.";
                 $scope.messageType = "success";
                 $scope.clientMessage = false;
@@ -165,6 +182,7 @@ app.controller('PurchaseController', ['$scope', '$location', '$http', '$timeout'
         $scope.Update = function (purchase) {
             var date = $filter('date')($scope.purchase.PurchaseDate, "yyyy-MM-dd");
             purchase.PurchaseDate = date;
+            purchase.ShowRoomId = 0;
             if ($scope.selectedItem != null) {
                 purchase.PurchasedProductId = $scope.selectedItem.PurchasedProductId;
             }
@@ -179,6 +197,7 @@ app.controller('PurchaseController', ['$scope', '$location', '$http', '$timeout'
                 headers: authHeaders
             }).success(function (data) {
                 $scope.Cancel();
+                $scope.GetPurchasesListShow();
                 $scope.GetPurchasesList();
                 $scope.message = "Purchase data updated successfully.";
                 $scope.messageType = "info";
@@ -204,11 +223,12 @@ app.controller('PurchaseController', ['$scope', '$location', '$http', '$timeout'
                     headers: authHeaders
                 }).success(function (data) {
                     $scope.message = "Data deleted successfully.";
-                    $scope.messageType = "success";
+                    $scope.messageType = "danger";
                     $scope.clientMessage = false;
                     $timeout(function () { $scope.clientMessage = true; }, 5000);
 
                     $scope.Cancel();
+                    $scope.GetPurchasesListShow();
                     $scope.GetPurchasesList();
                 }).error(function (data) {
                     alert('error occord')
@@ -237,7 +257,7 @@ app.controller('PurchaseController', ['$scope', '$location', '$http', '$timeout'
             $scope.entryForm.$setUntouched();
             $scope.searchText = '';
             $scope.supplierSearchText = '';
-           
+            $scope.orderNumberSearchText = '';
             $scope.editMode = false;
         };
         //**Search Cancel Button**
@@ -288,18 +308,18 @@ app.controller('PurchaseController', ['$scope', '$location', '$http', '$timeout'
                 });
         };
 
-        $http({
-            url: 'api/Purchases/GetPurchasesList',
-            method: "GET",
-            headers: authHeaders
-        }).success(function (data) {
-            $scope.pies = data.purchasedProductList;
-        }).error(function (data) {
-            $scope.message = "Product  list loading failed.";
-            $scope.messageType = "warning";
-            $scope.clientMessage = false;
-            $timeout(function () { $scope.clientMessage = true; }, 5000);
-        });
+        //$http({
+        //    url: 'api/Purchases/GetPurchasesList',
+        //    method: "GET",
+        //    headers: authHeaders
+        //}).success(function (data) {
+        //    $scope.pies = data.purchasedProductList;
+        //}).error(function (data) {
+        //    $scope.message = "Product  list loading failed.";
+        //    $scope.messageType = "warning";
+        //    $scope.clientMessage = false;
+        //    $timeout(function () { $scope.clientMessage = true; }, 5000);
+        //});
 
         $scope.getProductsMatchesList = function (searchText) {
             var deferred = $q.defer();
@@ -332,6 +352,27 @@ app.controller('PurchaseController', ['$scope', '$location', '$http', '$timeout'
             //console.log('Text changed to ' + text);
         };
         $scope.supplierSelectedItemChange = function (item) {
+            //console.log('Item changed to ' + JSON.stringify(item));
+        };
+
+        // Add  Form Order Number
+        $scope.getOrderNumbers = function (searchText) {
+            var deferred = $q.defer();
+
+            $timeout(function () {
+                var states = $scope.OrderNumbers.filter(function (state) {
+                    return (state.OrderNumber.toUpperCase().indexOf(searchText.toUpperCase()) !== -1);
+                });
+                deferred.resolve(states);
+
+            }, 500);
+
+            return deferred.promise;
+        };
+        $scope.orderNumberTextChange = function (text) {
+            //console.log('Text changed to ' + text);
+        };
+        $scope.orderNumberSelectedItemChange = function (item) {
             //console.log('Item changed to ' + JSON.stringify(item));
         };
 

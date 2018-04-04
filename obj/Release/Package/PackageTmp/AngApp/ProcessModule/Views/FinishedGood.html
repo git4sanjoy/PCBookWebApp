@@ -1,102 +1,5 @@
-﻿<modal title="Production" visible="showModal" class="">
-
-    <div class="modal-body">
-
-        <div class="row" style="margin-top:-1.5em;">
-            <div class="col-sm-12">
-                <h4>{{selectedDesign.Name}}</h4>
-                <h5>{{selectedDesign.Description}}</h5>
-            </div>
-            <div class="col-sm-12 col-md-6 col-lg-3">
-                <label>Date</label>
-                <div class="input-group" ng-class="{ 'has-error' : reportForm.FromDate.$invalid && (reportForm.FromDate.$dirty || submitted)}">
-                    <span class="input-group-addon"><i class="fa fa-calendar" ng-click="FromDatePickerOpen()"></i></span>
-                    <input class="form-control" type="text" id="FromDate" name="FromDate" tabindex="1" autocomplete="off"
-                           move-focus-by-enter-key
-                           ng-focus="FromDatePickerOpen()"
-                           datepicker-localdate
-                           datepicker-popup="dd/MM/yyyy"
-                           is-open="fromDatePickerIsOpen"
-                           ng-click="FromDatePickerOpen()"
-                           ng-required="true"
-                           ng-model="newDeal.DealProductionDate" />
-                </div>
-                <p ng-show="reportForm.FromDate.$error.required && (reportForm.FromDate.$dirty || submitted)" class="help-block">Date is required.</p>
-            </div>
-            <div class="col-sm-12 col-md-6 col-lg-4">
-                <label>Remarks/ Factory Name</label>
-                <div class="input-group" ng-class="{ 'has-error' : reportForm.FromDate.$invalid && (reportForm.FromDate.$dirty || submitted)}">
-                    <span class="input-group-addon"><i class="fa fa-industry"></i></span>
-                    <input id="FactoryName" type="text" name="FactoryName" class="form-control" autocomplete="off" placeholder="Factory Name"
-                           onfocus="javascript: if(this.value == 'None'){ this.value = ''; }"
-                           onblur="javascript: if(this.value==''){this.value='None';}"
-                           tabindex="2"
-                           move-focus-by-enter-key
-                           ng-model="newDeal.FactoryName"
-                           ng-required="true" />
-                </div>
-                <p ng-show="reportForm.FromDate.$error.required && (reportForm.FromDate.$dirty || submitted)" class="help-block">Date is required.</p>
-            </div>
-            <div class="col-sm-12 col-md-6 col-lg-3">
-                <label>Quantity</label>
-                <div class="input-group" ng-class="{ 'has-error' : reportForm.FromDate.$invalid && (reportForm.FromDate.$dirty || submitted)}">
-                    <span class="input-group-addon"><i class="fa fa-cubes"></i></span>
-                    <input class="form-control" type="number" id="Quantity" tabindex="3" placeholder="0" name="Quantity"
-                           onfocus="javascript: if(this.value == '0'){ this.value = ''; }"
-                           onblur="javascript: if(this.value==''){this.value='0';}"
-                           move-focus-by-enter-key
-                           ng-model="newDeal.Quantity" />
-                </div>
-                <p ng-show="reportForm.FromDate.$error.required && (reportForm.FromDate.$dirty || submitted)" class="help-block">Date is required.</p>
-            </div>
-            <div class="col-sm-12 col-md-6 col-lg-2">
-                <md-button  style="margin-top:1.8em;" tabindex="5" class="md-raised md-primary btn-block" 
-                           aria-label="Save" 
-                           ng-click="saveProduction()">
-                <i class="fa fa-save"></i>
-                </md-button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th width="5%">SL</th>
-                            <th width="15%">Date</th>
-                            <th width="50%">Facrory Name</th>
-                            <th width="20%">Quantity</th>
-                            <th width="10%"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="aProduction in selectedDesign.DealProductions">
-                            <td>{{$index+1}}</td>
-                            <td>{{aProduction.DealProductionDate | date : "dd-MM-yyyy"}}</td>
-                            <td>{{aProduction.FactoryName}}</td>
-                            <td align="right">{{aProduction.Quantity}}</td>
-                            <td><button class="btn btn-danger btn-block" ng-click="deleteProduction(aProduction)"><i class="fa fa-trash"></i></button></td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr class="text-bold">
-                            <td colspan="3" align="right">Total</td>
-                            <td align="right">{{selectedDesign.DealProductions | sumByKey:'Quantity' |number:"0"}}</td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    </div>
-
-</modal>
-<div class="row">
+﻿<div class="row">
+    <!--Server side error messageing------>
     <div class="col-sm-12">
         <div class="" ng-hide="serverMessage">
             <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
@@ -120,83 +23,129 @@
     <!--End Client side error messageing-->
 </div>
 
-<form>
-    <div class="row">
-        <div class="col-lg-12">
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <label><i class="fa fa-image"></i> Add Design No</label>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-
-
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-3" ng-repeat="image in imagesrc">
-                            <div class="thumbnail">
-                                <img style="height:300px;width:100%" src="{{image.Src}}">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <label>Select Images</label>
-                            <input id="file" ng-hide="true" type="file" accept="images/*" class="form-control" multiple ng-files="getTheFiles($files)" />
-                            <button class="btn btn-default btn-block" onclick="document.getElementById('file').click();">
-                                <i class="fa fa-image"></i> Browse Images
-                            </button>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="form-group">
-                                <label>Design No</label>
-                                <input type="text" ng-model="DealDetail.Name" class="form-control" placeholder="Enter Design No" />
-                            </div>
-                        </div>
-                        
-                        <div class="col-lg-4">
-                            <div class="form-group">
-                                <label>Product Name</label>
-                                <input ng-model="DealDetail.Description" class="form-control" placeholder="Enter Product Name" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <button class="btn btn-primary" ng-click="Submit()">
-                                <i class="fa fa-plus"></i> Add Design No and Gallery Images
-                            </button>
-                            <button class="btn btn-default" ng-click="Clear()">
-                                <i class="fa fa-refresh"></i> Clear
-                            </button>
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
-
-
-
+<div class="box box-primary">
+    <div class="box-header with-border">
+        <md-switch ng-model="data.cb1" aria-label="Preview and Search Hide" style="margin:0;padding:0;">
+            <span ng-class="data.cb1 == true ? 'box-title text-red' : 'box-title text-black'">Finished Goods List Hide : {{data.cb1}}</span>
+        </md-switch>
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
-
     </div>
-</form>
-<div class="row">
-    <div class="col-sm-6 col-md-3" ng-repeat="aDesign in designList">
-        <div class="thumbnail">
-            <carousel interval="myInterval">
-                <slide data-ng-repeat="mySlide in aDesign.Deal_Images" active="slide.active">
-                    <img data-ng-src="{{mySlide.ImageUrl}}" style="margin:auto;">
-                    <div class="carousel-caption">
-                        <h4>{{aDesign.Name}}</h4>
-                        <p>{{aDesign.Description}}</p>
-                    </div>
-                </slide>
-            </carousel>
 
-        </div>
+    <div class="box-body">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline"><i class="fa fa-recycle"></i> Add Finished Goods</span>
+                </md-card-title-text>
+            </md-card-title>
+            <md-card-content>              
+                <form name="entryForm" novalidate role="form" class="form-horizontal" id="entryForm">
+                    <div class="row" id="row1">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <label>Finished Goods Name</label>
+                            <div class="input-group" ng-class="{ 'has-error' : entryForm.FinishedGoodName.$invalid && (entryForm.FinishedGoodName.$dirty || submitted)}">
+                                <span class="input-group-addon"><span class="fa fa-apple"></span></span>
+                                <input id="SE" type="text" class="form-control" name="FinishedGoodName" placeholder="" autocomplete="off" tabindex="1"
+                                       move-focus-by-enter-key
+                                       ng-model="finishedGood.FinishedGoodName"
+                                       ng-required="true">                                        
+                                <p ng-show="entryForm.FinishedGoodName.$error.required && (entryForm.FinishedGoodName.$dirty || submitted)" class="help-block">Name is required.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <label>Design No</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-sticky-note"></span></span>
+                                <input id="DesignNo" type="text" class="form-control" name="DesignNo" placeholder="" autocomplete="off" tabindex="2"
+                                       move-focus-by-enter-key
+                                       ng-model="finishedGood.DesignNo">                               
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <label>Product Type</label>
+                            <div class="input-group" ng-class="{ 'has-error' : entryForm.ProductTypeId.$invalid && (entryForm.ProductTypeId.$dirty || submitted)}">
+                                <span class="input-group-addon"><i class="fa fa-recycle"></i></span>
+                                <select class="form-control" tabindex="3" id="ProductTypeId" name="ProductTypeId"
+                                        move-focus-by-enter-key
+                                        data-val="true"
+                                        data-ng-options="item.ProductTypeId as item.ProductTypeName for item in ProductTypeList"                                        
+                                        ng-model="finishedGood.ProductTypeId"
+                                        ng-required="true">
+                                    <option value="">Select Product Type</option>
+                                </select>
+                                <p ng-show="entryForm.ProductTypeId.$error.required && (entryForm.ProductTypeId.$dirty || submitted)" class="help-block">Product Type is required.</p>
+                            </div>                           
+                        </div>
+                        <!--<div class="col-lg-4 col-md-6 col-sm-12">
+                            <label>Product Name</label>
+                            <div class="input-group" ng-class="{ 'has-error' : entryForm.ProductTypeId.$invalid && (entryForm.ProductTypeId.$dirty || submitted)}">
+                                <span class="input-group-addon"><i class="fa fa-recycle"></i></span>
+                                <input class="form-control" name="ProductTypeDdl" id="ProductTypeDdl" type="text" tabindex="5" placeholder="Product Type"
+                                       ng-model="finishedGood.ProductTypeId"
+                                       move-focus-by-enter-key
+                                       typeahead-on-select="changeSelectProductType($item)"
+                                       typeahead="p.ProductTypeName for p in ProductTypeList | filter:$viewValue | limitTo:8" />
+                            </div>
+                        </div>-->
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12" style="margin-top: 1em;">
+                            <md-button class="md-raised md-primary" tabindex="13" aria-label="Save"
+                                       ng-disabled="entryForm.$invalid"
+                                       ng-hide="editMode"
+                                       ng-click="Save(finishedGood)">
+                                <i class="fa fa-save"></i> Save
+                            </md-button>
+                            <md-button class="md-raised md-warn" tabindex="13" aria-label="Update"
+                                       ng-show="editMode"
+                                       ng-click="Update(finishedGood)">
+                                <i class="fa fa-save"></i> Update
+                            </md-button>
+                            <md-button class="md-raised" tabindex="" aria-label="Clear"
+                                       ng-click="Cancel()">
+                                <i class="fa fa-refresh"></i> Clear
+                            </md-button>
+                        </div>
+                    </div>
+                </form>
+            </md-card-content>
+        </md-card>
+        <md-card ng-hide="data.cb1">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline"><i class="fa fa-search"></i> Finished Goods List</span>
+                </md-card-title-text>
+            </md-card-title>
+            <md-card-content>               
+                <table class="table table-bordered table-hover table-condensed" style="margin-top:1em;">
+                    <thead>
+                        <tr style="font-weight: bold" class="info">
+                            <td style="width:25%">Finished Goods Name</td>
+                            <td style="width:15%">Lot Number</td>
+                            <td style="width:20%">Product Type</td>
+                            <td colspan="2" style="width:5%">Action</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in List">                            
+                            <td>{{item.FinishedGoodName}}</td>
+                            <td>{{item.DesignNo}}</td>
+                            <td>{{item.ProductTypeName}}</td>                            
+                            <td class="text-center"><i class="fa fa-edit" ng-click="Edit(item)" data-toggle="tooltip" data-placement="left" title="Edit"></i></td>
+                            <td class="text-center"><i class="fa fa-trash-o" ng-click="Delete(item)" data-toggle="tooltip" data-placement="right" title="Delete"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </md-card-content>
+        </md-card>
     </div>
 </div>
+
+
+
+
+
+

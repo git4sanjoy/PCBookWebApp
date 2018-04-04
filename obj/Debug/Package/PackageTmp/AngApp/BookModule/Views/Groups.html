@@ -1,0 +1,234 @@
+﻿<div class="box box-success">
+    <div class="box-header with-border">
+        <div class="form-inline">
+            <md-switch ng-model="data.cb1" aria-label="Switch 1" style="margin:0;padding:0">
+                Chart of accounts : <em><small class="text-red">{{filteredList.length}}</small></em>
+            </md-switch>
+        </div>
+        <div class="form-horizontal">
+            <input ng-model="searchText" class="form-control" type="text" value="" placeholder="Search">
+        </div>
+        
+        <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+        <div class="row">
+            <span>Selected Node : {{mytree.currentNode.FileName}}</span>
+
+            <div data-angular-treeview="true"
+                 data-tree-id="mytree"
+                 data-tree-model="List"
+                 data-node-id="GroupId"
+                 data-node-label="GroupName"
+                 data-node-children="Childrens">
+            </div>
+        </div>
+        <div class="row">
+            <!--Server side error messageing------>
+            <div class="col-sm-12" ng-hide="serverMessage" style="margin-top:1em;">
+                <div class="alert alert-{{messageType}} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 style="margin-top:0"><i class="fa fa-times-circle"></i> Errors!</h3>
+                    <ul>
+                        <li ng-repeat="errMsg in validationErrors">{{ errMsg }}</li>
+                    </ul>
+                </div>
+            </div>
+            <!--End Server side error messageing-->
+            <!--Client side error messageing------>
+            <div class="col-sm-12" ng-hide="clientMessage" style="margin-top:1em;">
+                <div class="alert alert-{{messageType}} alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-check"></i> {{messageType}}!</h4>
+                    {{message}}
+                </div>
+            </div>
+            <!--End Client side error messageing-->
+        </div>
+        <div class="row" style="margin-bottom:1em;">
+            <form name="groupForm" novalidate role="form" class="form-horizontal" id="groupForm" ng-submit="submitGroupForm()" ng-hide="data.cb1">
+                <div class="col-lg-3 col-md-6 col-sm-12">
+
+                    <label>Group Name <span class="text-red">*</span></label>
+                    <div class="input-group" ng-class="{ 'has-error' : groupForm.groupName.$invalid && (groupForm.groupName.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-cube"></i></span>
+                        <input type="text" name="groupName" id="groupName" class="form-control" autofocus placeholder="Group Name" autocomplete="off" tabindex="1"
+                                maxlength="145"
+                                move-focus-by-enter-key
+                                ng-model="group.groupName"
+                                ng-required="true" />
+                    </div>
+                    <p ng-show="groupForm.groupName.$error.required && (groupForm.groupName.$dirty || submitted)" class="help-block">Group Name is Required.</p>
+                </div>
+
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <!-- products -->
+                    <label>Under Group <span class="text-red">*</span></label>
+                    <div class="input-group" ng-class="{ 'has-error' : groupForm.products.$invalid && (groupForm.products.$dirty || submitted)}">
+                        <span class="input-group-addon"><i class="fa fa-cubes"></i></span>
+                        <input id="groupListCmb" type="text" name="groupListCmb" class="form-control" autocomplete="off" placeholder="Under Group" tabindex="2"
+                                move-focus-by-enter-key
+                                ng-model="group.groupListCmb"
+                                ng-minlength="2"
+                                ng-maxlength="145"
+                                ng-required="true"
+                                my-enter="checkUnderGroup()"
+                                typeahead-on-select="changeSelectGroup($item)"
+                                typeahead="g.GroupName for g in groupList | filter:$viewValue | limitTo:8" />
+                    </div>
+                    <p ng-show="groupForm.groupListCmb.$error.required && (groupForm.groupListCmb.$dirty || submitted)" class="help-block">Under Group Name is required.</p>
+                    <p ng-show="groupForm.groupListCmb.$error.minlength && (groupForm.groupListCmb.$dirty || submitted)" class="help-block">Under Group Name is too short.</p>
+                    <p ng-show="groupForm.groupListCmb.$error.maxlength && (groupForm.groupListCmb.$dirty || submitted)" class="help-block">Under Group Name is too long.</p>
+                </div>
+                <div ng-show="primaryListCmbDiv">
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <label>Primary</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-book"></i></span>
+                            <select id="transction" name="transction" class="form-control" tabindex="3"
+                                    ng-focus="true"
+                                    move-focus-by-enter-key
+                                    ng-model="group.primaryGroupCmb"
+                                    ng-options="p.PrimaryName for p in primaryAccList track by p.PrimaryId">
+                                <option value="">--Select Primary Type--</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12" style="margin-top: 1.7em;">
+                    <label class="checkbox-inline"><input ng-model="isTrialBalance" type="checkbox" value="">Trial Balance</label>
+                    <label class="checkbox-inline"><input ng-model="isProvision" type="checkbox" value="">Provision</label>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12" style="margin-top: 1.7em;">
+                    <button type="submit" class="btn btn-primary" tabindex="4"
+                            move-focus-by-enter-key
+                            ng-disabled="groupForm.$invalid">
+                        <i class="fa fa-pencil"></i> Add Group
+                    </button>
+
+                </div>
+            </form> 
+        </div>
+
+        <md-card md-theme="{{ showDarkTheme ? 'dark-orange' : 'default' }}" md-theme-watch ng-show="data.cb1" style="margin:0;padding:0">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Chart of Accounts</span>
+                </md-card-title-text>
+            </md-card-title>
+            <md-card-content layout="row" layout-align="space-between">
+                <table class="table table-bordered table-hover table-condensed table-striped">
+                    <tr class="success text-bold">
+                        <td ng-click="sort('PrimaryName')"><span class="glyphicon sort-icon" ng-show="sortKey=='PrimaryName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Primary Name</td>
+                        <td ng-click="sort('lev2')"><span class="glyphicon sort-icon" ng-show="sortKey=='lev2'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Group Lavel1</td>
+                        <td ng-click="sort('lev3')"><span class="glyphicon sort-icon" ng-show="sortKey=='lev3'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Group Lavel2</td>
+                        <td ng-click="sort('lev4')"><span class="glyphicon sort-icon" ng-show="sortKey=='lev4'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Group Lavel3</td>
+                        <td ng-click="sort('lev5')"><span class="glyphicon sort-icon" ng-show="sortKey=='lev5'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> Group Lavel4</td>
+                    </tr>
+                    <tr ng-repeat="g in (filteredList = (groupsListTree | filter: searchText)) | orderBy:sortKey:reverse| startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                        <td>{{ g.PrimaryName || '' }}</td>
+                        <td>{{ g.lev2 || '' }}</td>
+                        <td>{{ g.lev3 || '' }}</td>
+                        <td>{{ g.lev4 || '' }}</td>
+                        <td>{{ g.lev5 || '' }}</td>
+                    </tr>
+                </table>
+            </md-card-content>
+        </md-card>
+        <md-card md-theme="{{ showDarkTheme ? 'dark-orange' : 'default' }}" md-theme-watch ng-hide="data.cb1" style="margin:0;padding:0">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Edit Chart of Accounts</span>
+                </md-card-title-text>
+            </md-card-title>
+            <md-card-content layout="row" layout-align="space-between">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-condensed table-striped">
+                        <thead>
+                            <tr style="font-weight: bold" class="info">
+                                <td style="width:40%;text-align:center" ng-click="sort('name')">
+                                    Group Name
+                                    <span class="glyphicon sort-icon" ng-show="sortKey=='name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                                </td>
+
+                                <td style="width:30%;text-align:center" ng-click="sort('UnderGroup')">
+                                    Under Group
+                                    <span class="glyphicon sort-icon" ng-show="sortKey=='UnderGroup'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                                </td>
+                                <td style="width:30%;text-align:center" ng-click="sort('GeneralLedgerName')">
+                                    General Ledger Name
+                                    <span class="glyphicon sort-icon" ng-show="sortKey=='GeneralLedgerName'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                                </td>
+                                <td style="width:10%;text-align:center" ng-click="sort('TrialBalance')">
+                                    TrialBalance
+                                    <span class="glyphicon sort-icon" ng-show="sortKey=='TrialBalance'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                                </td>
+                                <td style="width:10%;text-align:center" ng-click="sort('Provision')">
+                                    Provision
+                                    <span class="glyphicon sort-icon" ng-show="sortKey=='Provision'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                                </td>
+                                <td style="width:10%;text-align:center">Action</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr class="" ng-repeat="groupObj in (filteredList = (groupsList | filter: searchText)) | orderBy:sortKey:reverse| startForm: (currentPage - 1) * pageSize | limitTo: pageSize">
+                                <td>
+                                    <!-- editable username (text with validation) -->
+                                    <span editable-text="groupObj.name" e-name="name" e-form="rowform" onbeforesave="checkName($data, groupObj.id)">
+                                        {{ groupObj.name || 'empty' }}
+                                    </span>
+                                </td>
+
+                                <td>{{groupObj.UnderGroup}}</td>
+                                <td>{{groupObj.GeneralLedgerName}}</td>
+                                <td>
+                                    <span editable-checkbox="groupObj.TrialBalance" e-name="TrialBalance" e-form="rowform" style="margin-left:.5em">
+                                        {{ groupObj.TrialBalance && "Yes" || "No" }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span editable-checkbox="groupObj.Provision" e-name="Provision" e-form="rowform" style="margin-left:.5em">
+                                        {{ groupObj.Provision && "Yes" || "No" }}
+                                    </span>
+                                </td>
+                                <td style="white-space: nowrap;text-align:left">
+                                    <!-- form -->
+                                    <form editable-form name="rowform" onbeforesave="saveUser($data, groupObj.id)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == groupObj">
+                                        <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary btn-sm">
+                                            Save
+                                        </button>
+                                        <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default btn-sm">
+                                            Cancel
+                                        </button>
+                                    </form>
+                                    <div class="buttons" ng-show="!rowform.$visible">
+                                        <button class="btn btn-primary btn-sm btn-block" ng-click="rowform.$show()"><i class="fa fa-edit"></i> Edit</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+
+                        </tfoot>
+                    </table>
+
+                </div>
+            </md-card-content>
+        </md-card>
+        <pagination ng-model="currentPage"
+                    total-items="filteredList.length"
+                    max-size="maxSize"
+                    items-per-page="pageSize"
+                    boundary-links="true">
+        </pagination>
+    </div><!-- /.box-body -->
+</div>
+
+
+
+

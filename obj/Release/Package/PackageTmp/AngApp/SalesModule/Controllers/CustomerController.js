@@ -1,7 +1,10 @@
 ﻿var app = angular.module('PCBookWebApp');
 
-app.controller('CustomerController', ['$scope', '$location', '$http', '$timeout', '$filter', 'upload', function ($scope, $location, $http, $timeout, $filter, upload) {
+app.controller('CustomerController', ['$scope', '$location', '$http', '$timeout', '$filter', 'upload',
+
+    function ($scope, $location, $http, $timeout, $filter, upload) {
     //$scope.Message = "Customer Controller Angular JS";
+    var vm = this;
     $scope.loading = true;
 
     $scope.clientMessage = true;
@@ -9,7 +12,7 @@ app.controller('CustomerController', ['$scope', '$location', '$http', '$timeout'
     $scope.messageType = "";
     $scope.message = "";
 
-    $scope.pageSize = 200;
+    $scope.pageSize = 300;
     $scope.currentPage = 1;
 
     $scope.addButton = false;
@@ -39,6 +42,8 @@ app.controller('CustomerController', ['$scope', '$location', '$http', '$timeout'
     };
 
     $scope.users = [];
+    $scope.groups = [];
+    $scope.statuses = [];
     $http({
         method: 'GET',
         url: '/api/Customer/GetCustomerList',
@@ -46,9 +51,39 @@ app.controller('CustomerController', ['$scope', '$location', '$http', '$timeout'
         headers: authHeaders,
         dataType: 'json'
     }).success(function (data) {
-        $scope.users = data;
+        $scope.users = data.customerList;
+        $scope.statuses = data.salesManList;
     });
-                               
+
+    $scope.loadGroups = function () {
+        return $scope.groups.length ? null : $http({
+            url: "/api/Customer/UpazilaListXEdit",
+            method: "GET",
+            headers: authHeaders
+        }).success(function (data) {
+            $scope.groups = data;
+        });
+    };
+
+
+    $scope.showGroup = function (user) {
+        if (user.group && $scope.groups.length) {
+            var selected = $filter('filter')($scope.groups, { id: user.group });
+            return selected.length ? selected[0].text : 'Not set';
+        } else {
+            return user.groupName || 'Not set';
+        }
+    };
+
+    $scope.showStatus = function (user) {
+        var selected = [];
+        if (user.status) {
+            selected = $filter('filter')($scope.statuses, { value: user.status });
+        }
+        return selected.length ? selected[0].text : 'Not set';
+    };
+
+
     $scope.upazilaList = [];
     $http({
         method: 'GET',
@@ -59,7 +94,15 @@ app.controller('CustomerController', ['$scope', '$location', '$http', '$timeout'
     }).success(function (data) {
         $scope.upazilaList = data;
     });
-
+    $scope.showRoomList = [];
+    $http({
+        url: "/api/ShowRooms/ShowRoomDdlList",
+        method: "GET",
+        headers: authHeaders
+    }).success(function (data) {
+        $scope.showRoomList = data;
+        //console.log(data);
+    });
     $scope.salesManList = [];
     $http({
         method: 'GET',
@@ -76,6 +119,11 @@ app.controller('CustomerController', ['$scope', '$location', '$http', '$timeout'
     $scope.submitCustomerForm = function () {
         // Set the 'submitted' flag to true
         $scope.submitted = true;
+        var showRoomId = 0;
+        if ($scope.customer.ShowRoomId) {
+            showRoomId = $scope.customer.ShowRoomId.ShowRoomId;
+        }
+
         if ($scope.customerForm.$valid) {
             var aInsertObj = {
                 UpazilaId: $scope.customer.UpazilaId.UpazilaId,
@@ -86,7 +134,7 @@ app.controller('CustomerController', ['$scope', '$location', '$http', '$timeout'
                 AddressBangla: $scope.customer.AddressBangla,
                 Phone: $scope.customer.Phone,
                 Email: $scope.customer.Email,
-                ShowRoomId: 0,
+                ShowRoomId: showRoomId,
                 CreditLimit: $scope.customer.CreditLimit,
                 ShopName: $scope.customer.ShopName
             };
@@ -349,6 +397,112 @@ app.controller('CustomerController', ['$scope', '$location', '$http', '$timeout'
             $scope.serverMessage = false;
             $timeout(function () { $scope.serverMessage = true; }, 5000);
         });
+    };
+
+
+
+    $scope.saveCustomer = function (data, id) {
+        angular.extend(data, { id: id });
+
+        var aObj = {
+            CustomerId: id,
+            UpazilaId: data.group,
+            SalesManId: data.status,
+            CustomerName: data.name,
+            CreditLimit: data.CreditLimit,
+            Address: data.Address,
+            Phone: data.Phone,
+            Email: data.Email,
+            CustomerNameBangla: data.CustomerNameBangla,
+            AddressBangla: data.AddressBangla,
+            ShopName: data.ShopName,
+            Image: data.Image,
+            ShowRoomId: 0
+        };
+
+        if (id == 0) {
+            alert('Use another option');
+            $.each($scope.users, function (i) {
+                if ($scope.users[i].id === 0) {
+                    $scope.users.splice(i, 1);
+                    return false;
+                }
+            });
+            return false;
+            console.log(aObj);
+            $http({
+                url: "/api/Customer",
+                data: aObj,
+                method: "POST",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.message = "Successfully Customer Created.";
+                $scope.messageType = "success";
+                $scope.clientMessage = false;
+                $timeout(function () { $scope.clientMessage = true; }, 5000);
+            }).error(function (error) {
+                $scope.validationErrors = [];
+                if (error.ModelState && angular.isObject(error.ModelState)) {
+                    for (var key in error.ModelState) {
+                        $scope.validationErrors.push(error.ModelState[key][0]);
+                    }
+                } else {
+                    $scope.validationErrors.push('Unable to Update Customer!!');
+                };
+                $.each($scope.users, function (i) {
+                    if ($scope.users[i].id === 0) {
+                        $scope.users.splice(i, 1);
+                        return false;
+                    }
+                });
+                $scope.messageType = "danger";
+                $scope.serverMessage = false;
+                $timeout(function () { $scope.serverMessage = true; }, 5000);
+            });
+        } else {
+            //console.log(aObj);
+            //return false;
+            $http({
+                url: '/api/Customer/UpdateCustomer/' + id,
+                data: aObj,
+                method: "PUT",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.message = "Successfully Customer Updated.";
+                $scope.messageType = "info";
+                $scope.clientMessage = false;
+                $timeout(function () { $scope.clientMessage = true; }, 5000);
+            }).error(function (error) {
+                $scope.validationErrors = [];
+                if (error.ModelState && angular.isObject(error.ModelState)) {
+                    for (var key in error.ModelState) {
+                        $scope.validationErrors.push(error.ModelState[key][0]);
+                    }
+                } else {
+                    $scope.validationErrors.push('Unable to Update Customer!!');
+                };
+                $scope.messageType = "danger";
+                $scope.serverMessage = false;
+                $timeout(function () { $scope.serverMessage = true; }, 5000);
+            });
+        }
+    };
+    // add Product
+    $scope.addCustomer = function () {
+        $scope.inserted = {
+            id: 0,
+            name: '',
+            status: null,
+            group: null,
+            CreditLimit: 0,
+            Address: '',
+            Phone: '',
+            Email: '',
+            CustomerNameBangla: '',
+            AddressBangla: ''
+        };
+        //$scope.users.push($scope.inserted);
+        $scope.users.unshift($scope.inserted);
     };
 
 

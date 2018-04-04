@@ -73,6 +73,13 @@ namespace PCBookWebApp.Controllers
                     Session["rptSource"] = null;                    
                     Session["rptUnitName"] = null;
                     Session["rptTitle"] = null;
+
+                    rd.Close();
+                    rd.Clone();
+                    rd.Dispose();
+                    rd = null;
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
                 }
                 else
                 {

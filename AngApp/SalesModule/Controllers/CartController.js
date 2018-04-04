@@ -32,31 +32,37 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
     // End DatePicker
 
     $scope.changeSelectCustomerName = function (item) {
-        $scope.invoice.customer_info.name = item;
+        $scope.invoice.customerAutoComplite = item;
     };
     $scope.changeSelectProductName = function (item) {
         $scope.productName = item;
     };
 
-    $scope.showRoomList = [];
+    //**************Report Option Print or Excel***************
+    $scope.printTypeArray = [];
+    $scope.printTypeArray.push({ name: "Bangla", Text: "Bangla", isDefault: true });
+    $scope.printTypeArray.push({ name: "English", Text: "English", isDefault: false });
+    $scope.printOptionRadios = $scope.printTypeArray[0];
+    //**********************************************************
+
+    $scope.wareHouseList = [];
     $http({
-        url: "/api/ShowRooms/GetShowRoomDropDownList",
+        url: "/api/WareHouses/WareHouseDropDownList",
         method: "GET",
         headers: authHeaders
     }).success(function (data) {
-        $scope.showRoomList = data;
-        //console.log($scope.showRoomList);
-        if ($scope.showRoomList.length > 0 && $scope.showRoomList.length == 1) {
-            angular.forEach($scope.showRoomList, function (item) {
-                $scope.invoice.showRoom = { ShowRoomId: item.ShowRoomId, ShowRoomName: item.ShowRoomName, ShowRoomNameBangla: item.ShowRoomNameBangla };
+        $scope.wareHouseList = data;
+        if ($scope.wareHouseList.length > 0 && $scope.wareHouseList.length == 1) {
+            angular.forEach($scope.wareHouseList, function (item) {
+                $scope.invoice.wareHouse = { WareHouseId: item.WareHouseId, WareHouseName: item.WareHouseName };
             })
         }
-
     });
+
     $scope.creditParty = false;
     $scope.customerList = {};
     $http({
-        url: "/api/Customer/GetDropDownList",
+        url: "/api/Customer/CustomerDropDownList",
         method: "GET",
         headers: authHeaders
     }).success(function (data) {
@@ -65,20 +71,23 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
     });
 
     $scope.updatePartyTypeaheadList = function (searchTerm) {
-        
-        $http({
-            url: "/api/Customer/GetCustomerTypeAheadList/" + searchTerm,
-            method: "GET",
-            headers: authHeaders
-        }).success(function (data) {
-            $scope.customerList = data;
-            //console.log(data);
-        });
+        if (searchTerm) {           
+            $http({
+                url: "/api/Customer/GetCustomerTypeAheadList/" + searchTerm,
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {
+                $scope.customerList = data;
+                //console.log(data);
+            });
+        } else {
+            $scope.customerList = '';
+        }
     };
 
     $scope.productList = {};
     $http({
-        url: "/api/Product/GetDropDownList",
+        url: "/api/Product/ProductDropDownList",
         method: "GET",
         headers: authHeaders
     }).success(function (data) {
@@ -102,6 +111,22 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
     };
 
     $scope.invoice.items = [];
+    $scope.showRoomList = [];
+
+    $http({
+        url: "/api/ShowRooms/GetShowRoomDropDownList",
+        method: "GET",
+        headers: authHeaders
+    }).success(function (data) {
+        $scope.showRoomList = data;
+        //console.log($scope.showRoomList);
+        if ($scope.showRoomList.length > 0 && $scope.showRoomList.length == 1) {
+            angular.forEach($scope.showRoomList, function (item) {
+                $scope.invoice.showRoom = { ShowRoomId: item.ShowRoomId, ShowRoomName: item.ShowRoomName, ShowRoomNameBangla: item.ShowRoomNameBangla };
+            })
+        }
+
+    });
     $scope.addItem = function () {
         if ($scope.productName) {
             var productName = $scope.productName.ProductName;
@@ -131,7 +156,8 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
         //}
         $scope.invoice.items.push({
             description: $scope.productName,
-	        qty: $scope.itemQuentity,
+            qty: $scope.itemQuentity,
+            qtyConverted: parseFloat($scope.itemQuentity).toFixed(2) * parseFloat($scope.itemMultiplyWith).toFixed(2),
 	        discount: $scope.itemDiscount,
             cost: $scope.itemCost,
             SubCategoryId: $scope.itemSubCategoryId,
@@ -141,7 +167,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
         $scope.itemQuentity = 0;
         $scope.itemCost = 0;
         $scope.itemDiscount = 0;
-
+        $scope.itemMultiplyWith = 0;
         var addMoreProduct = confirm(productName + " Added to Cart. Are you sure you want to add more?");
         if (addMoreProduct) {
             angular.element('#productName').focus();
@@ -175,6 +201,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
         var showRoomId = "";
         var showRoomName = "";
         var customerName = "";
+        var WareHouseId = "";
         if ($scope.invoice.showRoom.ShowRoomId) {
             // Check Show Room have value
             showRoomId = $scope.invoice.showRoom.ShowRoomId;
@@ -185,13 +212,12 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
             angular.element('#showRoom').focus();
             return false;
         }
-        if ($scope.invoice.customer_info.name) {
+        if ($scope.invoice.customerAutoComplite) {
             // Check Customer Name have value
-            customerName = $scope.invoice.customer_info.name.CustomerName;
-
+            customerName = $scope.invoice.customerAutoComplite.CustomerName;
         } else {
             alert('Please input customer name');
-            angular.element('#CustomerName').focus();
+            angular.element('#customerAutoComplite').focus();
             return false;
         }
 
@@ -224,15 +250,37 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
                 return false;
             }
         }
+        //var memoTotal = $scope.grandTotal();
+        //var memoTotal = $scope.total();
+        var memoItems = $scope.invoice.items;
+        var totalTk = 0;
+        var totalQuantity = 0;
+        var totalQuantityConverted = 0;
+        angular.forEach(memoItems, function (item) {
+            totalTk += parseFloat(item.qty) * (parseFloat(item.cost) - parseFloat(item.discount));
+            totalQuantity += parseFloat(item.qty.toFixed(2));
+            totalQuantityConverted += parseFloat(item.qtyConverted.toFixed(2)) 
+        })
+
+
+
+        var wareHouseId = null;
+        if ($scope.invoice.wareHouse) {
+            wareHouseId = $scope.invoice.wareHouse.WareHouseId
+        }
         var aMemo = {
             MemoMasterId: 0,
-            CustomerId: $scope.invoice.customer_info.name.CustomerId,
+            CustomerId: $scope.invoice.customerAutoComplite.CustomerId,
             MemoDate: fd,
             ShowRoomId: 0,
             MemoNo: $scope.invoice.number,
             MemoDiscount: memoDiscount,
             GatOther: gatOther,
-            ExpencessRemarks: $scope.invoice.otherExpencessRemarks
+            ExpencessRemarks: $scope.invoice.otherExpencessRemarks,
+            WareHouseId: wareHouseId,
+            MemoCost: totalTk,
+            Quantity: totalQuantity,
+            QuantityConverted: totalQuantityConverted
         };       
         
         $http({
@@ -263,7 +311,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
                     aPayment = {
                         PaymentId: 0,
                         MemoMasterId: memoMasterId,
-                        CustomerId: $scope.invoice.customer_info.name.CustomerId,
+                        CustomerId: $scope.invoice.customerAutoComplite.CustomerId,
                         ShowRoomId: 0,
                         PaymentDate: fd,
                         SCAmount: $scope.invoice.payment,
@@ -273,7 +321,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
                     aPayment = {
                         PaymentId: 0,
                         MemoMasterId: memoMasterId,
-                        CustomerId: $scope.invoice.customer_info.name.CustomerId,
+                        CustomerId: $scope.invoice.customerAutoComplite.CustomerId,
                         ShowRoomId: 0,
                         PaymentDate: fd,
                         SCAmount: $scope.invoice.payment,
@@ -295,8 +343,6 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
                         $scope.clientMessage = false;
                         $timeout(function () { $scope.clientMessage = true; }, 5000);
                     });
-                } else {
-
                 }
                 //Success Alert
                 //$mdDialog.show(
@@ -310,13 +356,14 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
                 //        .targetEvent(ev)
                 //);
 
-                //Print the memo
-                var innerContents = document.getElementById('printable-memo-bangla').innerHTML;
-                var popupWinindow = window.open('', '_blank', 'width=900,height=700,scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no');
-                popupWinindow.document.open();
-                popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="http://books.pakizagroup.com/Content/Site.css" /></head><body onload="window.print()">' + innerContents + '</html>');
-                popupWinindow.document.close();
+                ////Print the memo
+                //var innerContents = document.getElementById('printable-memo-bangla').innerHTML;
+                //var popupWinindow = window.open('', '_blank', 'width=900,height=700,scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no');
+                //popupWinindow.document.open();
+                //popupWinindow.document.write('<html><head><link rel="stylesheet" type="text/css" href="http://books.pakizagroup.com/Content/Site.css" /></head><body onload="window.print()">' + innerContents + '</html>');
+                //popupWinindow.document.close();
 
+                //$scope.showSimpleToast();
                 //Rset Form
                 $scope.invoice = {
                     showRoom: { ShowRoomId: showRoomId, ShowRoomName: showRoomName },
@@ -333,7 +380,30 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
                     }
                 };
                 $scope.invoice.items = [];
+                //Print Memo Using Crystal Report
+                $http({
+                    method: "GET",
+                    url: "/SalesReport/ExportCustomers",
+                    headers: authHeaders,
+                    params: {
+                        FromDate: new Date(),
+                        ToDate: new Date(),
+                        LedgerIds: 0,
+                        SelectedReportOption: "Memo",
+                        ShowType: "Print",
+                        MemoMasterId: memoMasterId
+                    }
+                }).success(function (data) {
+                    if (data == 'NoRecord') {
+                        alert('No Record Found');
+                    } else {
+                        window.open("../GenericReportViewer/ShowGenericRpt", 'mywindow', 'fullscreen=yes, scrollbars=auto');
+                    }
+                }).error(function (error) {
+                    alert(error);
+                });
                 angular.element('#CustomerName').focus();
+                console.log(memoMasterId);
 
             }).error(function (error) {
 
@@ -344,54 +414,46 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
 
     }
 
-    $scope.GetCustomerDetailById = function () {
-        var customerId = $scope.invoice.customer_info.name.CustomerId;
-        var customerName = $scope.invoice.customer_info.name.CustomerName;
-
+    $scope.GetCustomerDetailById = function (customer) {
+        var customerId = 0;
         $scope.invoice.customer_info.Address = "";
         $scope.invoice.customer_info.Phone = "";
         $scope.invoice.customer_info.Email = "";
-        $http({
-            url: "/api/Customer/GetSingleCustomer/" + customerId,
-            method: "GET",
-            headers: authHeaders
-        }).success(function (data) {
-            if (data.length > 0) {
-                //$scope.invoice.customer_info.Address = data[0].Address;
-                //$scope.invoice.customer_info.Phone = data[0].Phone;
-                //$scope.invoice.customer_info.Email = data[0].Email;
-                //$scope.invoice.customer_info.CreditLimit = data[0].CreditLimit;
-                //$scope.invoice.customer_info.TotalCredit = data[0].TotalCredit;
-                //$scope.invoice.customer_info.AddressBangla = data[0].AddressBangla;
-                //$scope.invoice.customer_info.Image = data[0].Image;
-
+        if (customer) {
+            $http({
+                url: "/api/Customer/GetSingleCustomer/" + customer.CustomerId,
+                method: "GET",
+                headers: authHeaders
+            }).success(function (data) {              
                 $scope.invoice.customer_info.Address = data[0].Address;
                 $scope.invoice.customer_info.DistrictName = data[0].DistrictName;
                 $scope.invoice.customer_info.Image = data[0].Image;
-                $scope.invoice.customer_info.BfAmount = data[0].BfAmount;
-                $scope.invoice.customer_info.BFDate = data[0].BFDate;
+                $scope.invoice.customer_info.BfAmount = data[0].TotalBf;
+                //$scope.invoice.customer_info.BFDate = data[0].BFDate;
                 $scope.invoice.customer_info.CreditLimit = data[0].CreditLimit;
-                $scope.invoice.customer_info.ActualCredit = data[0].ActualCredit;
-                $scope.invoice.customer_info.TotalSale = data[0].TotalSale;
-                $scope.invoice.customer_info.TotalCollection = data[0].TotalCollection;
-                $scope.invoice.customer_info.TotalDiscount = data[0].TotalDiscount;
-
+                $scope.invoice.customer_info.ActualCredit = parseFloat(data[0].GrossSales) - parseFloat(data[0].MemoDiscount) + parseFloat(data[0].GatOther);
+                $scope.invoice.customer_info.TotalSale = data[0].ActualSales;
+                $scope.invoice.customer_info.TotalCollection = data[0].TotalPayments;
+                $scope.invoice.customer_info.TotalDiscount = data[0].TotalDiscounts;
+                $scope.invoice.customer_info.SaleZoneName = data[0].SaleZoneName;
+                $scope.invoice.zoneName = { SaleZoneId: data[0].SaleZoneId, SaleZoneName: data[0].SaleZoneName };
+                $scope.GetNewMemoId();
                 //if (customerName == "Cash Party") {
                 //    $scope.creditParty = false;
                 //} else {
                 //    $scope.creditParty = true;
                 //}
-            } else {
-                $scope.invoice.customer_info.name = {};
-                angular.element('#CustomerName').focus();
-            }
 
-        }).error(function (error) {
-            $scope.message = 'Unable to get party info' + error.message;
-            $scope.messageType = "warning";
-            $scope.clientMessage = false;
-            $timeout(function () { $scope.clientMessage = true; }, 5000);
-        });
+
+            }).error(function (error) {
+                $scope.message = 'Unable to get party info' + error.message;
+                $scope.messageType = "warning";
+                $scope.clientMessage = false;
+                $timeout(function () { $scope.clientMessage = true; }, 5000);
+            });
+        }
+        //return false;
+
     }
 
     $scope.GetProductDetailById = function () {
@@ -405,6 +467,7 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
                 method: "GET",
                 headers: authHeaders
             }).success(function (data) {
+                $scope.itemMultiplyWith = data.MultiplyWith;
                 $scope.itemCost = data.Rate;
                 $scope.itemDiscount = data.Discount;
                 $scope.itemMinDiscount = data.Discount;
@@ -503,10 +566,13 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
         })
         return total;
     };
+
+
+
     //Toster
     var last = {
-        bottom: true,
-        top: false,
+        bottom: false,
+        top: true ,
         left: false,
         right: true
     };
@@ -556,6 +622,6 @@ app.controller('CartController', ['$scope', '$location', '$http', '$timeout', '$
             }
         });
     };
-        //End toster
+    //End toster
 
 }])

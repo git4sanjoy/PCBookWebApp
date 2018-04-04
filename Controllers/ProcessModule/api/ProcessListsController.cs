@@ -97,47 +97,61 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
         [ResponseType(typeof(VmProcessList))]
         public IHttpActionResult GetProcessList()
         {
-          
+            string userId = User.Identity.GetUserId();
+            var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
+
+            var list = db.ProcessLists
+                .Include(pl => pl.UnitRole)
+                .Select(pl => new {
+                    pl.ProcessListId,
+                    pl.ProcessListName,
+                    pl.ShowRoomId,
+                    pl.UnitRoleId,
+                    UnitRoleName=pl.UnitRole.UnitRoleName
+                })
+                .Where(pl => pl.ShowRoomId == showRoomId)
+                .ToList();
+
             //var list = db.ShowRooms.Select(e => new { ShowRoomId = e.ShowRoomId, ShowRoomName = e.ShowRoomName });
             //if (list == null)
             //{
             //    return NotFound();
             //}
             //return Ok(list);
-            List<VmProcessList> ProcessList = new List<VmProcessList>();
-            VmProcessList ProcessListObj = new VmProcessList();
+            //List<VmProcessList> ProcessList = new List<VmProcessList>();
+            //VmProcessList ProcessListObj = new VmProcessList();
 
-            string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
-            string queryString = @"select p.ProcessListId,p.ProcessListName,p.UnitRoleId,r.UnitRoleName from ProcessLists p
-                                          join UnitRoles r on r.UnitRoleId = p.UnitRoleId";
+            //string connectionString = ConfigurationManager.ConnectionStrings["PCBookWebAppContext"].ConnectionString;
+            //string queryString = @"select p.ProcessListId,p.ProcessListName,p.UnitRoleId,r.UnitRoleName from ProcessLists p
+            //                              join UnitRoles r on r.UnitRoleId = p.UnitRoleId";
 
-            using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
-            {
-                SqlCommand command = new SqlCommand(queryString, connection);
-                connection.Open();
-                //command.Parameters.Add(new SqlParameter("@userId", userId));
-                SqlDataReader reader = command.ExecuteReader();
-                try
-                {
-                    while (reader.Read())
-                    {
+            //using (System.Data.SqlClient.SqlConnection connection = new SqlConnection(connectionString))
+            //{
+            //    SqlCommand command = new SqlCommand(queryString, connection);
+            //    connection.Open();
+            //    //command.Parameters.Add(new SqlParameter("@userId", userId));
+            //    SqlDataReader reader = command.ExecuteReader();
+            //    try
+            //    {
+            //        while (reader.Read())
+            //        {
                        
-                        ProcessListObj = new VmProcessList();
-                        ProcessListObj.ProcessListId = (int)reader["ProcessListId"];
-                        ProcessListObj.ProcessListName = (string)reader["ProcessListName"];
-                        ProcessListObj.UnitRoleId = reader["UnitRoleId"].ToString();
-                        ProcessListObj.UnitRoleName = (string)reader["UnitRoleName"];
-                        ProcessList.Add(ProcessListObj);
+            //            ProcessListObj = new VmProcessList();
+            //            ProcessListObj.ProcessListId = (int)reader["ProcessListId"];
+            //            ProcessListObj.ProcessListName = (string)reader["ProcessListName"];
+            //            ProcessListObj.UnitRoleId = reader["UnitRoleId"].ToString();
+            //            ProcessListObj.UnitRoleName = (string)reader["UnitRoleName"];
+            //            ProcessList.Add(ProcessListObj);
                         
-                    }
-                }
-                finally
-                {
-                    reader.Close();
-                }
-            }
+            //        }
+            //    }
+            //    finally
+            //    {
+            //        reader.Close();
+            //    }
+            //}
             //ViewBag.AccountUserList = BankAccounts;
-            return Ok(ProcessList);
+            return Ok(list);
         }
 
         // POST: api/ProcessLists
@@ -149,7 +163,7 @@ namespace PCBookWebApp.Controllers.ProcessModule.api
             string userId = User.Identity.GetUserId();
             var showRoomId = db.ShowRoomUsers.Where(a => a.Id == userId).Select(a => a.ShowRoomId).FirstOrDefault();
             string userName = User.Identity.GetUserName();
-            bool isTrue = db.ProcessLists.Any(s => s.ProcessListName == processList.ProcessListName.Trim());
+            bool isTrue = db.ProcessLists.Any(s => s.ProcessListName == processList.ProcessListName.Trim() && s.ShowRoomId==showRoomId);
             if (isTrue == false)
             {
                 processList.ShowRoomId = showRoomId;

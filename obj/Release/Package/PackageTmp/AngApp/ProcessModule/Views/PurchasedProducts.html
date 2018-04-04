@@ -1,6 +1,10 @@
 ﻿<div class="box box-primary">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-apple"></i> Products</h3>
+        
+        <div class="form-inline">
+            <span class="box-title"><i class="fa fa-apple"></i> Products <small class="text-red"><em>{{filteredProductList.length}}</em></small></span>
+            <input class="searchTextBox" type="text" value="" placeholder="Filter your search results" ng-model="searchText">
+        </div>
         <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -85,7 +89,12 @@
 
             </tfoot>
         </table>
-
+        <pagination ng-model="currentPage" 
+                    total-items="filteredProductList.length"
+                    max-size="maxSize"
+                    items-per-page="pageSize"
+                    boundary-links="true">
+        </pagination>
     </div>
 
 </div>
